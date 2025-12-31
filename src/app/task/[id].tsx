@@ -1,25 +1,30 @@
-import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, TextInput, Platform } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { ChevronLeft, Calendar as CalendarIcon } from "lucide-react-native";
+import { ChevronLeft, Calendar as CalendarIcon, X } from "lucide-react-native";
+import { useTheme } from "@/core/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function TaskDetailScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const { tasks, updateTask, contexts, loadContexts } = useTasks();
     const { projects, loadProjects } = useProjects();
+    const { isDark } = useTheme();
+    const { t } = useTranslation();
     
-    // Convert id to number
     const taskId = id ? Number(id) : null;
     const task = tasks.find(t => t.id === taskId);
 
     const [title, setTitle] = useState("");
     const [projectId, setProjectId] = useState<number | null>(null);
     const [contextId, setContextId] = useState<number | null>(null);
-    const [dueDate, setDueDate] = useState(""); // Simplified for MVP (YYYY-MM-DD)
+    const [dueDate, setDueDate] = useState<Date | null>(null);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     useEffect(() => {
         loadProjects();
@@ -32,21 +37,32 @@ export default function TaskDetailScreen() {
             setProjectId(task.project_id);
             setContextId(task.context_id);
             
-            let formattedDate = "";
             if (task.due_date) {
                 const d = new Date(task.due_date);
                 if (!isNaN(d.getTime())) {
-                   formattedDate = d.toISOString().split('T')[0];
+                    setDueDate(d);
                 }
+            } else {
+                setDueDate(null);
             }
-            setDueDate(formattedDate);
         }
     }, [task]);
 
+    const bgColor = isDark ? "bg-slate-950" : "bg-gray-50";
+    const cardBg = isDark ? "bg-slate-800" : "bg-white";
+    const textColor = isDark ? "text-white" : "text-gray-900";
+    const secondaryText = isDark ? "text-slate-400" : "text-gray-500";
+    const borderColor = isDark ? "border-slate-700" : "border-gray-200";
+    const inputBg = isDark ? "bg-slate-800" : "bg-white";
+    const chipBg = isDark ? "bg-slate-700" : "bg-gray-50";
+    const chipActiveBg = isDark ? "bg-blue-900" : "bg-blue-100";
+    const chipActiveText = isDark ? "text-blue-300" : "text-blue-700";
+    const chipText = isDark ? "text-slate-300" : "text-gray-600";
+
     if (!task) {
         return (
-            <SafeAreaView className="flex-1 bg-white items-center justify-center">
-                <Text>Task not found</Text>
+            <SafeAreaView className={`flex-1 ${bgColor} items-center justify-center`}>
+                <Text className={textColor}>Task not found</Text>
                 <Button title="Go Back" onPress={() => router.back()} />
             </SafeAreaView>
         );
@@ -54,62 +70,109 @@ export default function TaskDetailScreen() {
 
     const handleSave = async () => {
         if (taskId) {
-            const dateObj = dueDate ? new Date(dueDate) : null;
             await updateTask(taskId, { 
                 title, 
                 project_id: projectId,
                 context_id: contextId,
-                due_date: dateObj
+                due_date: dueDate
             });
             router.back();
         }
     };
 
+    const formatDate = (date: Date) => {
+        return date.toLocaleDateString(undefined, { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+    };
+
+    const handleDateChange = (event: any, selectedDate?: Date) => {
+        if (Platform.OS === 'android') {
+            setShowDatePicker(false);
+        }
+        if (selectedDate) {
+            setDueDate(selectedDate);
+        }
+    };
+
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView className={`flex-1 ${bgColor}`}>
             <View className="flex-1 p-4">
                 <View className="flex-row items-center mb-6">
                     <TouchableOpacity onPress={() => router.back()} className="mr-4">
-                        <ChevronLeft size={24} color="#000" />
+                        <ChevronLeft size={24} color={isDark ? "#fff" : "#000"} />
                     </TouchableOpacity>
-                    <Text className="text-2xl font-bold">Edit Task</Text>
+                    <Text className={`text-2xl font-bold ${textColor}`}>Edit Task</Text>
                 </View>
 
                 <ScrollView className="flex-1">
+                    {/* Title */}
                     <View className="mb-6">
-                        <Text className="text-sm font-bold text-gray-500 mb-2 uppercase">Title</Text>
+                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Title</Text>
                         <TextInput 
                             value={title} 
                             onChangeText={setTitle} 
-                            className="bg-white border-2 border-gray-100 p-3 rounded-lg text-lg"
+                            className={`${inputBg} border-2 ${borderColor} p-3 rounded-lg text-lg ${textColor}`}
+                            placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
                         />
                     </View>
 
+                    {/* Due Date with DatePicker */}
                     <View className="mb-6">
-                        <Text className="text-sm font-bold text-gray-500 mb-2 uppercase">Due Date (YYYY-MM-DD)</Text>
-                         <View className="flex-row items-center bg-white border-2 border-gray-100 p-3 rounded-lg">
-                            <CalendarIcon size={20} color="#6b7280" className="mr-3"/>
-                            <TextInput 
-                                value={dueDate} 
-                                onChangeText={setDueDate} 
-                                placeholder="Optional"
-                                className="flex-1 text-lg"
-                            />
-                        </View>
+                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Due Date</Text>
+                        <TouchableOpacity 
+                            onPress={() => setShowDatePicker(true)}
+                            className={`flex-row items-center justify-between ${inputBg} border-2 ${borderColor} p-3 rounded-lg`}
+                        >
+                            <View className="flex-row items-center">
+                                <CalendarIcon size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                                <Text className={`ml-3 text-lg ${dueDate ? textColor : secondaryText}`}>
+                                    {dueDate ? formatDate(dueDate) : "Select Date"}
+                                </Text>
+                            </View>
+                            {dueDate && (
+                                <TouchableOpacity onPress={() => setDueDate(null)}>
+                                    <X size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                                </TouchableOpacity>
+                            )}
+                        </TouchableOpacity>
+                        
+                        {showDatePicker && (
+                            <View className={`mt-2 ${Platform.OS === 'ios' ? `${cardBg} rounded-lg p-2` : ''}`}>
+                                <DateTimePicker
+                                    value={dueDate || new Date()}
+                                    mode="date"
+                                    display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                                    onChange={handleDateChange}
+                                    themeVariant={isDark ? 'dark' : 'light'}
+                                />
+                                {Platform.OS === 'ios' && (
+                                    <TouchableOpacity 
+                                        onPress={() => setShowDatePicker(false)}
+                                        className="bg-blue-500 p-3 rounded-lg mt-2"
+                                    >
+                                        <Text className="text-white text-center font-bold">Done</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        )}
                     </View>
 
+                    {/* Project */}
                     <View className="mb-6">
-                        <Text className="text-sm font-bold text-gray-500 mb-2 uppercase">Project</Text>
+                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Project</Text>
                         <View className="flex-row flex-wrap gap-2">
                              <TouchableOpacity
                                 onPress={() => setProjectId(null)}
                                 className={`px-4 py-2 rounded-full border ${
                                     projectId === null 
-                                    ? "bg-blue-100 border-blue-500" 
-                                    : "bg-gray-50 border-gray-200"
+                                    ? `${chipActiveBg} border-blue-500` 
+                                    : `${chipBg} ${borderColor}`
                                 }`}
                              >
-                                <Text className={projectId === null ? "text-blue-700 font-medium" : "text-gray-600"}>
+                                <Text className={projectId === null ? chipActiveText : chipText}>
                                     No Project
                                 </Text>
                              </TouchableOpacity>
@@ -119,11 +182,11 @@ export default function TaskDetailScreen() {
                                     onPress={() => setProjectId(project.id)}
                                     className={`px-4 py-2 rounded-full border ${
                                         projectId === project.id 
-                                        ? "bg-blue-100 border-blue-500" 
-                                        : "bg-gray-50 border-gray-200"
+                                        ? `${chipActiveBg} border-blue-500` 
+                                        : `${chipBg} ${borderColor}`
                                     }`}
                                 >
-                                    <Text className={projectId === project.id ? "text-blue-700 font-medium" : "text-gray-600"}>
+                                    <Text className={projectId === project.id ? chipActiveText : chipText}>
                                         {project.title}
                                     </Text>
                                 </TouchableOpacity>
@@ -131,18 +194,19 @@ export default function TaskDetailScreen() {
                         </View>
                     </View>
 
+                    {/* Context */}
                     <View className="mb-6">
-                        <Text className="text-sm font-bold text-gray-500 mb-2 uppercase">Context</Text>
+                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Context</Text>
                         <View className="flex-row flex-wrap gap-2">
                              <TouchableOpacity
                                 onPress={() => setContextId(null)}
                                 className={`px-4 py-2 rounded-full border ${
                                     contextId === null 
-                                    ? "bg-purple-100 border-purple-500" 
-                                    : "bg-gray-50 border-gray-200"
+                                    ? "bg-purple-900/30 border-purple-500" 
+                                    : `${chipBg} ${borderColor}`
                                 }`}
                              >
-                                <Text className={contextId === null ? "text-purple-700 font-medium" : "text-gray-600"}>
+                                <Text className={contextId === null ? "text-purple-400" : chipText}>
                                     None
                                 </Text>
                              </TouchableOpacity>
@@ -152,14 +216,14 @@ export default function TaskDetailScreen() {
                                     onPress={() => setContextId(context.id)}
                                     className={`px-4 py-2 rounded-full border ${
                                         contextId === context.id 
-                                        ? "bg-purple-100 border-purple-500" 
-                                        : "bg-gray-50 border-gray-200"
+                                        ? "bg-purple-900/30 border-purple-500" 
+                                        : `${chipBg} ${borderColor}`
                                     }`}
-                                    style={contextId === context.id ? {} : { borderColor: context.color || '#e5e7eb' }}
+                                    style={contextId === context.id ? {} : { borderColor: context.color || (isDark ? '#475569' : '#e5e7eb') }}
                                 >
                                     <View className="flex-row items-center gap-2">
                                         <View className="w-3 h-3 rounded-full" style={{ backgroundColor: context.color || '#ccc'}} />
-                                        <Text className={contextId === context.id ? "text-purple-700 font-medium" : "text-gray-600"}>
+                                        <Text className={contextId === context.id ? "text-purple-400" : chipText}>
                                             {context.title}
                                         </Text>
                                     </View>
@@ -169,7 +233,7 @@ export default function TaskDetailScreen() {
                     </View>
                 </ScrollView>
 
-                <Button title="Save Changes" onPress={handleSave} />
+                <Button title={t("common.save")} onPress={handleSave} />
             </View>
         </SafeAreaView>
     );
