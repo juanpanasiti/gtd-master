@@ -1,12 +1,15 @@
 import "../global.css";
 import "@/core/i18n"; // Initialize i18n
 import { Slot } from "expo-router";
-import { View, Text } from "react-native";
+import { View, Text, LogBox } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { runMigrations } from "@/db/migrations-runner";
 import { ThemeProvider, useTheme } from "@/core/theme/ThemeProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+// Ignore SafeAreaView deprecation warning from external libraries
+LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
 
 function AppContent() {
   const [isReady, setIsReady] = useState(false);
