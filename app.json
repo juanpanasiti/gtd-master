@@ -22,10 +22,16 @@
         "backgroundColor": "#f1f5f9"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.giosoft.gtdmaster"
     },
     "web": {
       "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1c8498d8-cd3e-4af0-8b43-553d7806aa7f"
+      }
     }
   }
 }
