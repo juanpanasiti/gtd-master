@@ -37,6 +37,7 @@ export default function ProjectsScreen() {
             contentContainerStyle={{ paddingBottom: 100 }}
             renderItem={({ item }) => (
               <TouchableOpacity
+                onPress={() => router.push(`/project/${item.id}`)}
                 className="p-4 mb-3 rounded-xl bg-white border border-gray-200 shadow-sm flex-row items-center gap-3"
               >
                 <Folder size={24} color="#4B5563" />
