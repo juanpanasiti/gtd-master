@@ -3,6 +3,7 @@
     "name": "GTD Master",
     "slug": "gtd-master",
     "version": "1.0.0",
+    "scheme": "gtdmaster",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
