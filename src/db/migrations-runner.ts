@@ -23,6 +23,19 @@ const MIGRATIONS = [
     created_at INTEGER NOT NULL
   );
   `,
+  // Version 3
+  `
+  CREATE TABLE IF NOT EXISTS contexts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    icon TEXT,
+    color TEXT
+  );
+  `,
+  // Version 4
+  `
+  ALTER TABLE tasks ADD COLUMN due_date INTEGER;
+  `,
 ];
 
 export async function runMigrations() {

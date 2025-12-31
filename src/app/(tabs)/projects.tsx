@@ -1,6 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Folder } from "lucide-react-native";
@@ -8,6 +9,7 @@ import { Folder } from "lucide-react-native";
 export default function ProjectsScreen() {
   const { projects, loadProjects, addProject } = useProjects();
   const [newProject, setNewProject] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     loadProjects();
@@ -22,7 +24,12 @@ export default function ProjectsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
         <View className="flex-1 p-4">
-          <Text className="text-3xl font-bold mb-6 text-gray-900">Projects</Text>
+          <View className="flex-row justify-between items-center mb-6">
+              <Text className="text-3xl font-bold text-gray-900">Projects</Text>
+              <TouchableOpacity onPress={() => router.push("/organize/contexts")}>
+                  <Text className="text-blue-600 font-medium">Contexts</Text>
+              </TouchableOpacity>
+          </View>
 
           <FlatList
             data={projects.filter(p => p.status === 'active')}

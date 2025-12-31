@@ -1,0 +1,50 @@
+{
+    "common": {
+        "loading": "Cargando...",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "add": "Agregar"
+    },
+    "tabs": {
+        "inbox": "Inbox",
+        "organize": "Organizar",
+        "engage": "Ejecutar",
+        "review": "Revisar"
+    },
+    "inbox": {
+        "title": "Inbox",
+        "placeholder": "Necesito...",
+        "captureTask": "Capturar Tarea",
+        "emptyTitle": "Bandeja Vacía",
+        "emptyDescription": "Has procesado todos tus elementos.\nCaptura más cosas o revisa Ejecutar."
+    },
+    "engage": {
+        "title": "Ejecutar",
+        "emptyTitle": "¿Listo para Ejecutar?",
+        "emptyDescription": "No hay acciones contextuales.\nRevisa tu Inbox para categorizar tareas."
+    },
+    "projects": {
+        "title": "Proyectos",
+        "placeholder": "Nombre del nuevo proyecto...",
+        "addProject": "Agregar Proyecto",
+        "manageContexts": "Administrar Contextos"
+    },
+    "contexts": {
+        "title": "Contextos",
+        "placeholder": "Nombre del nuevo contexto..."
+    },
+    "settings": {
+        "title": "Ajustes",
+        "appearance": "Apariencia",
+        "language": "Idioma",
+        "about": "Acerca de",
+        "version": "Versión",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "system": "Sistema",
+        "english": "Inglés",
+        "spanish": "Español"
+    }
+}

@@ -1,0 +1,50 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add"
+    },
+    "tabs": {
+        "inbox": "Inbox",
+        "organize": "Organize",
+        "engage": "Engage",
+        "review": "Review"
+    },
+    "inbox": {
+        "title": "Inbox",
+        "placeholder": "I need to...",
+        "captureTask": "Capture Task",
+        "emptyTitle": "Tray Empty",
+        "emptyDescription": "You have processed all your items.\nCapture more things or check Engage."
+    },
+    "engage": {
+        "title": "Engage",
+        "emptyTitle": "Ready to Engage?",
+        "emptyDescription": "No contextual next actions found.\nCheck your Inbox to categorize tasks."
+    },
+    "projects": {
+        "title": "Projects",
+        "placeholder": "New project name...",
+        "addProject": "Add Project",
+        "manageContexts": "Manage Contexts"
+    },
+    "contexts": {
+        "title": "Contexts",
+        "placeholder": "New context name..."
+    },
+    "settings": {
+        "title": "Settings",
+        "appearance": "Appearance",
+        "language": "Language",
+        "about": "About",
+        "version": "Version",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "english": "English",
+        "spanish": "Spanish"
+    }
+}

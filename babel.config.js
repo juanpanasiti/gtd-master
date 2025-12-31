@@ -9,11 +9,14 @@ module.exports = function (api) {
             [
                 "module-resolver",
                 {
+                    root: ["."],
                     alias: {
                         "@": "./src",
                     },
                 },
             ],
+            "react-native-worklets/plugin",
+            "react-native-reanimated/plugin",
         ],
     };
 };
