@@ -5,11 +5,15 @@ import { useRouter } from "expo-router";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Folder } from "lucide-react-native";
+import { useTheme } from "@/core/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 
 export default function ProjectsScreen() {
   const { projects, loadProjects, addProject } = useProjects();
   const [newProject, setNewProject] = useState("");
   const router = useRouter();
+  const { isDark } = useTheme();
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadProjects();
@@ -21,13 +25,18 @@ export default function ProjectsScreen() {
     setNewProject("");
   };
 
+  const bgColor = isDark ? "bg-slate-950" : "bg-gray-50";
+  const textColor = isDark ? "text-white" : "text-gray-900";
+  const secondaryText = isDark ? "text-slate-400" : "text-gray-500";
+  const cardBg = isDark ? "bg-slate-800" : "bg-white";
+  const borderColor = isDark ? "border-slate-700" : "border-gray-200";
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className={`flex-1 ${bgColor}`}>
         <View className="flex-1 p-4">
           <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-3xl font-bold text-gray-900">Projects</Text>
               <TouchableOpacity onPress={() => router.push("/organize/contexts")}>
-                  <Text className="text-blue-600 font-medium">Contexts</Text>
+                  <Text className="text-blue-500 font-medium">{t("projects.manageContexts")}</Text>
               </TouchableOpacity>
           </View>
 
@@ -38,18 +47,18 @@ export default function ProjectsScreen() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => router.push(`/project/${item.id}`)}
-                className="p-4 mb-3 rounded-xl bg-white border border-gray-200 shadow-sm flex-row items-center gap-3"
+                className={`p-4 mb-3 rounded-xl ${cardBg} border ${borderColor} shadow-sm flex-row items-center gap-3`}
               >
-                <Folder size={24} color="#4B5563" />
+                <Folder size={24} color={isDark ? "#9ca3af" : "#4B5563"} />
                 <View className="flex-1">
-                    <Text className="text-lg font-semibold text-gray-800">{item.title}</Text>
-                    <Text className="text-sm text-gray-500">{item.status}</Text>
+                    <Text className={`text-lg font-semibold ${textColor}`}>{item.title}</Text>
+                    <Text className={secondaryText}>{item.status}</Text>
                 </View>
               </TouchableOpacity>
             )}
             ListEmptyComponent={
                 <View className="items-center justify-center p-10">
-                    <Text className="text-gray-400 text-center">No active projects.</Text>
+                    <Text className={`${secondaryText} text-center`}>No active projects.</Text>
                 </View>
             }
           />
@@ -58,12 +67,12 @@ export default function ProjectsScreen() {
             <Input
               value={newProject}
               onChangeText={setNewProject}
-              placeholder="New Project Name"
+              placeholder={t("projects.placeholder")}
               returnKeyType="done"
               onSubmitEditing={handleAddProject}
             />
             <Button 
-                title="Create Project" 
+                title={t("projects.addProject")} 
                 onPress={handleAddProject} 
                 disabled={!newProject.trim()}
                 className={!newProject.trim() ? "opacity-50" : ""}

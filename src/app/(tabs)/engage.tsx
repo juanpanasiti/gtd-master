@@ -3,9 +3,13 @@ import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo } from "react";
 import { TaskItem } from "@/components/TaskItem";
 import { CheckCircle } from "lucide-react-native";
+import { useTheme } from "@/core/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 
 export default function EngageScreen() {
     const { tasks, loadTasks, toggleTask, contexts, loadContexts } = useTasks();
+    const { isDark } = useTheme();
+    const { t } = useTranslation();
 
     useEffect(() => {
         loadTasks();
@@ -35,11 +39,16 @@ export default function EngageScreen() {
         return Object.values(grouped);
     }, [tasks, contexts]);
 
-    return (
-        <SafeAreaView className="flex-1 bg-white">
-            <View className="flex-1 p-4">
-                <Text className="text-3xl font-bold mb-6 text-gray-900">Engage</Text>
+    const bgColor = isDark ? "bg-slate-950" : "bg-gray-50";
+    const textColor = isDark ? "text-white" : "text-gray-900";
+    const secondaryText = isDark ? "text-slate-400" : "text-gray-500";
+    const sectionHeaderBg = isDark ? "bg-slate-950/95" : "bg-gray-50/95";
+    const sectionHeaderText = isDark ? "text-slate-300" : "text-gray-700";
+    const emptyBg = isDark ? "bg-slate-800" : "bg-blue-50";
 
+    return (
+        <SafeAreaView className={`flex-1 ${bgColor}`}>
+            <View className="flex-1 p-4">
                 <SectionList
                     sections={sections}
                     keyExtractor={(item) => item.id.toString()}
@@ -51,24 +60,26 @@ export default function EngageScreen() {
                         />
                     )}
                     renderSectionHeader={({ section: { title, color } }) => (
-                        <View className="flex-row items-center py-2 bg-white/95 backdrop-blur-sm mt-4 mb-2">
+                        <View className={`flex-row items-center py-2 ${sectionHeaderBg} backdrop-blur-sm mt-4 mb-2`}>
                              <View 
                                 className="w-3 h-3 rounded-full mr-2" 
                                 style={{ backgroundColor: color }} 
                             />
-                            <Text className="text-lg font-bold text-gray-700 uppercase tracking-wider">
+                            <Text className={`text-lg font-bold ${sectionHeaderText} uppercase tracking-wider`}>
                                 {title}
                             </Text>
                         </View>
                     )}
                     ListEmptyComponent={
                         <View className="items-center justify-center p-10 mt-10">
-                            <View className="bg-blue-50 p-6 rounded-full mb-4">
-                                <CheckCircle size={48} color="#3b82f6" />
+                            <View className={`${emptyBg} p-6 rounded-full mb-4`}>
+                                <CheckCircle size={48} color={isDark ? "#60a5fa" : "#3b82f6"} />
                             </View>
-                            <Text className="text-xl font-bold text-gray-800 mb-2">Ready to Engage?</Text>
-                            <Text className="text-gray-500 text-center">
-                                No contextual next actions found.{"\n"}Check your Inbox to categorize tasks.
+                            <Text className={`text-xl font-bold mb-2 ${textColor}`}>
+                                {t("engage.emptyTitle")}
+                            </Text>
+                            <Text className={`${secondaryText} text-center`}>
+                                {t("engage.emptyDescription")}
                             </Text>
                         </View>
                     }

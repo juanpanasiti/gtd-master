@@ -6,11 +6,15 @@ import { Button } from "@/components/ui/Button";
 import { useRouter } from "expo-router";
 import { TaskItem } from "@/components/TaskItem";
 import { Inbox as InboxIcon } from "lucide-react-native";
+import { useTheme } from "@/core/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
 
 export default function Inbox() {
   const { tasks, loadTasks, addTask, toggleTask, contexts, loadContexts } = useTasks();
   const [newTask, setNewTask] = useState("");
   const router = useRouter();
+  const { isDark } = useTheme();
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadTasks();
@@ -26,15 +30,18 @@ export default function Inbox() {
   // Inbox Logic: Active tasks with no Project and no Context
   const inboxTasks = tasks.filter(t => !t.is_completed && !t.project_id && !t.context_id);
 
+  const bgColor = isDark ? "bg-slate-950" : "bg-gray-50";
+  const textColor = isDark ? "text-white" : "text-gray-900";
+  const secondaryText = isDark ? "text-slate-400" : "text-gray-500";
+  const emptyBg = isDark ? "bg-slate-800" : "bg-gray-100";
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className={`flex-1 ${bgColor}`}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         <View className="flex-1 p-4">
-          <Text className="text-3xl font-bold mb-6 text-gray-900">Inbox</Text>
-
           <FlatList
             data={inboxTasks}
             keyExtractor={(item) => item.id.toString()}
@@ -48,12 +55,14 @@ export default function Inbox() {
             )}
             ListEmptyComponent={
                 <View className="items-center justify-center p-10 mt-10">
-                    <View className="bg-gray-100 p-6 rounded-full mb-4">
-                        <InboxIcon size={48} color="#9ca3af" />
+                    <View className={`${emptyBg} p-6 rounded-full mb-4`}>
+                        <InboxIcon size={48} color={isDark ? "#6b7280" : "#9ca3af"} />
                     </View>
-                    <Text className="text-xl font-bold text-gray-800 mb-2">Tray Empty</Text>
-                    <Text className="text-gray-500 text-center">
-                        You have processed all your items.{"\n"}Capture more things or check Engage.
+                    <Text className={`text-xl font-bold mb-2 ${textColor}`}>
+                        {t("inbox.emptyTitle")}
+                    </Text>
+                    <Text className={`${secondaryText} text-center`}>
+                        {t("inbox.emptyDescription")}
                     </Text>
                 </View>
             }
@@ -63,12 +72,12 @@ export default function Inbox() {
             <Input
               value={newTask}
               onChangeText={setNewTask}
-              placeholder="I need to..."
+              placeholder={t("inbox.placeholder")}
               returnKeyType="done"
               onSubmitEditing={handleAddTask}
             />
             <Button 
-                title="Capture Task" 
+                title={t("inbox.captureTask")} 
                 onPress={handleAddTask} 
                 disabled={!newTask.trim()}
                 className={!newTask.trim() ? "opacity-50" : ""}

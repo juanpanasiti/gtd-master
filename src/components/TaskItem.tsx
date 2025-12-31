@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import { useTheme } from "@/core/theme/ThemeProvider";
 
 interface TaskItemProps {
     task: {
@@ -14,28 +15,37 @@ interface TaskItemProps {
 
 export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
     const router = useRouter();
+    const { isDark } = useTheme();
+
+    const cardBg = task.is_completed 
+        ? (isDark ? "bg-slate-800/50" : "bg-gray-50")
+        : (isDark ? "bg-slate-800" : "bg-white");
+    
+    const borderColor = task.is_completed
+        ? (isDark ? "border-slate-700" : "border-gray-100")
+        : (isDark ? "border-slate-700" : "border-gray-200");
+
+    const textColor = task.is_completed
+        ? (isDark ? "text-slate-500" : "text-gray-400")
+        : (isDark ? "text-slate-100" : "text-gray-800");
 
     return (
         <TouchableOpacity
             onPress={() => router.push(`/task/${task.id}`)}
-            className={`p-4 mb-3 rounded-xl border ${
-                task.is_completed 
-                ? "bg-gray-50 border-gray-100" 
-                : "bg-white border-gray-200 shadow-sm"
-            }`}
+            className={`p-4 mb-3 rounded-xl border ${cardBg} ${borderColor} ${!task.is_completed ? "shadow-sm" : ""}`}
         >
             <View className="flex-row items-center gap-3">
                 <TouchableOpacity onPress={() => onToggle(task.id, task.is_completed)}>
                     <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
-                        task.is_completed ? "bg-green-500 border-green-500" : "border-gray-300"
+                        task.is_completed 
+                            ? "bg-green-500 border-green-500" 
+                            : (isDark ? "border-slate-500" : "border-gray-300")
                     }`}>
                         {task.is_completed && <Text className="text-white text-xs">✓</Text>}
                     </View>
                 </TouchableOpacity>
                 <View className="flex-1">
-                    <Text className={`text-lg ${
-                        task.is_completed ? "text-gray-400 line-through" : "text-gray-800"
-                    }`}>
+                    <Text className={`text-lg ${textColor} ${task.is_completed ? "line-through" : ""}`}>
                         {task.title}
                     </Text>
                     {context && (
