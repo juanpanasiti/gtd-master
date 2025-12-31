@@ -1,4 +1,5 @@
-import { View, Text, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";

@@ -1,4 +1,5 @@
-import { View, Text, FlatList, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, FlatList, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "@/store/useTasks";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/Input";

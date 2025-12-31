@@ -1,4 +1,5 @@
-import { View, Text, FlatList, SafeAreaView } from "react-native";
+import { View, Text, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo } from "react";
 import { TaskItem } from "@/components/TaskItem";

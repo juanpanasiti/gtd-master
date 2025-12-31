@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Sun, Moon, Smartphone, Globe } from "lucide-react-native";
