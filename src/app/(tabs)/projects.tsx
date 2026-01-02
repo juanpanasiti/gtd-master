@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Folder } from "lucide-react-native";
+import { Folder, ListTodo } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
@@ -50,6 +50,18 @@ export default function ProjectsScreen() {
             data={projects.filter(p => p.status === 'active')}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{ paddingBottom: 100 }}
+            ListHeaderComponent={
+                <TouchableOpacity
+                    onPress={() => router.push("/project/single")}
+                    className={`p-4 mb-3 rounded-xl ${cardBg} border ${borderColor} shadow-sm flex-row items-center gap-3`}
+                >
+                    <ListTodo size={24} color={isDark ? "#60a5fa" : "#2563eb"} />
+                    <View className="flex-1">
+                        <Text className={`text-lg font-semibold ${textColor}`}>Single Actions</Text>
+                        <Text className={secondaryText}>Tasks without a project</Text>
+                    </View>
+                </TouchableOpacity>
+            }
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => router.push(`/project/${item.id}`)}
