@@ -18,8 +18,8 @@ export default function EngageScreen() {
     }, []);
 
     const sections = useMemo(() => {
-        // 1. Get active tasks with contexts
-        const activeTasks = tasks.filter(t => !t.is_completed && t.context_id);
+        // 1. Get active tasks with contexts (excluding someday and waiting)
+        const activeTasks = tasks.filter(t => !t.is_completed && t.context_id && t.status === "active");
         
         // 2. Group by context
         const grouped = activeTasks.reduce((acc, task) => {

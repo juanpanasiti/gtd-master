@@ -36,6 +36,14 @@ const MIGRATIONS = [
   `
   ALTER TABLE tasks ADD COLUMN due_date INTEGER;
   `,
+  // Version 5
+  `
+  ALTER TABLE tasks ADD COLUMN status TEXT DEFAULT 'active' NOT NULL;
+  `,
+  // Version 6
+  `
+  ALTER TABLE tasks ADD COLUMN delegate_name TEXT;
+  `,
 ];
 
 export async function runMigrations() {

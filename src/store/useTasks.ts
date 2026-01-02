@@ -10,6 +10,8 @@ interface Task {
     project_id: number | null;
     context_id: number | null;
     due_date: Date | null;
+    status: "active" | "someday" | "waiting";
+    delegate_name: string | null;
     created_at: Date;
 }
 

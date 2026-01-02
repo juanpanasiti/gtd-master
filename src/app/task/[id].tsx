@@ -26,6 +26,8 @@ export default function TaskDetailScreen() {
     const [contextId, setContextId] = useState<number | null>(null);
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [status, setStatus] = useState<"active" | "someday" | "waiting">("active");
+    const [delegateName, setDelegateName] = useState("");
 
     useEffect(() => {
         loadProjects();
@@ -37,6 +39,8 @@ export default function TaskDetailScreen() {
             setTitle(task.title);
             setProjectId(task.project_id);
             setContextId(task.context_id);
+            setStatus(task.status || "active");
+            setDelegateName(task.delegate_name || "");
             
             if (task.due_date) {
                 const d = new Date(task.due_date);
@@ -73,7 +77,9 @@ export default function TaskDetailScreen() {
         if (taskId) {
             await updateTask(taskId, { 
                 title, 
-                project_id: projectId,
+                project_id: proje,
+                status,
+                delegate_name: status === "waiting" ? delegateName : nullctId,
                 context_id: contextId,
                 due_date: dueDate
             });
@@ -230,6 +236,63 @@ export default function TaskDetailScreen() {
                                     </View>
                                 </TouchableOpacity>
                             ))}
+
+                    {/* Status */}
+                    <View className="mb-6">
+                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Status</Text>
+                        <View className="flex-row flex-wrap gap-2">
+                            <TouchableOpacity
+                                onPress={() => setStatus("active")}
+                                className={`px-4 py-2 rounded-full border ${
+                                    status === "active" 
+                                    ? "bg-green-900/30 border-green-500" 
+                                    : `${chipBg} ${borderColor}`
+                                }`}
+                            >
+                                <Text className={status === "active" ? "text-green-400" : chipText}>
+                                    Accionable
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setStatus("someday")}
+                                className={`px-4 py-2 rounded-full border ${
+                                    status === "someday" 
+                                    ? "bg-amber-900/30 border-amber-500" 
+                                    : `${chipBg} ${borderColor}`
+                                }`}
+                            >
+                                <Text className={status === "someday" ? "text-amber-400" : chipText}>
+                                    Algún día
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setStatus("waiting")}
+                                className={`px-4 py-2 rounded-full border ${
+                                    status === "waiting" 
+                                    ? "bg-cyan-900/30 border-cyan-500" 
+                                    : `${chipBg} ${borderColor}`
+                                }`}
+                            >
+                                <Text className={status === "waiting" ? "text-cyan-400" : chipText}>
+                                    En espera
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/* Waiting For (only visible when status is waiting) */}
+                    {status === "waiting" && (
+                        <View className="mb-6">
+                            <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Waiting For</Text>
+                            <TextInput 
+                                value={delegateName} 
+                                onChangeText={setDelegateName} 
+                                placeholder="Name of person/entity"
+                                className={`${inputBg} border-2 ${borderColor} p-3 rounded-lg text-lg ${textColor}`}
+                                placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
+                            />
+                        </View>
+                    )}
                         </View>
                     </View>
                 </ScrollView>
