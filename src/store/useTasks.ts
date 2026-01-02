@@ -12,6 +12,7 @@ interface Task {
     due_date: Date | null;
     status: "active" | "someday" | "waiting";
     delegate_name: string | null;
+    description: string | null;
     created_at: Date;
 }
 

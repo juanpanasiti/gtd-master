@@ -22,6 +22,7 @@ export default function TaskDetailScreen() {
     const task = tasks.find(t => t.id === taskId);
 
     const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [projectId, setProjectId] = useState<number | null>(null);
     const [contextId, setContextId] = useState<number | null>(null);
     const [dueDate, setDueDate] = useState<Date | null>(null);
@@ -37,6 +38,7 @@ export default function TaskDetailScreen() {
     useEffect(() => {
         if (task) {
             setTitle(task.title);
+            setDescription(task.description || "");
             setProjectId(task.project_id);
             setContextId(task.context_id);
             setStatus(task.status || "active");
@@ -77,6 +79,7 @@ export default function TaskDetailScreen() {
         if (taskId) {
             await updateTask(taskId, { 
                 title, 
+                description,
                 project_id: projectId,
                 status,
                 delegate_name: status === "waiting" ? delegateName : null,
@@ -165,6 +168,21 @@ export default function TaskDetailScreen() {
                             onChangeText={setTitle} 
                             className={`${inputBg} border-2 ${borderColor} p-3 rounded-lg text-lg ${textColor}`}
                             placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
+                        />
+                    </View>
+
+                    {/* Description (Notes) */}
+                    <View className="mb-6">
+                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Notes</Text>
+                        <TextInput 
+                            value={description} 
+                            onChangeText={setDescription} 
+                            className={`${inputBg} border-2 ${borderColor} p-3 rounded-lg text-base ${textColor}`}
+                            placeholder="Add details, notes, or sub-steps..."
+                            placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
+                            multiline
+                            textAlignVertical="top"
+                            style={{ minHeight: 120 }}
                         />
                     </View>
 

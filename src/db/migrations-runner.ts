@@ -44,6 +44,10 @@ const MIGRATIONS = [
   `
   ALTER TABLE tasks ADD COLUMN delegate_name TEXT;
   `,
+  // Version 7
+  `
+  ALTER TABLE tasks ADD COLUMN description TEXT;
+  `,
 ];
 
 export async function runMigrations() {

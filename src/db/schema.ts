@@ -9,6 +9,7 @@ export const tasks = sqliteTable("tasks", {
     due_date: integer("due_date", { mode: "timestamp" }),
     status: text("status", { enum: ["active", "someday", "waiting"] }).notNull().default("active"),
     delegate_name: text("delegate_name"),
+    description: text("description"),
     created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
 });
 
