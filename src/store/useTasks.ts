@@ -29,6 +29,8 @@ interface TasksState {
     loadContexts: () => Promise<void>;
     addTask: (title: string, due_date?: Date | null) => Promise<void>;
     addContext: (title: string, icon?: string, color?: string) => Promise<void>;
+    updateContext: (id: number, updates: Partial<Context>) => Promise<void>;
+    deleteContext: (id: number) => Promise<void>;
     toggleTask: (id: number, currentStatus: boolean) => Promise<void>;
     updateTask: (id: number, updates: Partial<Task>) => Promise<void>;
     deleteTask: (id: number) => Promise<void>;
@@ -75,6 +77,22 @@ export const useTasks = create<TasksState>((set, get) => ({
             await get().loadContexts();
         } catch (error) {
             console.error("Failed to add context", error);
+        }
+    },
+    updateContext: async (id: number, updates: Partial<Context>) => {
+        try {
+            await db.update(contexts).set(updates).where(eq(contexts.id, id));
+            await get().loadContexts();
+        } catch (error) {
+            console.error("Failed to update context", error);
+        }
+    },
+    deleteContext: async (id: number) => {
+        try {
+            await db.delete(contexts).where(eq(contexts.id, id));
+            await get().loadContexts();
+        } catch (error) {
+            console.error("Failed to delete context", error);
         }
     },
     toggleTask: async (id: number, currentStatus: boolean) => {

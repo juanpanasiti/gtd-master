@@ -5,7 +5,9 @@
         "cancel": "Cancel",
         "delete": "Delete",
         "edit": "Edit",
-        "add": "Add"
+        "add": "Add",
+        "complete": "Complete",
+        "done": "Done"
     },
     "tabs": {
         "inbox": "Inbox",
@@ -18,7 +20,10 @@
         "placeholder": "I need to...",
         "captureTask": "Capture Task",
         "emptyTitle": "Tray Empty",
-        "emptyDescription": "You have processed all your items.\nCapture more things or check Engage."
+        "emptyDescription": "You have processed all your items.\nCapture more things or check Engage.",
+        "twoMinuteRule": "2-Minute Rule",
+        "completeTaskConfirm": "Complete \"{{taskTitle}}\"?",
+        "twoMinuteRuleApplied": "2-minute rule applied"
     },
     "engage": {
         "title": "Engage",
@@ -29,7 +34,8 @@
         "title": "Projects",
         "placeholder": "New project name...",
         "addProject": "Add Project",
-        "manageContexts": "Manage Contexts"
+        "manageContexts": "Manage Contexts",
+        "emptyList": "No active projects."
     },
     "contexts": {
         "title": "Contexts",

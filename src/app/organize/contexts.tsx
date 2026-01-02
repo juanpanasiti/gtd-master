@@ -7,67 +7,121 @@ import { Button } from "@/components/ui/Button";
 import { Tag, ChevronLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 
+import { useTheme } from "@/core/theme/ThemeProvider";
+import { useTranslation } from "react-i18next";
+
 const COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#a855f7", "#ec4899", "#6b7280"];
 
 export default function ContextsScreen() {
-    const { contexts, loadContexts, addContext } = useTasks();
+    const { contexts, loadContexts, addContext, updateContext } = useTasks();
     const [title, setTitle] = useState("");
     const [selectedColor, setSelectedColor] = useState(COLORS[7]);
+    const [editingContextId, setEditingContextId] = useState<number | null>(null);
     const router = useRouter();
+    const { isDark } = useTheme();
+    const { t } = useTranslation();
+
+    const bgColor = isDark ? "bg-slate-950" : "bg-white";
+    const cardBg = isDark ? "bg-slate-800" : "bg-gray-50";
+    const itemBg = isDark ? "bg-slate-900" : "bg-white";
+    const textColor = isDark ? "text-white" : "text-gray-900";
+    const secondaryText = isDark ? "text-slate-300" : "text-gray-700";
+    const borderColor = isDark ? "border-slate-700" : "border-gray-100";
+    const inputBg = isDark ? "bg-slate-900" : "bg-white";
 
     useEffect(() => {
         loadContexts();
     }, []);
 
-    const handleAdd = async () => {
+    const handleSubmit = async () => {
         if (!title.trim()) return;
-        await addContext(title, "tag", selectedColor);
+
+        if (editingContextId) {
+            await updateContext(editingContextId, { title, color: selectedColor });
+            setEditingContextId(null);
+        } else {
+            await addContext(title, "tag", selectedColor);
+        }
+        
         setTitle("");
+        setSelectedColor(COLORS[7]);
+    };
+
+    const handleEdit = (context: any) => {
+        setTitle(context.title);
+        setSelectedColor(context.color || COLORS[7]);
+        setEditingContextId(context.id);
+    };
+
+    const handleCancel = () => {
+        setTitle("");
+        setSelectedColor(COLORS[7]);
+        setEditingContextId(null);
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView className={`flex-1 ${bgColor}`}>
             <View className="flex-1 p-4">
                  <View className="flex-row items-center mb-6">
                     <TouchableOpacity onPress={() => router.back()} className="mr-4">
-                        <ChevronLeft size={24} color="#000" />
+                        <ChevronLeft size={24} color={isDark ? "#fff" : "#000"} />
                     </TouchableOpacity>
-                    <Text className="text-2xl font-bold">Manage Contexts</Text>
+                    <Text className={`text-2xl font-bold ${textColor}`}>{t("contexts.title")}</Text>
                 </View>
 
-                <View className="mb-6 bg-gray-50 p-4 rounded-xl">
-                    <Text className="font-bold mb-2 text-gray-700">New Context</Text>
+                <View className={`mb-6 ${cardBg} p-4 rounded-xl`}>
+                    <Text className={`font-bold mb-2 ${secondaryText}`}>
+                        {editingContextId ? t("common.edit") : t("common.add")} {t("contexts.title")}
+                    </Text>
                     <Input 
                         value={title} 
                         onChangeText={setTitle} 
-                        placeholder="Context Name (e.g. @home)" 
-                        className="mb-3 bg-white"
+                        placeholder={t("contexts.placeholder")}
+                        className={`mb-3 ${inputBg} ${textColor}`}
+                        placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
                     />
                     <View className="flex-row gap-2 mb-4 flex-wrap">
                         {COLORS.map(color => (
                             <TouchableOpacity
                                 key={color}
                                 onPress={() => setSelectedColor(color)}
-                                className={`w-8 h-8 rounded-full ${selectedColor === color ? "border-2 border-black" : ""}`}
+                                className={`w-8 h-8 rounded-full ${selectedColor === color ? `border-2 ${isDark ? "border-white" : "border-black"}` : ""}`}
                                 style={{ backgroundColor: color }}
                             />
                         ))}
                     </View>
-                    <Button title="Add Context" onPress={handleAdd} disabled={!title.trim()} />
+                    <View className="flex-row gap-2">
+                        <Button 
+                            title={editingContextId ? t("common.save") : t("common.add")} 
+                            onPress={handleSubmit} 
+                            disabled={!title.trim()} 
+                            className="flex-1"
+                        />
+                        {editingContextId && (
+                            <Button 
+                                title={t("common.cancel")} 
+                                onPress={handleCancel} 
+                                className={`flex-1 ${isDark ? "bg-slate-600" : "bg-gray-400"}`}
+                            />
+                        )}
+                    </View>
                 </View>
 
-                <Text className="font-bold mb-4 text-xl text-gray-800">Existing Contexts</Text>
+                <Text className={`font-bold mb-4 text-xl ${textColor}`}>Existing Contexts</Text>
                 <FlatList
                     data={contexts}
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ item }) => (
-                        <View className="flex-row items-center p-3 mb-2 bg-white border border-gray-100 rounded-lg">
+                        <TouchableOpacity 
+                            onPress={() => handleEdit(item)}
+                            className={`flex-row items-center p-3 mb-2 ${itemBg} border ${borderColor} rounded-lg ${editingContextId === item.id ? "border-blue-500 border-2" : ""}`}
+                        >
                             <View 
                                 className="w-4 h-4 rounded-full mr-3" 
                                 style={{ backgroundColor: item.color || "#ccc" }} 
                             />
-                            <Text className="text-lg text-gray-700">{item.title}</Text>
-                        </View>
+                            <Text className={`text-lg ${secondaryText}`}>{item.title}</Text>
+                        </TouchableOpacity>
                     )}
                 />
             </View>

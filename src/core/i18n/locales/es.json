@@ -5,7 +5,9 @@
         "cancel": "Cancelar",
         "delete": "Eliminar",
         "edit": "Editar",
-        "add": "Agregar"
+        "add": "Agregar",
+        "complete": "Completar",
+        "done": "Hecho"
     },
     "tabs": {
         "inbox": "Inbox",
@@ -18,7 +20,10 @@
         "placeholder": "Necesito...",
         "captureTask": "Capturar Tarea",
         "emptyTitle": "Bandeja Vacía",
-        "emptyDescription": "Has procesado todos tus elementos.\nCaptura más cosas o revisa Ejecutar."
+        "emptyDescription": "Has procesado todos tus elementos.\nCaptura más cosas o revisa Ejecutar.",
+        "twoMinuteRule": "Regla de 2 Minutos",
+        "completeTaskConfirm": "¿Completar \"{{taskTitle}}\"?",
+        "twoMinuteRuleApplied": "Regla de 2 minutos aplicada"
     },
     "engage": {
         "title": "Ejecutar",
@@ -29,7 +34,8 @@
         "title": "Proyectos",
         "placeholder": "Nombre del nuevo proyecto...",
         "addProject": "Agregar Proyecto",
-        "manageContexts": "Administrar Contextos"
+        "manageContexts": "Administrar Contextos",
+        "emptyList": "No hay proyectos activos."
     },
     "contexts": {
         "title": "Contextos",

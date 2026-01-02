@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
@@ -34,6 +34,11 @@ export default function ProjectsScreen() {
 
   return (
     <SafeAreaView className={`flex-1 ${bgColor}`}>
+      <KeyboardAvoidingView 
+              behavior="padding"
+              keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 40}
+              className="flex-1"
+            >
         <View className="flex-1 p-4">
           <View className="flex-row justify-between items-center mb-6">
               <TouchableOpacity onPress={() => router.push("/organize/contexts")}>
@@ -59,7 +64,7 @@ export default function ProjectsScreen() {
             )}
             ListEmptyComponent={
                 <View className="items-center justify-center p-10">
-                    <Text className={`${secondaryText} text-center`}>No active projects.</Text>
+                    <Text className={`${secondaryText} text-center`}>{t("projects.emptyList")}</Text>
                 </View>
             }
           />
@@ -80,6 +85,7 @@ export default function ProjectsScreen() {
             />
           </View>
         </View>
+        </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

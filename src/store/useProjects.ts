@@ -13,7 +13,7 @@ interface Project {
 interface ProjectsState {
     projects: Project[];
     loadProjects: () => Promise<void>;
-    addProject: (title: string) => Promise<void>;
+    addProject: (title: string) => Promise<number | undefined>;
     updateProjectStatus: (id: number, status: Project["status"]) => Promise<void>;
 }
 
@@ -31,11 +31,13 @@ export const useProjects = create<ProjectsState>((set, get) => ({
     addProject: async (title: string) => {
         try {
             if (!title.trim()) return;
-            await db.insert(projects).values({
+            const result = await db.insert(projects).values({
                 title,
                 created_at: new Date()
-            });
+            }).returning({ insertedId: projects.id });
+
             await get().loadProjects();
+            return result[0]?.insertedId;
         } catch (error) {
             console.error("Failed to add project", error);
         }

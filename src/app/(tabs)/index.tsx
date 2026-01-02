@@ -30,15 +30,15 @@ export default function Inbox() {
 
   const handleTwoMinuteRule = async (taskId: number, taskTitle: string) => {
     Alert.alert(
-      "Regla de 2 Minutos",
-      `¿Completar "${taskTitle}"?`,
+      t("inbox.twoMinuteRule"),
+      t("inbox.completeTaskConfirm", { taskTitle }),
       [
-        { text: "Cancelar", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         { 
-          text: "Completar", 
+          text: t("common.complete"), 
           onPress: async () => {
             await toggleTask(taskId, false);
-            Alert.alert("✅ Hecho", "Regla de 2 minutos aplicada");
+            Alert.alert(t("common.done"), t("inbox.twoMinuteRuleApplied"));
           }
         }
       ]
@@ -58,7 +58,8 @@ export default function Inbox() {
   return (
     <SafeAreaView className={`flex-1 ${bgColor}`}>
       <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 40}
         className="flex-1"
       >
         <View className="flex-1 p-4">

@@ -1,11 +1,11 @@
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Platform } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Platform, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { ChevronLeft, Calendar as CalendarIcon, X } from "lucide-react-native";
+import { ChevronLeft, Calendar as CalendarIcon, X, FolderPlus } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -14,7 +14,7 @@ export default function TaskDetailScreen() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const { tasks, updateTask, contexts, loadContexts } = useTasks();
-    const { projects, loadProjects } = useProjects();
+    const { projects, loadProjects, addProject } = useProjects();
     const { isDark } = useTheme();
     const { t } = useTranslation();
     
@@ -77,14 +77,40 @@ export default function TaskDetailScreen() {
         if (taskId) {
             await updateTask(taskId, { 
                 title, 
-                project_id: proje,
+                project_id: projectId,
                 status,
-                delegate_name: status === "waiting" ? delegateName : nullctId,
+                delegate_name: status === "waiting" ? delegateName : null,
                 context_id: contextId,
                 due_date: dueDate
             });
             router.back();
         }
+    };
+
+    const handleConvertToProject = () => {
+        if (!title.trim()) {
+            Alert.alert("Error", "Task must have a title to convert to project");
+            return;
+        }
+
+        Alert.alert(
+            "Convert to Project",
+            `Create project "${title}" and move this task into it?`,
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Convert",
+                    onPress: async () => {
+                        const newProjectId = await addProject(title);
+                        if (newProjectId) {
+                            setProjectId(newProjectId);
+                            setTitle(""); // Clear title for the next action
+                            Alert.alert("Success", "Project created! Now define the first Next Action for this project.");
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const formatDate = (date: Date) => {
@@ -113,6 +139,22 @@ export default function TaskDetailScreen() {
                     </TouchableOpacity>
                     <Text className={`text-2xl font-bold ${textColor}`}>Edit Task</Text>
                 </View>
+
+                {/* Convert to Project Action */}
+                <TouchableOpacity 
+                    onPress={handleConvertToProject}
+                    className="flex-row items-center mb-6 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800"
+                >
+                    <FolderPlus size={20} color={isDark ? "#60a5fa" : "#2563eb"} />
+                    <View className="ml-3 flex-1">
+                        <Text className={`font-semibold ${isDark ? "text-blue-400" : "text-blue-700"}`}>
+                            Convert to Project
+                        </Text>
+                        <Text className={`text-xs ${isDark ? "text-blue-300" : "text-blue-600"}`}>
+                            Promotes this task to a project and asks for next action
+                        </Text>
+                    </View>
+                </TouchableOpacity>
 
                 <ScrollView className="flex-1">
                     {/* Title */}
@@ -236,6 +278,8 @@ export default function TaskDetailScreen() {
                                     </View>
                                 </TouchableOpacity>
                             ))}
+                        </View>
+                    </View>
 
                     {/* Status */}
                     <View className="mb-6">
@@ -293,8 +337,7 @@ export default function TaskDetailScreen() {
                             />
                         </View>
                     )}
-                        </View>
-                    </View>
+
                 </ScrollView>
 
                 <Button title={t("common.save")} onPress={handleSave} />
