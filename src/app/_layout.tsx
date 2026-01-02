@@ -1,6 +1,6 @@
 import "../global.css";
 import "@/core/i18n"; // Initialize i18n
-import { Slot } from "expo-router";
+import { Stack } from "expo-router";
 import { View, Text, LogBox } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -32,7 +32,7 @@ function AppContent() {
   return (
     <>
       <StatusBar style={isDark ? "light" : "dark"} />
-      <Slot />
+      <Stack screenOptions={{ headerShown: false }} />
     </>
   );
 }
