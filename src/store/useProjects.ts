@@ -14,6 +14,8 @@ interface ProjectsState {
     projects: Project[];
     loadProjects: () => Promise<void>;
     addProject: (title: string) => Promise<number | undefined>;
+    updateProject: (id: number, updates: Partial<Project>) => Promise<void>;
+    deleteProject: (id: number) => Promise<void>;
     updateProjectStatus: (id: number, status: Project["status"]) => Promise<void>;
 }
 
@@ -40,6 +42,22 @@ export const useProjects = create<ProjectsState>((set, get) => ({
             return result[0]?.insertedId;
         } catch (error) {
             console.error("Failed to add project", error);
+        }
+    },
+    updateProject: async (id: number, updates: Partial<Project>) => {
+        try {
+            await db.update(projects).set(updates).where(eq(projects.id, id));
+            await get().loadProjects();
+        } catch (error) {
+            console.error("Failed to update project", error);
+        }
+    },
+    deleteProject: async (id: number) => {
+        try {
+            await db.delete(projects).where(eq(projects.id, id));
+            await get().loadProjects();
+        } catch (error) {
+            console.error("Failed to delete project", error);
         }
     },
     updateProjectStatus: async (id: number, status) => {

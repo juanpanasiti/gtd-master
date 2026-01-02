@@ -1,8 +1,8 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo } from "react";
-import { ArrowLeft, Folder } from "lucide-react-native";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, Folder, Edit2, Check, X as XIcon, Trash2 } from "lucide-react-native";
 import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { TaskItem } from "@/components/TaskItem";
@@ -16,7 +16,10 @@ export default function ProjectDetailScreen() {
   const { isDark } = useTheme();
 
   const { tasks, loadTasks, toggleTask, contexts, loadContexts } = useTasks();
-  const { projects, loadProjects } = useProjects();
+  const { projects, loadProjects, updateProject, deleteProject } = useProjects();
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
 
   const projectId = parseInt(id || "0", 10);
 
@@ -30,6 +33,36 @@ export default function ProjectDetailScreen() {
     () => projects.find((p) => p.id === projectId),
     [projects, projectId]
   );
+
+  useEffect(() => {
+    if (project) {
+        setEditTitle(project.title);
+    }
+  }, [project]);
+
+  const handleUpdate = async () => {
+    if (!editTitle.trim()) return;
+    await updateProject(projectId, { title: editTitle });
+    setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+        "Delete Project",
+        "Are you sure you want to delete this project? All associated tasks will remain but lose their project assignment.",
+        [
+            { text: "Cancel", style: "cancel" },
+            { 
+                text: "Delete", 
+                style: "destructive",
+                onPress: async () => {
+                    await deleteProject(projectId);
+                    router.back();
+                }
+            }
+        ]
+    );
+  };
 
   const projectTasks = useMemo(
     () => tasks.filter((t) => t.project_id === projectId && !t.is_completed),
@@ -55,9 +88,32 @@ export default function ProjectDetailScreen() {
           <ArrowLeft size={24} color={isDark ? "#fff" : "#374151"} />
         </TouchableOpacity>
         <Folder size={24} color={isDark ? "#9ca3af" : "#4b5563"} className="ml-2" />
-        <Text className={`text-xl font-bold ml-3 ${textColor}`}>
-          {project?.title || "Project"}
-        </Text>
+        
+        {isEditing ? (
+            <View className="flex-1 flex-row items-center ml-3">
+                <TextInput
+                    value={editTitle}
+                    onChangeText={setEditTitle}
+                    className={`flex-1 text-xl font-bold ${textColor} border-b ${borderColor} mr-2`}
+                    autoFocus
+                />
+                <TouchableOpacity onPress={handleUpdate} className="p-2">
+                    <Check size={20} color={isDark ? "#4ade80" : "#16a34a"} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setIsEditing(false)} className="p-2">
+                    <XIcon size={20} color={isDark ? "#f87171" : "#dc2626"} />
+                </TouchableOpacity>
+            </View>
+        ) : (
+            <>
+                <Text className={`text-xl font-bold ml-3 flex-1 ${textColor}`} numberOfLines={1}>
+                    {project?.title || "Project"}
+                </Text>
+                <TouchableOpacity onPress={() => setIsEditing(true)} className="p-2">
+                    <Edit2 size={20} color={isDark ? "#9ca3af" : "#4b5563"} />
+                </TouchableOpacity>
+            </>
+        )}
       </View>
 
       <FlatList
@@ -107,7 +163,21 @@ export default function ProjectDetailScreen() {
             </View>
           ) : null
         }
+        ListFooterComponentStyle={{ marginTop: 20 }}
       />
+      
+      {/* Footer Delete Action */}
+      <View className={`border-t ${borderColor} p-4`}>
+        <TouchableOpacity 
+            onPress={handleDelete}
+            className="flex-row items-center justify-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20"
+        >
+            <Trash2 size={20} color={isDark ? "#f87171" : "#dc2626"} />
+            <Text className={`ml-2 font-semibold ${isDark ? "text-red-400" : "text-red-600"}`}>
+                Delete Project
+            </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
