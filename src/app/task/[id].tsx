@@ -26,7 +26,9 @@ export default function TaskDetailScreen() {
     const [projectId, setProjectId] = useState<number | null>(null);
     const [contextId, setContextId] = useState<number | null>(null);
     const [dueDate, setDueDate] = useState<Date | null>(null);
+    const [startDate, setStartDate] = useState<Date | null>(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showStartDatePicker, setShowStartDatePicker] = useState(false);
     const [status, setStatus] = useState<"active" | "someday" | "waiting">("active");
     const [delegateName, setDelegateName] = useState("");
 
@@ -51,6 +53,15 @@ export default function TaskDetailScreen() {
                 }
             } else {
                 setDueDate(null);
+            }
+
+            if (task.start_date) {
+                const d = new Date(task.start_date);
+                if (!isNaN(d.getTime())) {
+                    setStartDate(d);
+                }
+            } else {
+                setStartDate(null);
             }
         }
     }, [task]);
@@ -84,7 +95,8 @@ export default function TaskDetailScreen() {
                 status,
                 delegate_name: status === "waiting" ? delegateName : null,
                 context_id: contextId,
-                due_date: dueDate
+                due_date: dueDate,
+                start_date: startDate
             });
             router.back();
         }
@@ -130,6 +142,15 @@ export default function TaskDetailScreen() {
         }
         if (selectedDate) {
             setDueDate(selectedDate);
+        }
+    };
+
+    const handleStartDateChange = (event: any, selectedDate?: Date) => {
+        if (Platform.OS === 'android') {
+            setShowStartDatePicker(false);
+        }
+        if (selectedDate) {
+            setStartDate(selectedDate);
         }
     };
 
@@ -186,25 +207,71 @@ export default function TaskDetailScreen() {
                         />
                     </View>
 
-                    {/* Due Date with DatePicker */}
+                    {/* Dates Section */}
                     <View className="mb-6">
-                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Due Date</Text>
-                        <TouchableOpacity 
-                            onPress={() => setShowDatePicker(true)}
-                            className={`flex-row items-center justify-between ${inputBg} border-2 ${borderColor} p-3 rounded-lg`}
-                        >
-                            <View className="flex-row items-center">
-                                <CalendarIcon size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
-                                <Text className={`ml-3 text-lg ${dueDate ? textColor : secondaryText}`}>
-                                    {dueDate ? formatDate(dueDate) : "Select Date"}
-                                </Text>
-                            </View>
-                            {dueDate && (
-                                <TouchableOpacity onPress={() => setDueDate(null)}>
-                                    <X size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
-                                </TouchableOpacity>
+                        <Text className={`text-sm font-bold ${secondaryText} mb-2 uppercase`}>Dates</Text>
+                        
+                        {/* Start Date */}
+                        <View className="mb-3">
+                            <Text className={`text-xs ${secondaryText} mb-1`}>Start Date (Hide untill)</Text>
+                            <TouchableOpacity 
+                                onPress={() => setShowStartDatePicker(true)}
+                                className={`flex-row items-center justify-between ${inputBg} border-2 ${borderColor} p-3 rounded-lg`}
+                            >
+                                <View className="flex-row items-center">
+                                    <CalendarIcon size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                                    <Text className={`ml-3 text-lg ${startDate ? textColor : secondaryText}`}>
+                                        {startDate ? formatDate(startDate) : "None (Active Now)"}
+                                    </Text>
+                                </View>
+                                {startDate && (
+                                    <TouchableOpacity onPress={() => setStartDate(null)}>
+                                        <X size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                                    </TouchableOpacity>
+                                )}
+                            </TouchableOpacity>
+                           
+                           {showStartDatePicker && (
+                                <View className={`mt-2 ${Platform.OS === 'ios' ? `${cardBg} rounded-lg p-2` : ''}`}>
+                                    <DateTimePicker
+                                        value={startDate || new Date()}
+                                        mode="date"
+                                        display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                                        onChange={handleStartDateChange}
+                                        themeVariant={isDark ? 'dark' : 'light'}
+                                    />
+                                    {Platform.OS === 'ios' && (
+                                        <TouchableOpacity 
+                                            onPress={() => setShowStartDatePicker(false)}
+                                            className="bg-blue-500 p-3 rounded-lg mt-2"
+                                        >
+                                            <Text className="text-white text-center font-bold">Done</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
                             )}
-                        </TouchableOpacity>
+                        </View>
+
+                        {/* Due Date */}
+                        <View>
+                            <Text className={`text-xs ${secondaryText} mb-1`}>Due Date (Deadline)</Text>
+                             <TouchableOpacity 
+                                onPress={() => setShowDatePicker(true)}
+                                className={`flex-row items-center justify-between ${inputBg} border-2 ${borderColor} p-3 rounded-lg`}
+                            >
+                                <View className="flex-row items-center">
+                                    <CalendarIcon size={20} color={isDark ? "#f87171" : "#ef4444"} />
+                                    <Text className={`ml-3 text-lg ${dueDate ? textColor : secondaryText}`}>
+                                        {dueDate ? formatDate(dueDate) : "None"}
+                                    </Text>
+                                </View>
+                                {dueDate && (
+                                    <TouchableOpacity onPress={() => setDueDate(null)}>
+                                        <X size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                                    </TouchableOpacity>
+                                )}
+                            </TouchableOpacity>
+                        </View>
                         
                         {showDatePicker && (
                             <View className={`mt-2 ${Platform.OS === 'ios' ? `${cardBg} rounded-lg p-2` : ''}`}>

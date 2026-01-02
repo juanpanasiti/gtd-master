@@ -19,7 +19,24 @@ export default function EngageScreen() {
 
     const sections = useMemo(() => {
         // 1. Get active tasks with contexts (excluding someday and waiting)
-        const activeTasks = tasks.filter(t => !t.is_completed && t.context_id && t.status === "active");
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const activeTasks = tasks.filter(t => {
+            const hasContext = !!t.context_id;
+            const isNotCompleted = !t.is_completed;
+            const isActive = t.status === "active";
+            
+            // Check start date (Tickler)
+            let isStarted = true;
+            if (t.start_date) {
+                const startDate = new Date(t.start_date);
+                startDate.setHours(0, 0, 0, 0);
+                isStarted = startDate <= today;
+            }
+
+            return hasContext && isNotCompleted && isActive && isStarted;
+        });
         
         // 2. Group by context
         const grouped = activeTasks.reduce((acc, task) => {

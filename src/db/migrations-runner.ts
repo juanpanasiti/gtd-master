@@ -48,6 +48,10 @@ const MIGRATIONS = [
   `
   ALTER TABLE tasks ADD COLUMN description TEXT;
   `,
+  // Version 8
+  `
+  ALTER TABLE tasks ADD COLUMN start_date INTEGER;
+  `,
 ];
 
 export async function runMigrations() {

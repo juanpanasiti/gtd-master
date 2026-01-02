@@ -72,10 +72,36 @@ export default function ProjectDetailScreen() {
     setNewTaskTitle("");
   };
 
-  const projectTasks = useMemo(
-    () => tasks.filter((t) => t.project_id === projectId && !t.is_completed),
-    [tasks, projectId]
-  );
+  const availableTasks = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return tasks.filter((t) => {
+        if (t.project_id !== projectId || t.is_completed) return false;
+        if (!t.start_date) return true;
+        const startDate = new Date(t.start_date);
+        startDate.setHours(0, 0, 0, 0);
+        return startDate <= today;
+    });
+  }, [tasks, projectId]);
+
+  const futureTasks = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return tasks.filter((t) => {
+        if (t.project_id !== projectId || t.is_completed) return false;
+        if (!t.start_date) return false;
+        const startDate = new Date(t.start_date);
+        startDate.setHours(0, 0, 0, 0);
+        return startDate > today;
+    });
+  }, [tasks, projectId]);
+
+  // Combine for FlatList but we might want sections. 
+  // Actually, let's just use one data array but sorted, or use distinct sections in the FlatList via 'data' prop concatenation if we want separators.
+  // Best approach for FlatList: Concatenate arrays but maybe add a 'header' item or just simple sorting.
+  // User wanted "At the end".
+  // Let's render Available first, then Future.
+  const displayTasks = [...availableTasks, ...futureTasks];
 
   const completedTasks = useMemo(
     () => tasks.filter((t) => t.project_id === projectId && t.is_completed),
@@ -143,20 +169,33 @@ export default function ProjectDetailScreen() {
       </View>
 
       <FlatList
-        data={projectTasks}
+        data={displayTasks}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        renderItem={({ item }) => (
-          <TaskItem
-            task={item}
-            onToggle={toggleTask}
-            context={contexts.find((c) => c.id === item.context_id)}
-          />
-        )}
+        renderItem={({ item }) => {
+             // Check if this is the first future task to render a header? No, unstable.
+             // Better: Use SectionList? Or simple check.
+             // Let's just render the item. We can style future tasks differently (opacity?).
+             const isFuture = item.start_date && new Date(item.start_date) > new Date();
+             return (
+                 <View className={isFuture ? "opacity-60" : ""}>
+                    {isFuture && displayTasks.indexOf(item) === availableTasks.length && (
+                        <Text className={`text-sm font-semibold uppercase tracking-wider mb-2 mt-4 ${secondaryText}`}>
+                            Scheduled (Future)
+                        </Text>
+                    )}
+                    <TaskItem
+                        task={item}
+                        onToggle={toggleTask}
+                        context={contexts.find((c) => c.id === item.context_id)}
+                    />
+                 </View>
+             );
+        }}
         ListHeaderComponent={
-          projectTasks.length > 0 ? (
+          availableTasks.length > 0 ? (
             <Text className={`text-sm font-semibold uppercase tracking-wider mb-3 ${secondaryText}`}>
-              Active Tasks ({projectTasks.length})
+              Active Tasks ({availableTasks.length})
             </Text>
           ) : null
         }

@@ -30,10 +30,31 @@ export default function SingleActionsScreen() {
     setNewTaskTitle("");
   };
 
-  const activeSingleActions = useMemo(
-    () => tasks.filter((t) => !t.project_id && t.context_id && t.status === "active" && !t.is_completed),
-    [tasks]
-  );
+  const availableSingleActions = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return tasks.filter((t) => {
+        if (t.project_id || !t.context_id || t.status !== "active" || t.is_completed) return false;
+        if (!t.start_date) return true;
+        const startDate = new Date(t.start_date);
+        startDate.setHours(0, 0, 0, 0);
+        return startDate <= today;
+    });
+  }, [tasks]);
+
+  const futureSingleActions = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return tasks.filter((t) => {
+        if (t.project_id || !t.context_id || t.status !== "active" || t.is_completed) return false;
+        if (!t.start_date) return false;
+        const startDate = new Date(t.start_date);
+        startDate.setHours(0, 0, 0, 0);
+        return startDate > today;
+    });
+  }, [tasks]);
+
+  const displaySingleActions = [...availableSingleActions, ...futureSingleActions];
 
   const completedSingleActions = useMemo(
     () => tasks.filter((t) => !t.project_id && t.context_id && t.status === "active" && t.is_completed),
@@ -81,20 +102,30 @@ export default function SingleActionsScreen() {
       )}
 
       <FlatList
-        data={activeSingleActions}
+        data={displaySingleActions}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        renderItem={({ item }) => (
-          <TaskItem
-            task={item}
-            onToggle={toggleTask}
-            context={contexts.find((c) => c.id === item.context_id)}
-          />
-        )}
+        renderItem={({ item }) => {
+             const isFuture = item.start_date && new Date(item.start_date) > new Date();
+             return (
+                 <View className={isFuture ? "opacity-60" : ""}>
+                    {isFuture && displaySingleActions.indexOf(item) === availableSingleActions.length && (
+                        <Text className={`text-sm font-semibold uppercase tracking-wider mb-2 mt-4 ${secondaryText}`}>
+                            Scheduled (Future)
+                        </Text>
+                    )}
+                    <TaskItem
+                        task={item}
+                        onToggle={toggleTask}
+                        context={contexts.find((c) => c.id === item.context_id)}
+                    />
+                 </View>
+             );
+        }}
         ListHeaderComponent={
-          activeSingleActions.length > 0 ? (
+          availableSingleActions.length > 0 ? (
             <Text className={`text-sm font-semibold uppercase tracking-wider mb-3 ${secondaryText}`}>
-              Active ({activeSingleActions.length})
+              Active ({availableSingleActions.length})
             </Text>
           ) : null
         }
