@@ -2,7 +2,7 @@ import { View, Text, FlatList, TouchableOpacity, TextInput, Alert } from "react-
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Folder, Edit2, Check, X as XIcon, Trash2 } from "lucide-react-native";
+import { ArrowLeft, Folder, Edit2, Check, X as XIcon, Trash2, Plus, ChevronDown, ChevronUp } from "lucide-react-native";
 import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { TaskItem } from "@/components/TaskItem";
@@ -15,11 +15,13 @@ export default function ProjectDetailScreen() {
   const { t } = useTranslation();
   const { isDark } = useTheme();
 
-  const { tasks, loadTasks, toggleTask, contexts, loadContexts } = useTasks();
+  const { tasks, loadTasks, toggleTask, contexts, loadContexts, addTask } = useTasks();
   const { projects, loadProjects, updateProject, deleteProject } = useProjects();
   
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const projectId = parseInt(id || "0", 10);
 
@@ -62,6 +64,12 @@ export default function ProjectDetailScreen() {
             }
         ]
     );
+  };
+
+  const handleQuickAdd = async () => {
+    if (!newTaskTitle.trim()) return;
+    await addTask(newTaskTitle, null, projectId);
+    setNewTaskTitle("");
   };
 
   const projectTasks = useMemo(
@@ -116,6 +124,24 @@ export default function ProjectDetailScreen() {
         )}
       </View>
 
+      {/* Quick Add Task */}
+      <View className={`flex-row items-center p-4 border-b ${borderColor} ${headerBg}`}>
+          <Plus size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+          <TextInput
+              value={newTaskTitle}
+              onChangeText={setNewTaskTitle}
+              placeholder="Add next action..."
+              placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
+              className={`flex-1 ml-3 text-base ${textColor}`}
+              onSubmitEditing={handleQuickAdd}
+          />
+          {newTaskTitle.length > 0 && (
+              <TouchableOpacity onPress={handleQuickAdd}>
+                  <Text className="font-bold text-blue-500">Add</Text>
+              </TouchableOpacity>
+          )}
+      </View>
+
       <FlatList
         data={projectTasks}
         keyExtractor={(item) => item.id.toString()}
@@ -149,17 +175,32 @@ export default function ProjectDetailScreen() {
         ListFooterComponent={
           completedTasks.length > 0 ? (
             <View className="mt-6">
-              <Text className={`text-sm font-semibold uppercase tracking-wider mb-3 ${secondaryText}`}>
-                Completed ({completedTasks.length})
-              </Text>
-              {completedTasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggle={toggleTask}
-                  context={contexts.find((c) => c.id === task.context_id)}
-                />
-              ))}
+              <TouchableOpacity 
+                onPress={() => setShowCompleted(!showCompleted)}
+                className="flex-row items-center justify-between py-2"
+              >
+                  <Text className={`text-sm font-semibold uppercase tracking-wider ${secondaryText}`}>
+                    Completed ({completedTasks.length})
+                  </Text>
+                  {showCompleted ? (
+                      <ChevronUp size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                  ) : (
+                      <ChevronDown size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                  )}
+              </TouchableOpacity>
+              
+              {showCompleted && (
+                  <View className="mt-2">
+                      {completedTasks.map((task) => (
+                        <TaskItem
+                          key={task.id}
+                          task={task}
+                          onToggle={toggleTask}
+                          context={contexts.find((c) => c.id === task.context_id)}
+                        />
+                      ))}
+                  </View>
+              )}
             </View>
           ) : null
         }

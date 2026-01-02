@@ -27,7 +27,7 @@ interface TasksState {
     contexts: Context[];
     loadTasks: () => Promise<void>;
     loadContexts: () => Promise<void>;
-    addTask: (title: string, due_date?: Date | null) => Promise<void>;
+    addTask: (title: string, due_date?: Date | null, project_id?: number | null) => Promise<void>;
     addContext: (title: string, icon?: string, color?: string) => Promise<void>;
     updateContext: (id: number, updates: Partial<Context>) => Promise<void>;
     deleteContext: (id: number) => Promise<void>;
@@ -57,13 +57,14 @@ export const useTasks = create<TasksState>((set, get) => ({
             console.error("Failed to load contexts", error);
         }
     },
-    addTask: async (title: string, due_date = null) => {
+    addTask: async (title: string, due_date = null, project_id = null) => {
         try {
             if (!title.trim()) return;
             await db.insert(tasks).values({
                 title,
                 created_at: new Date(),
-                due_date
+                due_date,
+                project_id
             });
             await get().loadTasks();
         } catch (error) {
