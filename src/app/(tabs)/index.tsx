@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "expo-router";
 import { TaskItem } from "@/components/TaskItem";
-import { Inbox as InboxIcon, Zap } from "lucide-react-native";
+import { Inbox as InboxIcon, Zap, PlayCircle } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
@@ -66,6 +66,19 @@ export default function Inbox() {
           <FlatList
             data={inboxTasks}
             keyExtractor={(item) => item.id.toString()}
+            ListHeaderComponent={
+                inboxTasks.length > 0 ? (
+                    <TouchableOpacity 
+                        onPress={() => router.push("/inbox/process")}
+                        className="flex-row items-center justify-center bg-blue-500 p-4 rounded-xl mb-4 shadow-sm"
+                    >
+                        <PlayCircle size={20} color="white" />
+                        <Text className="text-white font-bold ml-2 text-lg">
+                            {t("inbox.processItems", { count: inboxTasks.length })}
+                        </Text>
+                    </TouchableOpacity>
+                ) : null
+            }
             renderItem={({ item }) => (
                 <View className="relative">
                     <TaskItem 
