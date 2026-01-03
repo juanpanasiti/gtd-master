@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo, useState } from "react";
 import { TaskItem } from "@/components/TaskItem";
-import { Calendar, Clock, Moon, ChevronDown, ChevronRight, PlayCircle } from "lucide-react-native";
+import { Calendar, Clock, Moon, ChevronDown, ChevronRight, PlayCircle, Activity } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
@@ -83,16 +83,29 @@ export default function ReviewScreen() {
                     contentContainerStyle={{ paddingBottom: 20 }}
                     ListHeaderComponent={
                         <View className="px-4 pt-4 pb-2">
-                            {/* Weekly Review Button */}
-                            <TouchableOpacity 
-                                onPress={() => router.push("/review/weekly")}
-                                className="flex-row items-center justify-center bg-purple-600 p-4 rounded-xl mb-6 shadow-sm"
-                            >
-                                <PlayCircle size={20} color="white" />
-                                <Text className="text-white font-bold ml-2 text-lg">
-                                    {t("review.startWeeklyReview")}
-                                </Text>
-                            </TouchableOpacity>
+                            <View className="flex-row gap-3 mb-6">
+                                {/* Weekly Review Button */}
+                                <TouchableOpacity 
+                                    onPress={() => router.push("/review/weekly")}
+                                    className="flex-1 flex-row items-center justify-center bg-purple-600 p-4 rounded-xl shadow-sm"
+                                >
+                                    <PlayCircle size={20} color="white" />
+                                    <Text className="text-white font-bold ml-2">
+                                        {t("review.startWeeklyReview")}
+                                    </Text>
+                                </TouchableOpacity>
+
+                                {/* Perspectives Button */}
+                                <TouchableOpacity 
+                                    onPress={() => router.push("/perspectives")}
+                                    className={`flex-1 flex-row items-center justify-center ${isDark ? "bg-slate-800" : "bg-white"} border ${borderColor} p-4 rounded-xl shadow-sm`}
+                                >
+                                    <Activity size={20} color={isDark ? "#94a3b8" : "#64748b"} />
+                                    <Text className={`font-bold ml-2 ${textColor}`}>
+                                        {t("perspectives.title")}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
 
                             <View className="flex-row items-center mb-3">
                                 <Calendar size={20} color={isDark ? "#94a3b8" : "#6b7280"} />

@@ -133,6 +133,17 @@
             "references": "References"
         }
     },
+    "perspectives": {
+        "title": "Perspectives",
+        "stalledProjects": "Stalled Projects",
+        "stalledDesc": "Projects without next actions",
+        "activeProjects": "Active Projects",
+        "momentum": "Weekly Momentum",
+        "completedTasks": "tasks completed",
+        "byArea": "By Area",
+        "noStalled": "Your system is healthy! No stalled projects.",
+        "inbox": "Inbox Items"
+    },
     "projectDetail": {
         "actions": "Actions",
         "reference": "Reference",

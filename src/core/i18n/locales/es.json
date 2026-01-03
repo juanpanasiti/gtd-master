@@ -138,6 +138,17 @@
             "references": "Referencias"
         }
     },
+    "perspectives": {
+        "title": "Perspectivas",
+        "stalledProjects": "Proyectos Estancados",
+        "stalledDesc": "Proyectos sin siguientes acciones",
+        "activeProjects": "Proyectos Activos",
+        "momentum": "Impulso Semanal",
+        "completedTasks": "tareas completadas",
+        "byArea": "Por Área",
+        "noStalled": "¡Tu sistema está sano! No hay proyectos estancados.",
+        "inbox": "Bandeja de Entrada"
+    },
     "projectDetail": {
         "actions": "Acciones",
         "reference": "Referencia",
