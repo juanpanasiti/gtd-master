@@ -124,6 +124,7 @@
     "notifications": {
         "dailyTitle": "Revisión Diaria",
         "dailyBody": "¿Listo para despejar tu mente y enfocarte en las tareas de hoy?",
+        "dailyBodyBriefing": "Hoy: {{due}} vencidas, {{start}} por empezar. ¿Listo?",
         "weeklyTitle": "Hora de la Revisión Semanal",
         "weeklyBody": "Tu sistema necesita una actualización. Revisa tus proyectos y compromisos."
     },

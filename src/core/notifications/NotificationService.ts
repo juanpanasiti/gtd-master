@@ -74,7 +74,7 @@ export const requestPermissions = async () => {
     }
 };
 
-export const scheduleDailyReviewReminder = async () => {
+export const scheduleDailyReviewReminder = async (dueCount: number = 0, startCount: number = 0) => {
     if (isExpoGo) return;
     const Notifications = getNotifications();
     if (!Notifications) return;
@@ -83,11 +83,16 @@ export const scheduleDailyReviewReminder = async () => {
         const { status } = await Notifications.getPermissionsAsync();
         if (status !== 'granted') return;
 
+        let body = i18next.t('notifications.dailyBody');
+        if (dueCount > 0 || startCount > 0) {
+            body = i18next.t('notifications.dailyBodyBriefing', { due: dueCount, start: startCount });
+        }
+
         await Notifications.scheduleNotificationAsync({
             identifier: 'daily-review',
             content: {
                 title: i18next.t('notifications.dailyTitle'),
-                body: i18next.t('notifications.dailyBody'),
+                body,
             },
             trigger: {
                 type: Notifications.SchedulableTriggerInputTypes.CALENDAR,

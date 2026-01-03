@@ -13,17 +13,22 @@ LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
 
 import { requestPermissions, scheduleDailyReviewReminder, scheduleWeeklyReviewReminder } from "@/core/notifications/NotificationService";
 
+import { useTasks } from "@/store/useTasks";
+
 function AppContent() {
   const [isReady, setIsReady] = useState(false);
   const { isDark } = useTheme();
+  const { loadTasks, getTodayBriefing } = useTasks();
 
   useEffect(() => {
     async function init() {
       try {
         await runMigrations();
+        await loadTasks(); // Load tasks safely
         const hasPermission = await requestPermissions();
         if (hasPermission) {
-          await scheduleDailyReviewReminder();
+          const { dueCount, startCount } = getTodayBriefing();
+          await scheduleDailyReviewReminder(dueCount, startCount);
           await scheduleWeeklyReviewReminder();
         }
       } catch (e) {

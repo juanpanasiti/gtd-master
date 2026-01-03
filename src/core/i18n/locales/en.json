@@ -119,6 +119,7 @@
     "notifications": {
         "dailyTitle": "Daily Review",
         "dailyBody": "Ready to clear your mind and focus on today's tasks?",
+        "dailyBodyBriefing": "Today: {{due}} due, {{start}} starting. Ready to focus?",
         "weeklyTitle": "Weekly Review Time",
         "weeklyBody": "Your system needs an update. Review your projects and commitments."
     },

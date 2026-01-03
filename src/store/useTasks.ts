@@ -36,6 +36,7 @@ interface TasksState {
     toggleTask: (id: number, currentStatus: boolean) => Promise<void>;
     updateTask: (id: number, updates: Partial<Task>) => Promise<void>;
     deleteTask: (id: number) => Promise<void>;
+    getTodayBriefing: () => { dueCount: number, startCount: number };
 }
 
 export const useTasks = create<TasksState>((set, get) => ({
@@ -131,5 +132,27 @@ export const useTasks = create<TasksState>((set, get) => ({
         } catch (error) {
             console.error("Failed to delete task", error);
         }
+    },
+    getTodayBriefing: () => {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(now);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const tasks = get().tasks;
+        const dueCount = tasks.filter(t =>
+            !t.is_completed &&
+            t.due_date &&
+            new Date(t.due_date) <= endOfDay
+        ).length;
+
+        const startCount = tasks.filter(t =>
+            !t.is_completed &&
+            t.start_date &&
+            new Date(t.start_date) >= now &&
+            new Date(t.start_date) <= endOfDay
+        ).length;
+
+        return { dueCount, startCount };
     }
 }));
