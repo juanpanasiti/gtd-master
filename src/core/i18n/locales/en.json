@@ -9,6 +9,7 @@
         "complete": "Complete",
         "done": "Done",
         "continue": "Continue",
+        "noContext": "No Context",
         "days_unit": "days",
         "weeks_unit": "weeks",
         "months_unit": "months",
@@ -42,9 +43,14 @@
         "placeholder": "I need to...",
         "quickCapture": "Quick Capture",
         "processInbox": "Process Inbox",
-        "empty": "Your Inbox is clear!",
-        "emptyDesc": "Everything's in its place. Capture new ideas anytime.",
-        "startProcessing": "Start Processing"
+        "emptyTitle": "Your Inbox is clear!",
+        "emptyDescription": "Everything's in its place. Capture new ideas anytime.",
+        "startProcessing": "Start Processing",
+        "captureTask": "Capture Task",
+        "twoMinuteRule": "2-Minute Rule",
+        "completeTaskConfirm": "If it takes less than 2 minutes, the rule is: Do it now! Have you completed \"{{taskTitle}}\"?",
+        "twoMinuteRuleApplied": "Task marked as complete!",
+        "processItems": "Process {{count}} Items"
     },
     "wizard": {
         "processInbox": "Process Inbox",
@@ -86,14 +92,18 @@
         "addFirst": "Add your first project to get started",
         "tasksCount": "{{count}} tasks",
         "manageAreas": "Manage Areas",
+        "manageContexts": "Manage Contexts",
         "areas": "Areas of Focus",
         "addArea": "Add Area",
+        "addProject": "Add Project",
+        "noArea": "No Area",
+        "emptyList": "No active projects",
         "reference": "Reference material"
     },
     "engage": {
         "title": "Engage",
         "emptyTitle": "Ready for Action!",
-        "emptyDesc": "No next actions in your current view. Review your projects or capture new ideas.",
+        "emptyDescription": "No next actions in your current view. Review your projects or capture new ideas.",
         "filterByContext": "Filter by Context",
         "allContexts": "All Contexts"
     },

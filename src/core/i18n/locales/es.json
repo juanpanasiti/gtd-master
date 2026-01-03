@@ -9,6 +9,7 @@
         "complete": "Completar",
         "done": "Hecho",
         "continue": "Continuar",
+        "noContext": "Sin Contexto",
         "days_unit": "días",
         "weeks_unit": "semanas",
         "months_unit": "meses",
@@ -42,9 +43,14 @@
         "placeholder": "Tengo que...",
         "quickCapture": "Captura Rápida",
         "processInbox": "Procesar Bandeja",
-        "empty": "¡Tu bandeja está vacía!",
-        "emptyDesc": "Todo está en su lugar. Captura nuevas ideas en cualquier momento.",
-        "startProcessing": "Empezar a Procesar"
+        "emptyTitle": "¡Tu bandeja está vacía!",
+        "emptyDescription": "Todo está en su lugar. Captura nuevas ideas en cualquier momento.",
+        "startProcessing": "Empezar a Procesar",
+        "captureTask": "Capturar Tarea",
+        "twoMinuteRule": "Regla de los 2 Minutos",
+        "completeTaskConfirm": "Si toma menos de 2 minutos, la regla es: ¡Hazlo ahora! ¿Has completado \"{{taskTitle}}\"?",
+        "twoMinuteRuleApplied": "¡Tarea marcada como completada!",
+        "processItems": "Procesar {{count}} Elementos"
     },
     "wizard": {
         "processInbox": "Procesar Bandeja",
@@ -86,14 +92,18 @@
         "addFirst": "Añade tu primer proyecto para empezar",
         "tasksCount": "{{count}} tareas",
         "manageAreas": "Gestionar Áreas",
+        "manageContexts": "Gestionar Contextos",
         "areas": "Áreas de Enfoque",
         "addArea": "Añadir Área",
+        "addProject": "Añadir Proyecto",
+        "noArea": "Sin Área",
+        "emptyList": "No hay proyectos activos",
         "reference": "Material de referencia"
     },
     "engage": {
         "title": "Ejecutar",
         "emptyTitle": "¡Listo para la acción!",
-        "emptyDesc": "No hay acciones siguientes en tu vista actual. Revisa tus proyectos o captura nuevas ideas.",
+        "emptyDescription": "No hay acciones siguientes en tu vista actual. Revisa tus proyectos o captura nuevas ideas.",
         "filterByContext": "Filtrar por Contexto",
         "allContexts": "Todos los Contextos"
     },
