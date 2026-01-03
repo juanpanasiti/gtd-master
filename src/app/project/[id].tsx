@@ -245,43 +245,6 @@ export default function ProjectDetailScreen() {
                 )}
             </View>
 
-            {activeTab === "actions" && hasRecurringTasks && (
-                <TouchableOpacity 
-                    onPress={() => {
-                        Alert.alert(
-                            t("projectDetail.resetSession"),
-                            t("projectDetail.resetSessionConfirm"),
-                            [
-                                { text: t("common.cancel"), style: "cancel" },
-                                { 
-                                    text: t("common.continue"), 
-                                    onPress: async () => {
-                                        await resetProjectRecurringTasks(projectId);
-                                    }
-                                }
-                            ]
-                        );
-                    }}
-                    style={{
-                        position: 'absolute',
-                        right: 20,
-                        bottom: 100, // Above the footer
-                        width: 56,
-                        height: 56,
-                        borderRadius: 28,
-                        backgroundColor: '#3b82f6',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        elevation: 5,
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 3.84,
-                    }}
-                >
-                    <RefreshCcw size={24} color="white" />
-                </TouchableOpacity>
-            )}
 
             <FlatList
                 data={displayTasks}
@@ -427,6 +390,47 @@ export default function ProjectDetailScreen() {
             </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Manual Reset FAB */}
+      {activeTab === "actions" && hasRecurringTasks && (
+          <TouchableOpacity 
+              onPress={() => {
+                  Alert.alert(
+                      t("projectDetail.resetSession"),
+                      t("projectDetail.resetSessionConfirm"),
+                      [
+                          { text: t("common.cancel"), style: "cancel" },
+                          { 
+                              text: t("common.continue"), 
+                              onPress: async () => {
+                                  await resetProjectRecurringTasks(projectId);
+                              }
+                          }
+                      ]
+                  );
+              }}
+              style={{
+                  position: 'absolute',
+                  right: 20,
+                  bottom: 110, // Slightly higher to be well above the footer
+                  width: 60,
+                  height: 60,
+                  borderRadius: 30,
+                  backgroundColor: '#3b82f6',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  elevation: 8,
+                  zIndex: 99,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.30,
+                  shadowRadius: 4.65,
+              }}
+              activeOpacity={0.7}
+          >
+              <RefreshCcw size={28} color="white" />
+          </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 }

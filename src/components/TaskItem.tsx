@@ -1,7 +1,9 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/core/theme/ThemeProvider";
-import { RefreshCcw } from "lucide-react-native";
+import { RefreshCcw, Calendar } from "lucide-react-native";
+import { RecurrenceService } from "@/core/tasks/RecurrenceService";
+import { useTranslation } from "react-i18next";
 
 interface TaskItemProps {
     task: {
@@ -10,6 +12,11 @@ interface TaskItemProps {
         is_completed: boolean;
         context_id?: number | null;
         is_recurring?: boolean;
+        last_reset_at?: Date | null;
+        recurrence_type?: string | null;
+        recurrence_interval?: number;
+        recurrence_days?: string | null;
+        created_at?: Date;
     };
     onToggle: (id: number, currentStatus: boolean) => void;
     context?: { id: number; title: string; color: string | null } | undefined;
@@ -18,6 +25,7 @@ interface TaskItemProps {
 export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
     const router = useRouter();
     const { isDark } = useTheme();
+    const { t } = useTranslation();
 
     const cardBg = task.is_completed 
         ? (isDark ? "bg-slate-800/50" : "bg-gray-50")
@@ -72,6 +80,16 @@ export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
                                     {context.title}
                                 </Text>
                             </View>
+                        </View>
+                    )}
+                    {task.is_completed && task.is_recurring && (
+                        <View className="flex-row items-center mt-1">
+                            <Calendar size={12} color={isDark ? "#64748b" : "#94a3b8"} />
+                            <Text className={`text-[10px] ml-1 font-medium ${isDark ? "text-slate-500" : "text-gray-400"}`}>
+                                {t("task.resetsOn", { 
+                                    date: RecurrenceService.getNextResetDate(task)?.toLocaleDateString() || "" 
+                                })}
+                            </Text>
                         </View>
                     )}
                 </View>

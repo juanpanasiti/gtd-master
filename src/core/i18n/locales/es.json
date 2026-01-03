@@ -196,6 +196,7 @@
         "recurrence_weekly": "Semanal",
         "recurrence_monthly": "Mensual",
         "every": "Cada",
-        "onDays": "Los días:"
+        "onDays": "Los días:",
+        "resetsOn": "Se reinicia el: {{date}}"
     }
 }

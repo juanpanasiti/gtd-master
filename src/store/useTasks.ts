@@ -173,6 +173,7 @@ export const useTasks = create<TasksState>((set, get) => ({
         }
     },
     resetProjectRecurringTasks: async (projectId: number) => {
+        console.log(`[DEBUG] resetProjectRecurringTasks called for projectId: ${projectId}`);
         try {
             const now = new Date();
             const state = get();
@@ -182,7 +183,15 @@ export const useTasks = create<TasksState>((set, get) => ({
                 t => t.project_id === projectId && t.is_recurring
             );
 
-            if (tasksToReset.length === 0) return;
+            console.log(`[DEBUG] Found ${tasksToReset.length} recurring tasks in project`);
+
+            if (tasksToReset.length === 0) {
+                console.log("[DEBUG] No recurring tasks found to reset.");
+                return;
+            }
+
+            const ids = tasksToReset.map(t => t.id);
+            console.log(`[DEBUG] Resetting task IDs: ${ids.join(", ")}`);
 
             // Use Promise.all with individual ID updates to be 100% precise
             await Promise.all(tasksToReset.map(task =>
@@ -195,10 +204,12 @@ export const useTasks = create<TasksState>((set, get) => ({
             )
             );
 
+            console.log("[DEBUG] DB Update complete, reloading tasks...");
             await state.loadTasks();
+            console.log("[DEBUG] State reloaded successfully");
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch (error) {
-            console.error("Failed to reset project tasks", error);
+            console.error("[DEBUG] Failed to reset project tasks", error);
         }
     }
 }));
