@@ -56,7 +56,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView className={`flex-1 ${bgColor}`}>
-      <View className="flex-row items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+      <View className={`flex-row items-center px-4 py-3 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
         <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
           <ArrowLeft size={24} color={isDark ? "#fff" : "#374151"} />
         </TouchableOpacity>
@@ -74,7 +74,7 @@ export default function SettingsScreen() {
               key={option.value}
               onPress={() => setThemeMode(option.value)}
               className={`flex-row items-center justify-between px-4 py-4 ${
-                index < themeOptions.length - 1 ? "border-b border-gray-200 dark:border-gray-700" : ""
+                index < themeOptions.length - 1 ? `border-b ${isDark ? "border-gray-700" : "border-gray-200"}` : ""
               }`}
             >
               <View className="flex-row items-center">
@@ -98,7 +98,7 @@ export default function SettingsScreen() {
               key={option.value}
               onPress={() => setLanguage(option.value)}
               className={`flex-row items-center justify-between px-4 py-4 ${
-                index < languageOptions.length - 1 ? "border-b border-gray-200 dark:border-gray-700" : ""
+                index < languageOptions.length - 1 ? `border-b ${isDark ? "border-gray-700" : "border-gray-200"}` : ""
               }`}
             >
               <View className="flex-row items-center">
@@ -118,27 +118,27 @@ export default function SettingsScreen() {
         </Text>
         <View className={`rounded-xl overflow-hidden mb-6 ${cardBg}`}>
           {/* Daily Reminder Toggle */}
-          <View className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700">
-            <View className="flex-row items-center flex-1">
-              <Bell size={20} color={isDark ? "#fff" : "#374151"} />
-              <View className="ml-3">
-                <Text className={`text-base ${textColor}`}>{t("settings.dailyReminder")}</Text>
-                <Text className={`text-xs ${secondaryText}`}>{t("settings.dailyReminderDesc")}</Text>
+            <View className={`flex-row items-center justify-between px-4 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
+              <View className="flex-row items-center flex-1">
+                <Bell size={20} color={isDark ? "#fff" : "#374151"} />
+                <View className="ml-3">
+                  <Text className={`text-base ${textColor}`}>{t("settings.dailyReminder")}</Text>
+                  <Text className={`text-xs ${secondaryText}`}>{t("settings.dailyReminderDesc")}</Text>
+                </View>
               </View>
+              <Switch
+                value={dailyReminderEnabled}
+                onValueChange={setDailyReminderEnabled}
+                trackColor={{ false: "#767577", true: "#3b82f6" }}
+              />
             </View>
-            <Switch
-              value={dailyReminderEnabled}
-              onValueChange={setDailyReminderEnabled}
-              trackColor={{ false: "#767577", true: "#3b82f6" }}
-            />
-          </View>
 
-          {/* Daily Reminder Time */}
-          {dailyReminderEnabled && (
-            <TouchableOpacity
-              onPress={() => setShowDailyPicker(true)}
-              className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700"
-            >
+            {/* Daily Reminder Time */}
+            {dailyReminderEnabled && (
+              <TouchableOpacity
+                onPress={() => setShowDailyPicker(true)}
+                className={`flex-row items-center justify-between px-4 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}
+              >
               <View className="flex-row items-center">
                 <Clock size={20} color={isDark ? "#fff" : "#374151"} />
                 <Text className={`ml-3 text-base ${textColor}`}>{t("settings.reminderTime")}</Text>
@@ -148,27 +148,27 @@ export default function SettingsScreen() {
           )}
 
           {/* Weekly Reminder Toggle */}
-          <View className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700">
-            <View className="flex-row items-center flex-1">
-              <Calendar size={20} color={isDark ? "#fff" : "#374151"} />
-              <View className="ml-3">
-                <Text className={`text-base ${textColor}`}>{t("settings.weeklyReminder")}</Text>
-                <Text className={`text-xs ${secondaryText}`}>{t("settings.weeklyReminderDesc")}</Text>
+            <View className={`flex-row items-center justify-between px-4 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
+              <View className="flex-row items-center flex-1">
+                <Calendar size={20} color={isDark ? "#fff" : "#374151"} />
+                <View className="ml-3">
+                  <Text className={`text-base ${textColor}`}>{t("settings.weeklyReminder")}</Text>
+                  <Text className={`text-xs ${secondaryText}`}>{t("settings.weeklyReminderDesc")}</Text>
+                </View>
               </View>
+              <Switch
+                value={weeklyReminderEnabled}
+                onValueChange={setWeeklyReminderEnabled}
+                trackColor={{ false: "#767577", true: "#3b82f6" }}
+              />
             </View>
-            <Switch
-              value={weeklyReminderEnabled}
-              onValueChange={setWeeklyReminderEnabled}
-              trackColor={{ false: "#767577", true: "#3b82f6" }}
-            />
-          </View>
 
-          {/* Weekly Reminder Day */}
-          {weeklyReminderEnabled && (
-            <TouchableOpacity
-              onPress={() => setShowDayPicker(true)}
-              className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700"
-            >
+            {/* Weekly Reminder Day */}
+            {weeklyReminderEnabled && (
+              <TouchableOpacity
+                onPress={() => setShowDayPicker(true)}
+                className={`flex-row items-center justify-between px-4 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}
+              >
               <View className="flex-row items-center">
                 <Calendar size={20} color={isDark ? "#fff" : "#374151"} />
                 <Text className={`ml-3 text-base ${textColor}`}>{t("settings.reminderDay")}</Text>
@@ -240,7 +240,7 @@ export default function SettingsScreen() {
         )}
 
         {showDayPicker && (
-           <View className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 z-50 p-4 border-t border-gray-200 dark:border-gray-700">
+           <View className={`absolute bottom-0 left-0 right-0 z-50 p-4 border-t ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"}`}>
               <View className="flex-row justify-between items-center mb-4">
                 <Text className={`text-lg font-bold ${textColor}`}>{t("settings.reminderDay")}</Text>
                 <TouchableOpacity onPress={() => setShowDayPicker(false)}>
@@ -258,7 +258,7 @@ export default function SettingsScreen() {
                     className={`px-4 py-2 rounded-full border ${
                       weeklyReminderDay === day 
                         ? "bg-blue-500 border-blue-500" 
-                        : "border-gray-300 dark:border-gray-600"
+                        : (isDark ? "border-gray-600" : "border-gray-300")
                     }`}
                   >
                     <Text className={weeklyReminderDay === day ? "text-white" : textColor}>
@@ -277,7 +277,7 @@ export default function SettingsScreen() {
         <View className={`rounded-xl overflow-hidden mb-6 ${cardBg}`}>
           <TouchableOpacity 
             onPress={() => Linking.openURL("https://forms.gle/NWtjT1tEe4TBVu277")}
-            className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700"
+            className={`flex-row items-center justify-between px-4 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}
           >
             <View className="flex-row items-center">
               <MessageSquare size={20} color={isDark ? "#fff" : "#374151"} />

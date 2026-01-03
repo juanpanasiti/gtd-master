@@ -204,7 +204,9 @@ export default function TaskDetailScreen() {
                 {/* Convert to Project Action */}
                 <TouchableOpacity 
                     onPress={handleConvertToProject}
-                    className="flex-row items-center mb-6 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800"
+                    className={`flex-row items-center mb-6 p-3 rounded-lg border ${
+                        isDark ? "bg-blue-900/20 border-blue-800" : "bg-blue-50 border-blue-100"
+                    }`}
                 >
                     <FolderPlus size={20} color={isDark ? "#60a5fa" : "#2563eb"} />
                     <View className="ml-3 flex-1">

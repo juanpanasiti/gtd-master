@@ -398,7 +398,7 @@ export default function ProjectDetailScreen() {
       <View className={`border-t ${borderColor} p-4`}>
         <TouchableOpacity 
             onPress={handleDelete}
-            className="flex-row items-center justify-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20"
+            className={`flex-row items-center justify-center p-3 rounded-lg ${isDark ? "bg-red-900/20" : "bg-red-50"}`}
         >
             <Trash2 size={20} color={isDark ? "#f87171" : "#dc2626"} />
             <Text className={`ml-2 font-semibold ${isDark ? "text-red-400" : "text-red-600"}`}>
