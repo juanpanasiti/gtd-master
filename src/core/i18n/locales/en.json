@@ -58,5 +58,19 @@
         "system": "System",
         "english": "English",
         "spanish": "Spanish"
+    },
+    "projectDetail": {
+        "actions": "Actions",
+        "reference": "Reference",
+        "addTaskPlaceholder": "Add next action...",
+        "activeTasks": "Active Tasks",
+        "noTasks": "No Tasks",
+        "noTasksDescription": "No active tasks in this project.\nAssign tasks from the Inbox.",
+        "completedTasks": "Completed",
+        "addReferencePlaceholder": "Add project reference (notes, links...)",
+        "noReference": "No Reference Material",
+        "noReferenceDescription": "Keep documents and notes related to this project here.",
+        "deleteProject": "Delete Project",
+        "scheduled": "Scheduled (Future)"
     }
 }

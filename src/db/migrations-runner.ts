@@ -60,6 +60,10 @@ const MIGRATIONS = [
   `
   ALTER TABLE projects ADD COLUMN area_id INTEGER;
   `,
+  // Version 11
+  `
+  CREATE TABLE project_references (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER NOT NULL, content TEXT NOT NULL, created_at INTEGER NOT NULL);
+  `,
 ];
 
 export async function runMigrations() {

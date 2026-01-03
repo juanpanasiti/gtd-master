@@ -16,21 +16,25 @@ export default function ProjectDetailScreen() {
   const { isDark } = useTheme();
 
   const { tasks, loadTasks, toggleTask, contexts, loadContexts, addTask } = useTasks();
-  const { projects, loadProjects, updateProject, deleteProject, areas, loadAreas } = useProjects();
+  const { projects, loadProjects, updateProject, deleteProject, areas, loadAreas, references, loadReferences, addReference, deleteReference } = useProjects();
   
+  const projectId = parseInt(id || "0", 10);
+  const projectReferences = references[projectId] || [];
+
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newReference, setNewReference] = useState("");
+  const [activeTab, setActiveTab] = useState<"actions" | "reference">("actions");
   const [showCompleted, setShowCompleted] = useState(false);
-
-  const projectId = parseInt(id || "0", 10);
 
   useEffect(() => {
     loadProjects();
     loadTasks();
     loadContexts();
     loadAreas();
+    loadReferences(projectId);
   }, []);
 
   const project = useMemo(
@@ -73,6 +77,12 @@ export default function ProjectDetailScreen() {
     if (!newTaskTitle.trim()) return;
     await addTask(newTaskTitle, null, projectId);
     setNewTaskTitle("");
+  };
+
+  const handleAddReference = async () => {
+    if (!newReference.trim()) return;
+    await addReference(projectId, newReference);
+    setNewReference("");
   };
 
   const availableTasks = useMemo(() => {
@@ -190,101 +200,177 @@ export default function ProjectDetailScreen() {
         )}
       </View>
 
-      {/* Quick Add Task */}
-      <View className={`flex-row items-center p-4 border-b ${borderColor} ${headerBg}`}>
-          <Plus size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
-          <TextInput
-              value={newTaskTitle}
-              onChangeText={setNewTaskTitle}
-              placeholder="Add next action..."
-              placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
-              className={`flex-1 ml-3 text-base ${textColor}`}
-              onSubmitEditing={handleQuickAdd}
-          />
-          {newTaskTitle.length > 0 && (
-              <TouchableOpacity onPress={handleQuickAdd}>
-                  <Text className="font-bold text-blue-500">Add</Text>
-              </TouchableOpacity>
-          )}
+      {/* Tabs */}
+      <View className={`flex-row border-b ${borderColor} ${headerBg}`}>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("actions")}
+            className={`flex-1 py-3 items-center border-b-2 ${activeTab === "actions" ? "border-blue-500" : "border-transparent"}`}
+          >
+              <Text className={`font-bold ${activeTab === "actions" ? "text-blue-500" : secondaryText}`}>
+                  {t("projectDetail.actions")}
+              </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("reference")}
+            className={`flex-1 py-3 items-center border-b-2 ${activeTab === "reference" ? "border-blue-500" : "border-transparent"}`}
+          >
+              <Text className={`font-bold ${activeTab === "reference" ? "text-blue-500" : secondaryText}`}>
+                  {t("projectDetail.reference")}
+              </Text>
+          </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={displayTasks}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        renderItem={({ item }) => {
-             // Check if this is the first future task to render a header? No, unstable.
-             // Better: Use SectionList? Or simple check.
-             // Let's just render the item. We can style future tasks differently (opacity?).
-             const isFuture = item.start_date && new Date(item.start_date) > new Date();
-             return (
-                 <View className={isFuture ? "opacity-60" : ""}>
-                    {isFuture && displayTasks.indexOf(item) === availableTasks.length && (
-                        <Text className={`text-sm font-semibold uppercase tracking-wider mb-2 mt-4 ${secondaryText}`}>
-                            Scheduled (Future)
+      {activeTab === "actions" ? (
+          <>
+            {/* Quick Add Task */}
+            <View className={`flex-row items-center p-4 border-b ${borderColor} ${headerBg}`}>
+                <Plus size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                <TextInput
+                    value={newTaskTitle}
+                    onChangeText={setNewTaskTitle}
+                    placeholder={t("projectDetail.addTaskPlaceholder")}
+                    placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
+                    className={`flex-1 ml-3 text-base ${textColor}`}
+                    onSubmitEditing={handleQuickAdd}
+                />
+                {newTaskTitle.length > 0 && (
+                    <TouchableOpacity onPress={handleQuickAdd}>
+                        <Text className="font-bold text-blue-500">{t("common.add")}</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+
+            <FlatList
+                data={displayTasks}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+                renderItem={({ item }) => {
+                    const isFuture = item.start_date && new Date(item.start_date) > new Date();
+                    return (
+                        <View className={isFuture ? "opacity-60" : ""}>
+                            {isFuture && displayTasks.indexOf(item) === availableTasks.length && (
+                                <Text className={`text-sm font-semibold uppercase tracking-wider mb-2 mt-4 ${secondaryText}`}>
+                                    {t("projectDetail.scheduled")}
+                                </Text>
+                            )}
+                            <TaskItem
+                                task={item}
+                                onToggle={toggleTask}
+                                context={contexts.find((c) => c.id === item.context_id)}
+                            />
+                        </View>
+                    );
+                }}
+                ListHeaderComponent={
+                availableTasks.length > 0 ? (
+                    <Text className={`text-sm font-semibold uppercase tracking-wider mb-3 ${secondaryText}`}>
+                    {t("projectDetail.activeTasks")} ({availableTasks.length})
+                    </Text>
+                ) : null
+                }
+                ListEmptyComponent={
+                <View className="items-center justify-center p-10 mt-10">
+                    <View className={`${isDark ? "bg-gray-800" : "bg-gray-100"} p-6 rounded-full mb-4`}>
+                    <Folder size={48} color={isDark ? "#6b7280" : "#9ca3af"} />
+                    </View>
+                    <Text className={`text-xl font-bold mb-2 ${textColor}`}>{t("projectDetail.noTasks")}</Text>
+                    <Text className={`${secondaryText} text-center`}>
+                    {t("projectDetail.noTasksDescription")}
+                    </Text>
+                </View>
+                }
+                ListFooterComponent={
+                completedTasks.length > 0 ? (
+                    <View className="mt-6">
+                    <TouchableOpacity 
+                        onPress={() => setShowCompleted(!showCompleted)}
+                        className="flex-row items-center justify-between py-2"
+                    >
+                        <Text className={`text-sm font-semibold uppercase tracking-wider ${secondaryText}`}>
+                            {t("projectDetail.completedTasks")} ({completedTasks.length})
                         </Text>
+                        {showCompleted ? (
+                            <ChevronUp size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                        ) : (
+                            <ChevronDown size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                        )}
+                    </TouchableOpacity>
+                    
+                    {showCompleted && (
+                        <View className="mt-2">
+                            {completedTasks.map((task) => (
+                                <TaskItem
+                                key={task.id}
+                                task={task}
+                                onToggle={toggleTask}
+                                context={contexts.find((c) => c.id === task.context_id)}
+                                />
+                            ))}
+                        </View>
                     )}
-                    <TaskItem
-                        task={item}
-                        onToggle={toggleTask}
-                        context={contexts.find((c) => c.id === item.context_id)}
+                    </View>
+                ) : null
+                }
+                ListFooterComponentStyle={{ marginTop: 20 }}
+            />
+          </>
+      ) : (
+          <>
+            {/* Add Reference */}
+            <View className={`p-4 border-b ${borderColor} ${headerBg}`}>
+                <View className="flex-row items-start mb-2">
+                    <TextInput
+                        value={newReference}
+                        onChangeText={setNewReference}
+                        placeholder={t("projectDetail.addReferencePlaceholder")}
+                        placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
+                        className={`flex-1 text-base ${textColor} min-h-[40px]`}
+                        multiline
                     />
-                 </View>
-             );
-        }}
-        ListHeaderComponent={
-          availableTasks.length > 0 ? (
-            <Text className={`text-sm font-semibold uppercase tracking-wider mb-3 ${secondaryText}`}>
-              Active Tasks ({availableTasks.length})
-            </Text>
-          ) : null
-        }
-        ListEmptyComponent={
-          <View className="items-center justify-center p-10 mt-10">
-            <View className={`${isDark ? "bg-gray-800" : "bg-gray-100"} p-6 rounded-full mb-4`}>
-              <Folder size={48} color={isDark ? "#6b7280" : "#9ca3af"} />
+                </View>
+                {newReference.trim().length > 0 && (
+                    <TouchableOpacity 
+                        onPress={handleAddReference}
+                        className="bg-blue-500 self-end px-4 py-2 rounded-lg"
+                    >
+                        <Text className="font-bold text-white">{t("common.add")}</Text>
+                    </TouchableOpacity>
+                )}
             </View>
-            <Text className={`text-xl font-bold mb-2 ${textColor}`}>No Tasks</Text>
-            <Text className={`${secondaryText} text-center`}>
-              No active tasks in this project.{"\n"}
-              Assign tasks from the Inbox.
-            </Text>
-          </View>
-        }
-        ListFooterComponent={
-          completedTasks.length > 0 ? (
-            <View className="mt-6">
-              <TouchableOpacity 
-                onPress={() => setShowCompleted(!showCompleted)}
-                className="flex-row items-center justify-between py-2"
-              >
-                  <Text className={`text-sm font-semibold uppercase tracking-wider ${secondaryText}`}>
-                    Completed ({completedTasks.length})
-                  </Text>
-                  {showCompleted ? (
-                      <ChevronUp size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
-                  ) : (
-                      <ChevronDown size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
-                  )}
-              </TouchableOpacity>
-              
-              {showCompleted && (
-                  <View className="mt-2">
-                      {completedTasks.map((task) => (
-                        <TaskItem
-                          key={task.id}
-                          task={task}
-                          onToggle={toggleTask}
-                          context={contexts.find((c) => c.id === task.context_id)}
-                        />
-                      ))}
-                  </View>
-              )}
-            </View>
-          ) : null
-        }
-        ListFooterComponentStyle={{ marginTop: 20 }}
-      />
+
+            <FlatList
+                data={projectReferences}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+                renderItem={({ item }) => (
+                    <View className={`p-4 mb-3 rounded-xl ${isDark ? "bg-gray-800" : "bg-gray-50"} border ${borderColor}`}>
+                        <View className="flex-row justify-between items-start">
+                            <Text className={`text-base flex-1 ${textColor}`}>{item.content}</Text>
+                            <TouchableOpacity 
+                                onPress={() => deleteReference(item.id, projectId)}
+                                className="ml-2"
+                            >
+                                <Trash2 size={16} color="#ef4444" />
+                            </TouchableOpacity>
+                        </View>
+                        <Text className={`text-xs mt-2 ${secondaryText}`}>
+                            {new Date(item.created_at).toLocaleDateString()}
+                        </Text>
+                    </View>
+                )}
+                ListEmptyComponent={
+                    <View className="items-center justify-center p-10 mt-10">
+                        <Text className={`text-lg font-bold mb-2 ${textColor}`}>
+                            {t("projectDetail.noReference")}
+                        </Text>
+                        <Text className={`${secondaryText} text-center`}>
+                            {t("projectDetail.noReferenceDescription")}
+                        </Text>
+                    </View>
+                }
+            />
+          </>
+      )}
       
       {/* Footer Delete Action */}
       <View className={`border-t ${borderColor} p-4`}>
@@ -294,7 +380,7 @@ export default function ProjectDetailScreen() {
         >
             <Trash2 size={20} color={isDark ? "#f87171" : "#dc2626"} />
             <Text className={`ml-2 font-semibold ${isDark ? "text-red-400" : "text-red-600"}`}>
-                Delete Project
+                {t("projectDetail.deleteProject")}
             </Text>
         </TouchableOpacity>
       </View>

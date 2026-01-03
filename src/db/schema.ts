@@ -28,6 +28,13 @@ export const projects = sqliteTable("projects", {
     created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
 });
 
+export const projectReferences = sqliteTable("project_references", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    project_id: integer("project_id").notNull(),
+    content: text("content").notNull(),
+    created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
+});
+
 export const contexts = sqliteTable("contexts", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull(),

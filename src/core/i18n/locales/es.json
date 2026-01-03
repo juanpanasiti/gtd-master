@@ -58,5 +58,19 @@
         "system": "Sistema",
         "english": "Inglés",
         "spanish": "Español"
+    },
+    "projectDetail": {
+        "actions": "Acciones",
+        "reference": "Referencia",
+        "addTaskPlaceholder": "Añadir acción siguiente...",
+        "activeTasks": "Tareas Activas",
+        "noTasks": "Sin Tareas",
+        "noTasksDescription": "No hay tareas activas en este proyecto.\nAsigna tareas desde la Bandeja de Entrada.",
+        "completedTasks": "Completadas",
+        "addReferencePlaceholder": "Añadir referencia (notas, enlaces...)",
+        "noReference": "Sin Material de Referencia",
+        "noReferenceDescription": "Guarda aquí documentos y notas relacionados con este proyecto.",
+        "deleteProject": "Eliminar Proyecto",
+        "scheduled": "Programado (Futuro)"
     }
 }
