@@ -147,7 +147,14 @@
         "completedTasks": "tareas completadas",
         "byArea": "Por Área",
         "noStalled": "¡Tu sistema está sano! No hay proyectos estancados.",
-        "inbox": "Bandeja de Entrada"
+        "inbox": "Bandeja de Entrada",
+        "dataTitle": "Gestión de Datos",
+        "exportBackup": "Exportar Respaldo",
+        "importBackup": "Importar Respaldo",
+        "exportSuccess": "¡Respaldo guardado con éxito!",
+        "importSuccess": "¡Datos importados! Reiniciando...",
+        "importConfirm": "Importar mezclará los datos. ¿Estás seguro?",
+        "importError": "Error al importar los datos."
     },
     "projectDetail": {
         "actions": "Acciones",

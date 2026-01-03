@@ -142,7 +142,14 @@
         "completedTasks": "tasks completed",
         "byArea": "By Area",
         "noStalled": "Your system is healthy! No stalled projects.",
-        "inbox": "Inbox Items"
+        "inbox": "Inbox Items",
+        "dataTitle": "Data Management",
+        "exportBackup": "Export Backup",
+        "importBackup": "Import Backup",
+        "exportSuccess": "Backup saved successfully!",
+        "importSuccess": "Data imported! Restarting...",
+        "importConfirm": "Importing will merge data. Are you sure?",
+        "importError": "Failed to import data."
     },
     "projectDetail": {
         "actions": "Actions",

@@ -8,9 +8,11 @@ import { useRouter } from "expo-router";
 import { 
     Activity, ArrowLeft, BarChart3, Briefcase, 
     CheckCircle2, Inbox, LayoutGrid, AlertCircle,
-    ChevronRight, Sparkles
+    ChevronRight, Sparkles, Download, Upload, Database
 } from "lucide-react-native";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
+import { DataService } from "@/core/data/DataService";
+import { Alert, ActivityIndicator } from "react-native";
 
 export default function PerspectivesScreen() {
     const router = useRouter();
@@ -62,6 +64,43 @@ export default function PerspectivesScreen() {
     const cardBg = isDark ? "bg-slate-900" : "bg-white";
     const borderColor = isDark ? "border-slate-800" : "border-gray-200";
 
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleExport = async () => {
+        setIsLoading(true);
+        const success = await DataService.exportData();
+        setIsLoading(false);
+        if (success) {
+            Alert.alert(t("perspectives.title"), t("perspectives.exportSuccess"));
+        }
+    };
+
+    const handleImport = async () => {
+        Alert.alert(
+            t("perspectives.dataTitle"),
+            t("perspectives.importConfirm"),
+            [
+                { text: t("common.cancel"), style: "cancel" },
+                { 
+                    text: t("perspectives.importBackup"), 
+                    onPress: async () => {
+                        setIsLoading(true);
+                        const success = await DataService.importData();
+                        setIsLoading(false);
+                        if (success) {
+                            Alert.alert(t("perspectives.title"), t("perspectives.importSuccess"));
+                            loadTasks();
+                            loadProjects();
+                            loadAreas();
+                        } else {
+                            Alert.alert(t("perspectives.title"), t("perspectives.importError"));
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     const SummaryCard = ({ title, value, icon, color, description }: any) => (
         <View className={`${cardBg} p-5 rounded-3xl border ${borderColor} mb-4 flex-1`}>
             <View className={`w-12 h-12 rounded-2xl bg-${color}-500/10 items-center justify-center mb-3`}>
@@ -83,7 +122,7 @@ export default function PerspectivesScreen() {
                     <ArrowLeft size={24} color={isDark ? "#fff" : "#000"} />
                 </TouchableOpacity>
                 <Text className={`text-lg font-bold ${textColor}`}>{t("perspectives.title")}</Text>
-                <View className="w-10" />
+                {isLoading ? <ActivityIndicator size="small" color="#6366f1" /> : <View className="w-10" />}
             </View>
 
             <ScrollView className="flex-1 px-5 pt-6">
@@ -153,7 +192,7 @@ export default function PerspectivesScreen() {
                 </View>
 
                 {/* Area Distribution */}
-                <View className="mb-10">
+                <View className="mb-6">
                     <View className="flex-row items-center mb-4 px-2">
                         <LayoutGrid size={18} color="#6366f1" />
                         <Text className={`ml-2 text-lg font-bold ${textColor}`}>{t("perspectives.byArea")}</Text>
@@ -185,6 +224,34 @@ export default function PerspectivesScreen() {
                                 </View>
                             </View>
                         )}
+                    </View>
+                </View>
+
+                {/* Data Management Section */}
+                <View className="mb-10">
+                    <View className="flex-row items-center mb-4 px-2">
+                        <Database size={18} color="#64748b" />
+                        <Text className={`ml-2 text-lg font-bold ${textColor}`}>{t("perspectives.dataTitle")}</Text>
+                    </View>
+
+                    <View className="flex-row gap-3">
+                        <TouchableOpacity 
+                            onPress={handleExport}
+                            disabled={isLoading}
+                            className={`flex-1 flex-row items-center justify-center p-4 rounded-2xl border ${borderColor} ${cardBg}`}
+                        >
+                            <Download size={18} color="#3b82f6" />
+                            <Text className={`ml-2 font-bold ${textColor}`}>{t("perspectives.exportBackup")}</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                            onPress={handleImport}
+                            disabled={isLoading}
+                            className={`flex-1 flex-row items-center justify-center p-4 rounded-2xl border ${borderColor} ${cardBg}`}
+                        >
+                            <Upload size={18} color="#10b981" />
+                            <Text className={`ml-2 font-bold ${textColor}`}>{t("perspectives.importBackup")}</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
