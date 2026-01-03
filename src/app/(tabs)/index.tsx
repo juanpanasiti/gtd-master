@@ -63,6 +63,23 @@ export default function Inbox() {
         className="flex-1"
       >
         <View className="flex-1 p-4">
+          <View className="flex-row items-center justify-between mb-4 px-2">
+            <View className="flex-row items-center">
+              <View className="bg-blue-500/10 p-2 rounded-lg">
+                <InboxIcon size={24} color="#3b82f6" />
+              </View>
+              <Text className={`ml-3 text-2xl font-bold ${textColor}`}>
+                {t("inbox.title")}
+              </Text>
+            </View>
+            <TouchableOpacity 
+              onPress={() => router.push("/inbox/quick")}
+              className="bg-purple-600/10 p-2 rounded-lg"
+            >
+              <Zap size={24} color="#a855f7" />
+            </TouchableOpacity>
+          </View>
+
           <FlatList
             data={inboxTasks}
             keyExtractor={(item) => item.id.toString()}

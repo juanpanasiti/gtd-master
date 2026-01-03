@@ -17,15 +17,20 @@
         "review": "Revisar"
     },
     "inbox": {
-        "title": "Inbox",
+        "title": "Bandeja de Entrada",
         "placeholder": "Necesito...",
         "captureTask": "Capturar Tarea",
         "emptyTitle": "Bandeja Vacía",
-        "emptyDescription": "Has procesado todos tus elementos.\nCaptura más cosas o revisa Ejecutar.",
+        "emptyDescription": "Captura todo lo que pase por tu mente.",
         "twoMinuteRule": "Regla de 2 Minutos",
         "completeTaskConfirm": "¿Completar \"{{taskTitle}}\"?",
         "twoMinuteRuleApplied": "Regla de 2 minutos aplicada",
-        "processItems": "Procesar Elementos ({{count}})"
+        "processItems": "Procesar Elementos ({{count}})",
+        "empty": "¡Tu bandeja está vacía!",
+        "addItem": "Añadir elemento...",
+        "quickCapture": "Captura Rápida",
+        "capturePlaceholder": "¿Qué tienes en mente?",
+        "capturedSuccess": "¡Elemento capturado!"
     },
     "wizard": {
         "title": "Aclarar y Organizar",
