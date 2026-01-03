@@ -153,7 +153,9 @@
         "dailyBody": "¿Listo para despejar tu mente y enfocarte en las tareas de hoy?",
         "dailyBodyBriefing": "Hoy: {{due}} vencen, {{start}} inician. ¿Listo para enfocarte?",
         "weeklyTitle": "Hora de la Revisión Semanal",
-        "weeklyBody": "Tu sistema necesita una actualización. Revisa tus proyectos y compromisos."
+        "weeklyBody": "Momento de pensar en grande. Reflexiona sobre tus proyectos y áreas.",
+        "recurrenceTitle": "¡Rutina lista! 🔄",
+        "recurrenceBody": "\"{{title}}\" se ha reiniciado y ya está disponible en tu lista."
     },
     "search": {
         "title": "Buscar",

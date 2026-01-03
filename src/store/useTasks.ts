@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { db } from "@/db/client";
 import { tasks, contexts } from "@/db/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, inArray } from "drizzle-orm";
 import * as Haptics from "expo-haptics";
+import * as NotificationService from "@/core/notifications/NotificationService";
 
 export interface Task {
     id: number;
@@ -111,9 +112,20 @@ export const useTasks = create<TasksState>((set, get) => ({
     },
     toggleTask: async (id: number, currentStatus: boolean) => {
         try {
-            await db.update(tasks).set({ is_completed: !currentStatus }).where(eq(tasks.id, id));
+            const newStatus = !currentStatus;
+            await db.update(tasks).set({ is_completed: newStatus }).where(eq(tasks.id, id));
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             await get().loadTasks();
+
+            // Handle notifications
+            const task = get().tasks.find(t => t.id === id);
+            if (task?.is_recurring) {
+                if (newStatus) {
+                    await NotificationService.scheduleRecurrenceReminder(task);
+                } else {
+                    await NotificationService.cancelRecurrenceReminder(id);
+                }
+            }
         } catch (error) {
             console.error("Failed to update task status", error);
         }
@@ -128,6 +140,7 @@ export const useTasks = create<TasksState>((set, get) => ({
     },
     deleteTask: async (id: number) => {
         try {
+            await NotificationService.cancelRecurrenceReminder(id);
             await db.delete(tasks).where(eq(tasks.id, id));
             await get().loadTasks();
         } catch (error) {
@@ -206,7 +219,11 @@ export const useTasks = create<TasksState>((set, get) => ({
             )
             );
 
-            console.log("[DEBUG] DB Update complete, reloading tasks...");
+            console.log("[DEBUG] DB Update complete, reloading tasks... Rose scheduling notifications...");
+
+            // Cancel any pending notifications for these tasks since they are manualy reset
+            await Promise.all(tasksToReset.map(t => NotificationService.cancelRecurrenceReminder(t.id)));
+
             await state.loadTasks();
             console.log("[DEBUG] State reloaded successfully");
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

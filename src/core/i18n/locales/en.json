@@ -153,7 +153,9 @@
         "dailyBody": "Ready to clear your mind and focus on today's tasks?",
         "dailyBodyBriefing": "Today: {{due}} due, {{start}} starting. Ready to focus?",
         "weeklyTitle": "Weekly Review Time",
-        "weeklyBody": "Your system needs an update. Review your projects and commitments."
+        "weeklyBody": "Time to think big. Reflect on your projects and areas of focus.",
+        "recurrenceTitle": "Routine ready! 🔄",
+        "recurrenceBody": "\"{{title}}\" has been reset and is now available in your list."
     },
     "search": {
         "title": "Search",

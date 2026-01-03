@@ -143,6 +143,46 @@ export const scheduleWeeklyReviewReminder = async (
     }
 };
 
+export const scheduleRecurrenceReminder = async (task: any) => {
+    if (isExpoGo) return;
+    const Notifications = getNotifications();
+    if (!Notifications) return;
+
+    try {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status !== 'granted') return;
+
+        // Dynamic import to avoid circular dependency
+        const { RecurrenceService } = require('@/core/tasks/RecurrenceService');
+        const nextReset = RecurrenceService.getNextResetDate(task);
+        if (!nextReset) return;
+
+        await Notifications.scheduleNotificationAsync({
+            identifier: `recurrence-${task.id}`,
+            content: {
+                title: i18next.t('notifications.recurrenceTitle'),
+                body: i18next.t('notifications.recurrenceBody', { title: task.title }),
+                data: { taskId: task.id },
+            },
+            trigger: nextReset,
+        });
+    } catch (e) {
+        console.warn('NotificationService: scheduleRecurrenceReminder failed', e);
+    }
+};
+
+export const cancelRecurrenceReminder = async (taskId: number) => {
+    if (isExpoGo) return;
+    const Notifications = getNotifications();
+    if (!Notifications) return;
+
+    try {
+        await Notifications.cancelScheduledNotificationAsync(`recurrence-${taskId}`);
+    } catch (e) {
+        console.warn('NotificationService: cancelRecurrenceReminder failed', e);
+    }
+};
+
 export const cancelAllReminders = async () => {
     if (isExpoGo) return;
     const Notifications = getNotifications();
