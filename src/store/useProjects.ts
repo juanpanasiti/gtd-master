@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { db } from "@/db/client";
 import { areas, projects, projectReferences } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
+import * as Haptics from "expo-haptics";
 
 export interface Area {
     id: number;
@@ -96,6 +97,12 @@ export const useProjects = create<ProjectsState>((set, get) => ({
                 .set({ status })
                 .where(eq(projects.id, id));
 
+            if (status === "completed") {
+                await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            } else {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }
+
             set({
                 projects: get().projects.map(p =>
                     p.id === id ? { ...p, status } : p
@@ -171,6 +178,7 @@ export const useProjects = create<ProjectsState>((set, get) => ({
                 content,
                 created_at: new Date()
             });
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             await get().loadReferences(projectId);
         } catch (error) {
             console.error("Failed to add reference", error);

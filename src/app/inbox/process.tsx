@@ -1,4 +1,7 @@
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
+import { 
+    View, Text, TouchableOpacity, TextInput, ScrollView, 
+    Alert, LayoutAnimation, Platform, UIManager 
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useState, useMemo, useEffect } from "react";
@@ -26,8 +29,22 @@ export default function ProcessInboxScreen() {
         tasks.filter(t => !t.is_completed && !t.project_id && !t.context_id), 
     [tasks]);
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [step, setStep] = useState<WizardStep>("ACTIONABLE");
+    const [currentIndex, setCurrentIndexState] = useState(0);
+    const [step, setStepState] = useState<WizardStep>("ACTIONABLE");
+
+    const setStep = (newStep: WizardStep) => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setStepState(newStep);
+    };
+
+    const setCurrentIndex = (index: number | ((prev: number) => number)) => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+        if (typeof index === 'function') {
+            setCurrentIndexState(prev => index(prev));
+        } else {
+            setCurrentIndexState(index);
+        }
+    };
     const [delegateName, setDelegateName] = useState("");
     const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
     const [selectedContextId, setSelectedContextId] = useState<number | null>(null);

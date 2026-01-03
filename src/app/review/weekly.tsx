@@ -1,4 +1,7 @@
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
+import { 
+    View, Text, TouchableOpacity, TextInput, ScrollView, 
+    Alert, LayoutAnimation, Platform, UIManager 
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useState, useEffect, useMemo } from "react";
@@ -12,6 +15,7 @@ import {
 } from "lucide-react-native";
 import { Button } from "@/components/ui/Button";
 import { TaskItem } from "@/components/TaskItem";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 type ReviewStep = "BRAIN_DUMP" | "CALENDAR" | "WAITING" | "PROJECTS" | "SOMEDAY" | "FINISH";
 
@@ -22,8 +26,13 @@ export default function WeeklyReviewScreen() {
     const { tasks, loadTasks, addTask, toggleTask, contexts, loadContexts } = useTasks();
     const { projects, loadProjects } = useProjects();
 
-    const [step, setStep] = useState<ReviewStep>("BRAIN_DUMP");
+    const [step, setStepState] = useState<ReviewStep>("BRAIN_DUMP");
     const [brainDumpText, setBrainDumpText] = useState("");
+
+    const setStep = (newStep: ReviewStep) => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setStepState(newStep);
+    };
 
     useEffect(() => {
         loadTasks();
@@ -237,6 +246,8 @@ export default function WeeklyReviewScreen() {
                         >
                             <Text className="text-white font-black text-xl uppercase tracking-widest">{t("common.done")}</Text>
                         </TouchableOpacity>
+
+                        <ConfettiCannon count={200} origin={{x: -10, y: 0}} />
                     </View>
                 )}
                 

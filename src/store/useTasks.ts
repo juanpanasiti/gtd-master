@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { db } from "@/db/client";
 import { tasks, contexts } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
+import * as Haptics from "expo-haptics";
 
 interface Task {
     id: number;
@@ -101,17 +102,11 @@ export const useTasks = create<TasksState>((set, get) => ({
     },
     toggleTask: async (id: number, currentStatus: boolean) => {
         try {
-            await db.update(tasks)
-                .set({ is_completed: !currentStatus })
-                .where(eq(tasks.id, id));
-
-            set({
-                tasks: get().tasks.map(t =>
-                    t.id === id ? { ...t, is_completed: !currentStatus } : t
-                )
-            });
+            await db.update(tasks).set({ is_completed: !currentStatus }).where(eq(tasks.id, id));
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            await get().loadTasks();
         } catch (error) {
-            console.error("Failed to toggle task", error);
+            console.error("Failed to update task status", error);
         }
     },
     updateTask: async (id: number, updates: Partial<Task>) => {
@@ -125,10 +120,7 @@ export const useTasks = create<TasksState>((set, get) => ({
     deleteTask: async (id: number) => {
         try {
             await db.delete(tasks).where(eq(tasks.id, id));
-            // Optimistic update
-            set({
-                tasks: get().tasks.filter(t => t.id !== id)
-            });
+            await get().loadTasks();
         } catch (error) {
             console.error("Failed to delete task", error);
         }
@@ -139,14 +131,14 @@ export const useTasks = create<TasksState>((set, get) => ({
         const endOfDay = new Date(now);
         endOfDay.setHours(23, 59, 59, 999);
 
-        const tasks = get().tasks;
-        const dueCount = tasks.filter(t =>
+        const tasksList = get().tasks;
+        const dueCount = tasksList.filter(t =>
             !t.is_completed &&
             t.due_date &&
             new Date(t.due_date) <= endOfDay
         ).length;
 
-        const startCount = tasks.filter(t =>
+        const startCount = tasksList.filter(t =>
             !t.is_completed &&
             t.start_date &&
             new Date(t.start_date) >= now &&
