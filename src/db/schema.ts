@@ -33,6 +33,7 @@ export const projects = sqliteTable("projects", {
     title: text("title").notNull(),
     status: text("status", { enum: ["active", "completed", "archived"] }).notNull().default("active"),
     area_id: integer("area_id"),
+    sort_order: integer("sort_order").default(0),
     created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
 });
 

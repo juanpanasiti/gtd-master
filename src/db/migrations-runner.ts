@@ -80,6 +80,8 @@ const MIGRATIONS = [
   `ALTER TABLE tasks ADD COLUMN recurrence_day_of_month INTEGER;`,
   // Version 19
   `ALTER TABLE tasks ADD COLUMN sort_order INTEGER DEFAULT 0;`,
+  // Version 20
+  `ALTER TABLE projects ADD COLUMN sort_order INTEGER DEFAULT 0;`,
 ];
 
 export async function runMigrations() {

@@ -22,6 +22,7 @@ export interface Project {
     title: string;
     status: "active" | "completed" | "archived";
     area_id: number | null;
+    sort_order: number;
     created_at: Date;
 }
 
@@ -34,6 +35,7 @@ interface ProjectsState {
     updateProject: (id: number, updates: Partial<Project>) => Promise<void>;
     deleteProject: (id: number) => Promise<void>;
     updateProjectStatus: (id: number, status: Project["status"]) => Promise<void>;
+    updateProjectsOrder: (projectUpdates: { id: number, updates: Partial<Project> }[]) => Promise<void>;
 
     // Area Actions
     loadAreas: () => Promise<void>;
@@ -53,7 +55,7 @@ export const useProjects = create<ProjectsState>((set, get) => ({
     references: {},
     loadProjects: async () => {
         try {
-            const allProjects = await db.select().from(projects).orderBy(desc(projects.created_at));
+            const allProjects = await db.select().from(projects).orderBy(projects.sort_order, desc(projects.created_at));
             // @ts-ignore
             set({ projects: allProjects });
         } catch (error) {
@@ -63,9 +65,16 @@ export const useProjects = create<ProjectsState>((set, get) => ({
     addProject: async (title, area_id = null) => {
         try {
             if (!title.trim()) return;
+
+            const currentProjects = get().projects;
+            const maxOrder = currentProjects.length > 0
+                ? Math.max(...currentProjects.map(p => p.sort_order || 0))
+                : 0;
+
             const result = await db.insert(projects).values({
                 title,
                 area_id,
+                sort_order: maxOrder + 1,
                 created_at: new Date()
             }).returning({ insertedId: projects.id });
 
@@ -190,6 +199,16 @@ export const useProjects = create<ProjectsState>((set, get) => ({
             await get().loadReferences(projectId);
         } catch (error) {
             console.error("Failed to delete reference", error);
+        }
+    },
+    updateProjectsOrder: async (projectUpdates: { id: number, updates: Partial<Project> }[]) => {
+        try {
+            await Promise.all(projectUpdates.map(pu =>
+                db.update(projects).set(pu.updates).where(eq(projects.id, pu.id))
+            ));
+            await get().loadProjects();
+        } catch (error) {
+            console.error("Failed to update projects order", error);
         }
     }
 }));

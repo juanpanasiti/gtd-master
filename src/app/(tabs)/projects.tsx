@@ -1,6 +1,6 @@
 import { View, Text, SectionList, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useProjects } from "@/store/useProjects";
+import { useProjects, Project } from "@/store/useProjects";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { Input } from "@/components/ui/Input";
@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/Button";
 import { Folder, ListTodo, Search as SearchIcon, Settings } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import DraggableFlatList, { ScaleDecorator, RenderItemParams } from "react-native-draggable-flatlist";
+import { GripVertical } from "lucide-react-native";
 
 export default function ProjectsScreen() {
-  const { projects, loadProjects, addProject, areas, loadAreas } = useProjects();
+  const { projects, loadProjects, addProject, areas, loadAreas, updateProjectsOrder, updateProject } = useProjects();
   const [newProject, setNewProject] = useState("");
   const router = useRouter();
   const { isDark } = useTheme();
@@ -21,7 +23,7 @@ export default function ProjectsScreen() {
     loadAreas();
   }, []);
  
-  const sections = useMemo(() => {
+  const flattenedData = useMemo(() => {
     const activeProjects = projects.filter(p => p.status === 'active');
     
     const groups = activeProjects.reduce((acc, p) => {
@@ -45,12 +47,49 @@ export default function ProjectsScreen() {
         return acc;
     }, {} as Record<string, { title: string, color: string, data: typeof projects }>);
 
-    return Object.values(groups).sort((a, b) => {
+    const sortedGroups = Object.values(groups).sort((a, b) => {
         if (a.title === t("projects.noArea")) return 1;
         if (b.title === t("projects.noArea")) return -1;
         return a.title.localeCompare(b.title);
     });
+
+    const flattened: any[] = [];
+    sortedGroups.forEach(group => {
+        // Find areaId for this group
+        const areaId = areas.find(a => a.title === group.title)?.id || null;
+        flattened.push({ type: 'header', title: group.title, color: group.color, areaId });
+        group.data.forEach(p => {
+            flattened.push({ ...p, type: 'project' });
+        });
+    });
+
+    return flattened;
   }, [projects, areas, t]);
+
+  const handleDragEnd = async (data: any[]) => {
+      // Only projects contribute to sort_order
+      let projectCounter = 0;
+      const projectUpdates: { id: number, updates: Partial<Project> }[] = [];
+      let currentAreaId: number | null = null;
+      
+      data.forEach((item) => {
+          if (item.type === 'header') {
+              currentAreaId = item.areaId;
+          } else if (item.type === 'project') {
+              projectUpdates.push({
+                  id: item.id,
+                  updates: {
+                      sort_order: projectCounter++,
+                      area_id: currentAreaId
+                  }
+              });
+          }
+      });
+
+      if (projectUpdates.length > 0) {
+          await updateProjectsOrder(projectUpdates);
+      }
+  };
 
   const handleAddProject = async () => {
     if (!newProject.trim()) return;
@@ -114,33 +153,48 @@ export default function ProjectsScreen() {
             </TouchableOpacity>
           </View>
 
-          <SectionList
-            sections={sections}
-            keyExtractor={(item) => item.id.toString()}
+          <DraggableFlatList
+            data={flattenedData}
+            onDragEnd={({ data }) => handleDragEnd(data)}
+            keyExtractor={(item) => item.type === 'header' ? `header-${item.title}` : `project-${item.id}`}
             contentContainerStyle={{ paddingBottom: 100 }}
-            renderSectionHeader={({ section: { title, color } }) => (
-                <View className="flex-row items-center py-2 mt-4 mb-2">
-                    <View 
-                        className="w-3 h-3 rounded-full mr-2" 
-                        style={{ backgroundColor: color }} 
-                    />
-                    <Text className={`text-lg font-bold uppercase tracking-wider ${textColor === "text-white" ? "text-slate-300" : "text-gray-700"}`}>
-                        {title}
-                    </Text>
-                </View>
-            )}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => router.push(`/project/${item.id}`)}
-                className={`p-4 mb-3 rounded-xl ${cardBg} border ${borderColor} shadow-sm flex-row items-center gap-3`}
-              >
-                <Folder size={24} color={isDark ? "#9ca3af" : "#4B5563"} />
-                <View className="flex-1">
-                    <Text className={`text-lg font-semibold ${textColor}`}>{item.title}</Text>
-                    <Text className={secondaryText}>{item.status}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item, drag, isActive }: RenderItemParams<any>) => {
+              if (item.type === 'header') {
+                return (
+                    <View className="flex-row items-center py-2 mt-4 mb-2">
+                        <View 
+                            className="w-3 h-3 rounded-full mr-2" 
+                            style={{ backgroundColor: item.color }} 
+                        />
+                        <Text className={`text-lg font-bold uppercase tracking-wider ${textColor === "text-white" ? "text-slate-300" : "text-gray-700"}`}>
+                            {item.title}
+                        </Text>
+                    </View>
+                );
+              }
+
+              return (
+                <ScaleDecorator>
+                  <TouchableOpacity
+                    onLongPress={drag}
+                    onPress={() => router.push(`/project/${item.id}`)}
+                    className={`p-4 mb-3 rounded-xl border ${cardBg} ${borderColor} shadow-sm flex-row items-center gap-3`}
+                    style={{
+                        backgroundColor: isActive ? (isDark ? "#1e293b" : "#f1f5f9") : (isDark ? "#1e293b" : "#fff")
+                    }}
+                  >
+                    <TouchableOpacity onLongPress={drag} className="p-1 -ml-2">
+                        <GripVertical size={20} color={isDark ? "#475569" : "#cbd5e1"} />
+                    </TouchableOpacity>
+                    <Folder size={24} color={isDark ? "#9ca3af" : "#4B5563"} />
+                    <View className="flex-1">
+                        <Text className={`text-lg font-semibold ${textColor}`}>{item.title}</Text>
+                        <Text className={secondaryText}>{item.status}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </ScaleDecorator>
+              );
+            }}
             ListHeaderComponent={
                 <TouchableOpacity
                     onPress={() => router.push("/project/single")}
