@@ -81,30 +81,38 @@ export default function ProjectsScreen() {
                 {t("projects.title")}
               </Text>
             </View>
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center gap-1">
                 <TouchableOpacity 
                     onPress={() => router.push("/search")}
-                    className={`${isDark ? "bg-slate-800" : "bg-gray-100"} p-2 rounded-lg`}
+                    className={`${isDark ? "bg-slate-800" : "bg-gray-100"} p-2.5 rounded-xl`}
                 >
-                    <SearchIcon size={24} color={isDark ? "#94a3b8" : "#64748b"} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => router.push("/organize/areas")}>
-                   <View className="bg-blue-500/10 p-2 rounded-lg">
-                       <Text className="text-blue-500 font-medium">{t("projects.manageAreas")}</Text>
-                   </View>
+                    <SearchIcon size={20} color={isDark ? "#94a3b8" : "#64748b"} />
                 </TouchableOpacity>
                 <TouchableOpacity 
                     onPress={() => router.push("/settings")}
-                    className="p-2"
+                    className={`${isDark ? "bg-slate-800" : "bg-gray-100"} p-2.5 rounded-xl`}
                 >
-                    <Settings size={24} color={isDark ? "#94a3b8" : "#64748b"} />
+                    <Settings size={20} color={isDark ? "#94a3b8" : "#64748b"} />
                 </TouchableOpacity>
             </View>
           </View>
 
-          <TouchableOpacity onPress={() => router.push("/organize/contexts")} className="mb-4">
-              <Text className="text-center text-blue-500 font-medium">{t("projects.manageContexts")}</Text>
-          </TouchableOpacity>
+          <View className="flex-row gap-2 mb-4 px-2">
+            <TouchableOpacity 
+                onPress={() => router.push("/organize/areas")}
+                className="flex-1 bg-blue-500/10 py-2.5 rounded-xl border border-blue-500/20 items-center justify-center flex-row gap-2"
+            >
+                <Folder size={16} color="#3b82f6" />
+                <Text className="text-blue-500 font-bold text-xs uppercase tracking-tight">{t("projects.manageAreas")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+                onPress={() => router.push("/organize/contexts")}
+                className="flex-1 bg-blue-500/10 py-2.5 rounded-xl border border-blue-500/20 items-center justify-center flex-row gap-2"
+            >
+                <ListTodo size={16} color="#3b82f6" />
+                <Text className="text-blue-500 font-bold text-xs uppercase tracking-tight">{t("projects.manageContexts")}</Text>
+            </TouchableOpacity>
+          </View>
 
           <SectionList
             sections={sections}
