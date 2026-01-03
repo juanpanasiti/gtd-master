@@ -1,5 +1,6 @@
 import { Tabs, useRouter } from "expo-router";
-import { Inbox, Folder, CheckCircle, Calendar, Settings } from "lucide-react-native";
+import { Settings } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
@@ -35,7 +36,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: t("tabs.inbox"),
-          tabBarIcon: ({ color }) => <Inbox size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "file-tray" : "file-tray-outline"} size={24} color={color} />
+          ),
           href: "/",
           headerShown: false,
         }}
@@ -44,7 +47,9 @@ export default function TabLayout() {
         name="projects"
         options={{
           title: t("tabs.organize"),
-          tabBarIcon: ({ color }) => <Folder size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "folder" : "folder-outline"} size={24} color={color} />
+          ),
           headerShown: false,
         }}
       />
@@ -52,7 +57,9 @@ export default function TabLayout() {
         name="engage"
         options={{
           title: t("tabs.engage"),
-          tabBarIcon: ({ color }) => <CheckCircle size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "checkmark-circle" : "checkmark-circle-outline"} size={24} color={color} />
+          ),
           headerShown: false,
         }}
       />
@@ -60,7 +67,9 @@ export default function TabLayout() {
         name="review"
         options={{
           title: t("tabs.review"),
-          tabBarIcon: ({ color }) => <Calendar size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "calendar" : "calendar-outline"} size={24} color={color} />
+          ),
           headerShown: false,
         }}
       />
