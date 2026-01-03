@@ -13,6 +13,7 @@ interface TaskItemProps {
         context_id?: number | null;
         is_recurring?: boolean;
         last_reset_at?: Date | null;
+        description?: string | null;
         recurrence_type?: string | null;
         recurrence_interval?: number;
         recurrence_days?: string | null;
@@ -55,12 +56,24 @@ export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
                     </View>
                 </TouchableOpacity>
                 <View className="flex-1">
-                    <View className="flex-row items-center">
-                        <Text className={`text-lg ${textColor} ${task.is_completed ? "line-through" : ""} flex-1`}>
+                    <View className="flex-row items-center gap-2">
+                        <Text 
+                            numberOfLines={1} 
+                            className={`text-lg ${textColor} ${task.is_completed ? "line-through" : ""} flex-shrink`}
+                        >
                             {task.title}
                         </Text>
+                        {task.description && (
+                            <Text 
+                                numberOfLines={1} 
+                                className={`text-sm ${isDark ? "text-slate-500" : "text-gray-400"} flex-1`}
+                                ellipsizeMode="tail"
+                            >
+                                — {task.description}
+                            </Text>
+                        )}
                         {task.is_recurring && (
-                            <RefreshCcw size={14} color={isDark ? "#94a3b8" : "#64748b"} className="ml-2" />
+                            <RefreshCcw size={14} color={isDark ? "#94a3b8" : "#64748b"} />
                         )}
                     </View>
                     {context && (
