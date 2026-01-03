@@ -74,6 +74,10 @@ const MIGRATIONS = [
   `ALTER TABLE tasks ADD COLUMN recurrence_days TEXT;`,
   // Version 16
   `ALTER TABLE tasks ADD COLUMN last_reset_at INTEGER;`,
+  // Version 17
+  `ALTER TABLE tasks ADD COLUMN recurrence_time TEXT;`,
+  // Version 18
+  `ALTER TABLE tasks ADD COLUMN recurrence_day_of_month INTEGER;`,
 ];
 
 export async function runMigrations() {

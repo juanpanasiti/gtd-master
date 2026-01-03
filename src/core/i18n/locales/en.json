@@ -198,6 +198,8 @@
         "recurrence_monthly": "Monthly",
         "every": "Every",
         "onDays": "On days:",
+        "onDayOfMonth": "On day of month:",
+        "resetTime": "Reset Time",
         "resetsOn": "Resets on: {{date}}"
     }
 }

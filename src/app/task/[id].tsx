@@ -5,7 +5,7 @@ import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { ChevronLeft, Calendar as CalendarIcon, X, FolderPlus, RefreshCcw } from "lucide-react-native";
+import { ChevronLeft, Calendar as CalendarIcon, X, FolderPlus, RefreshCcw, Clock } from "lucide-react-native";
 import { Switch } from "react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
@@ -36,6 +36,9 @@ export default function TaskDetailScreen() {
     const [recurrenceType, setRecurrenceType] = useState<"daily" | "weekly" | "monthly">("daily");
     const [recurrenceInterval, setRecurrenceInterval] = useState(1);
     const [recurrenceDays, setRecurrenceDays] = useState<string>("");
+    const [recurrenceTime, setRecurrenceTime] = useState<Date | null>(null);
+    const [recurrenceDayOfMonth, setRecurrenceDayOfMonth] = useState<number>(1);
+    const [showTimePicker, setShowTimePicker] = useState(false);
 
     useEffect(() => {
         loadProjects();
@@ -54,6 +57,16 @@ export default function TaskDetailScreen() {
             setRecurrenceType(task.recurrence_type || "daily");
             setRecurrenceInterval(task.recurrence_interval || 1);
             setRecurrenceDays(task.recurrence_days || "");
+            setRecurrenceDayOfMonth(task.recurrence_day_of_month || 1);
+            
+            if (task.recurrence_time) {
+                const [hours, minutes] = task.recurrence_time.split(':').map(Number);
+                const timeDate = new Date();
+                timeDate.setHours(hours, minutes, 0, 0);
+                setRecurrenceTime(timeDate);
+            } else {
+                setRecurrenceTime(null);
+            }
             
             if (task.due_date) {
                 const d = new Date(task.due_date);
@@ -109,7 +122,9 @@ export default function TaskDetailScreen() {
                 is_recurring: isRecurring,
                 recurrence_type: isRecurring ? recurrenceType : null,
                 recurrence_interval: isRecurring ? recurrenceInterval : 1,
-                recurrence_days: isRecurring && recurrenceType === "weekly" ? recurrenceDays : null
+                recurrence_days: isRecurring && recurrenceType === "weekly" ? recurrenceDays : null,
+                recurrence_time: isRecurring && recurrenceTime ? `${recurrenceTime.getHours().toString().padStart(2, '0')}:${recurrenceTime.getMinutes().toString().padStart(2, '0')}` : null,
+                recurrence_day_of_month: isRecurring && recurrenceType === "monthly" ? recurrenceDayOfMonth : null
             });
             router.back();
         }
@@ -164,6 +179,15 @@ export default function TaskDetailScreen() {
         }
         if (selectedDate) {
             setStartDate(selectedDate);
+        }
+    };
+
+    const handleTimeChange = (event: any, selectedTime?: Date) => {
+        if (Platform.OS === 'android') {
+            setShowTimePicker(false);
+        }
+        if (selectedTime) {
+            setRecurrenceTime(selectedTime);
         }
     };
 
@@ -508,6 +532,71 @@ export default function TaskDetailScreen() {
                                         </View>
                                     </View>
                                 )}
+
+                                {recurrenceType === "monthly" && (
+                                    <View>
+                                        <Text className={`text-xs ${secondaryText} mb-2`}>{t("task.onDayOfMonth")}</Text>
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                                            {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                                                <TouchableOpacity 
+                                                    key={day}
+                                                    onPress={() => setRecurrenceDayOfMonth(day)}
+                                                    className={`w-10 h-10 rounded-lg items-center justify-center mr-2 border ${
+                                                        recurrenceDayOfMonth === day 
+                                                        ? "bg-blue-500 border-blue-500" 
+                                                        : `${chipBg} ${borderColor}`
+                                                    }`}
+                                                >
+                                                    <Text className={`font-bold ${recurrenceDayOfMonth === day ? "text-white" : textColor}`}>
+                                                        {day}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </ScrollView>
+                                    </View>
+                                )}
+
+                                <View className="border-t border-slate-700/50 pt-4">
+                                    <Text className={`text-xs ${secondaryText} mb-2 uppercase font-bold`}>{t("task.resetTime")}</Text>
+                                    <TouchableOpacity 
+                                        onPress={() => setShowTimePicker(true)}
+                                        className={`flex-row items-center justify-between ${inputBg} border-2 ${borderColor} p-3 rounded-lg`}
+                                    >
+                                        <View className="flex-row items-center">
+                                            <Clock size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                                            <Text className={`ml-3 text-lg ${recurrenceTime ? textColor : secondaryText}`}>
+                                                {recurrenceTime 
+                                                    ? recurrenceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+                                                    : "00:00 (Always)"}
+                                            </Text>
+                                        </View>
+                                        {recurrenceTime && (
+                                            <TouchableOpacity onPress={() => setRecurrenceTime(null)}>
+                                                <X size={20} color={isDark ? "#9ca3af" : "#6b7280"} />
+                                            </TouchableOpacity>
+                                        )}
+                                    </TouchableOpacity>
+
+                                    {showTimePicker && (
+                                        <View className={`mt-2 ${Platform.OS === 'ios' ? `${cardBg} rounded-lg p-2` : ''}`}>
+                                            <DateTimePicker
+                                                value={recurrenceTime || new Date(new Date().setHours(0,0,0,0))}
+                                                mode="time"
+                                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                                onChange={handleTimeChange}
+                                                themeVariant={isDark ? 'dark' : 'light'}
+                                            />
+                                            {Platform.OS === 'ios' && (
+                                                <TouchableOpacity 
+                                                    onPress={() => setShowTimePicker(false)}
+                                                    className="bg-blue-500 p-3 rounded-lg mt-2"
+                                                >
+                                                    <Text className="text-white text-center font-bold">Done</Text>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
+                                    )}
+                                </View>
                             </View>
                         )}
                     </View>

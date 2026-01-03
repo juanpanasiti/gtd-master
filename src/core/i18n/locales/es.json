@@ -197,6 +197,8 @@
         "recurrence_monthly": "Mensual",
         "every": "Cada",
         "onDays": "Los días:",
+        "onDayOfMonth": "Día del mes:",
+        "resetTime": "Hora de reinicio",
         "resetsOn": "Se reinicia el: {{date}}"
     }
 }

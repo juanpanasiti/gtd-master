@@ -19,6 +19,8 @@ export interface Task {
     recurrence_type: "daily" | "weekly" | "monthly" | null;
     recurrence_interval: number;
     recurrence_days: string | null;
+    recurrence_time: string | null;
+    recurrence_day_of_month: number | null;
     last_reset_at: Date | null;
     created_at: Date;
 }

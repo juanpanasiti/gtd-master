@@ -46,13 +46,15 @@ export class RecurrenceService {
         const searchDate = new Date(tomorrow);
         for (let i = 0; i < 366; i++) {
             // We use shouldResetTask but we need to bypass the is_completed check
-            // logic inside shouldResetTask for this projection.
-            // Actually, it's better to implement specific projection logic.
-
             if (this.willResetOn(task, searchDate)) {
+                if (task.recurrence_time) {
+                    const [hours, minutes] = task.recurrence_time.split(':').map(Number);
+                    searchDate.setHours(hours, minutes, 0, 0);
+                }
                 return searchDate;
             }
             searchDate.setDate(searchDate.getDate() + 1);
+            searchDate.setHours(0, 0, 0, 0);
         }
 
         return null;
@@ -60,16 +62,16 @@ export class RecurrenceService {
 
     private static willResetOn(task: any, targetDate: Date): boolean {
         const createdAt = new Date(task.created_at);
-        const todayStart = new Date(targetDate);
-        todayStart.setHours(0, 0, 0, 0);
+        const dayStart = new Date(targetDate);
+        dayStart.setHours(0, 0, 0, 0);
 
         switch (task.recurrence_type) {
             case "daily":
-                return this.checkDaily(task, todayStart, createdAt, null);
+                return this.checkDaily(task, dayStart, createdAt, null);
             case "weekly":
-                return this.checkWeekly(task, todayStart, targetDate, null);
+                return this.checkWeekly(task, dayStart, targetDate, null);
             case "monthly":
-                return this.checkMonthly(task, todayStart, targetDate, null);
+                return this.checkMonthly(task, dayStart, targetDate, null);
             default:
                 return false;
         }
@@ -79,8 +81,6 @@ export class RecurrenceService {
         const interval = task.recurrence_interval || 1;
         if (interval === 1) return true; // Every day
 
-        // For intervals > 1, we calculate days since creation or a fixed point
-        // Using createdAt as the anchor
         const anchor = new Date(createdAt);
         anchor.setHours(0, 0, 0, 0);
 
@@ -91,7 +91,6 @@ export class RecurrenceService {
     }
 
     private static checkWeekly(task: any, todayStart: Date, now: Date, lastReset: Date | null): boolean {
-        // recurrence_days is a comma-separated string of day numbers (0-6, where 0 is Sunday)
         if (!task.recurrence_days) return false;
 
         const targetDays = task.recurrence_days.split(",").map(Number);
@@ -101,10 +100,17 @@ export class RecurrenceService {
     }
 
     private static checkMonthly(task: any, todayStart: Date, now: Date, lastReset: Date | null): boolean {
-        // Simple version: same day of month
-        const anchorDate = new Date(task.created_at).getDate();
+        const interval = task.recurrence_interval || 1;
+        const targetDay = task.recurrence_day_of_month || new Date(task.created_at).getDate();
         const currentDayOfMonth = now.getDate();
 
-        return currentDayOfMonth === anchorDate;
+        // Check if it's the correct day of the month
+        if (currentDayOfMonth !== targetDay) return false;
+
+        // Check interval (months since creation)
+        const anchor = new Date(task.created_at);
+        const monthsDiff = (now.getFullYear() - anchor.getFullYear()) * 12 + (now.getMonth() - anchor.getMonth());
+
+        return monthsDiff % interval === 0;
     }
 }

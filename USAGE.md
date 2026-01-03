@@ -159,7 +159,10 @@ GTD Master allows managing habits and repetitive tasks without cluttering your s
 When editing a task, you can enable **Recurrence** and choose between:
 - **Daily**: Repeats every X days.
 - **Weekly**: Select specific days (e.g., Monday, Wednesday, Friday).
-- **Monthly**: Repeats once a month.
+- **Monthly**: Repeats every X months on a specific **day of the month**.
+
+### Granular Control
+You can also set a **Reset Time** (e.g., 07:00 AM). The task will not return to your active list until that specific time on the scheduled day, allowing you to focus on your morning routine only when it's actually time to start.
 
 ### Automatic vs. Manual Reset
 1. **Automatic**: Every midnight (00:00), the system checks your completed recurring tasks and marks them as "Incomplete" if their cycle requires it.
