@@ -3,14 +3,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo, useState } from "react";
 import { TaskItem } from "@/components/TaskItem";
-import { Calendar, Clock, Moon, ChevronDown, ChevronRight } from "lucide-react-native";
+import { Calendar, Clock, Moon, ChevronDown, ChevronRight, PlayCircle } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
 
 export default function ReviewScreen() {
     const { tasks, loadTasks, toggleTask, contexts, loadContexts } = useTasks();
     const { isDark } = useTheme();
     const { t } = useTranslation();
+    const router = useRouter();
     const [somedayExpanded, setSomedayExpanded] = useState(false);
 
     useEffect(() => {
@@ -63,7 +65,7 @@ export default function ReviewScreen() {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
         if (diffDays < 0) {
-            return { text: `${Math.abs(diffDays)} days overdue`, color: isDark ? "text-red-400" : "text-red-600" };
+            return { text: `${Math.abs(diffDays)} ${t("review.overdue")}`, color: isDark ? "text-red-400" : "text-red-600" };
         }
         if (diffDays <= 7) {
             return { text: d.toLocaleDateString(undefined, { weekday: 'long' }), color: isDark ? "text-blue-400" : "text-blue-600" };
@@ -81,10 +83,21 @@ export default function ReviewScreen() {
                     contentContainerStyle={{ paddingBottom: 20 }}
                     ListHeaderComponent={
                         <View className="px-4 pt-4 pb-2">
+                            {/* Weekly Review Button */}
+                            <TouchableOpacity 
+                                onPress={() => router.push("/review/weekly")}
+                                className="flex-row items-center justify-center bg-purple-600 p-4 rounded-xl mb-6 shadow-sm"
+                            >
+                                <PlayCircle size={20} color="white" />
+                                <Text className="text-white font-bold ml-2 text-lg">
+                                    {t("review.startWeeklyReview")}
+                                </Text>
+                            </TouchableOpacity>
+
                             <View className="flex-row items-center mb-3">
                                 <Calendar size={20} color={isDark ? "#94a3b8" : "#6b7280"} />
                                 <Text className={`ml-2 text-xl font-bold ${textColor}`}>
-                                    Agenda
+                                    {t("review.agenda")}
                                 </Text>
                             </View>
                         </View>
@@ -115,7 +128,7 @@ export default function ReviewScreen() {
                                 <View className="flex-row items-center mb-3">
                                     <Clock size={20} color={isDark ? "#22d3ee" : "#06b6d4"} />
                                     <Text className={`ml-2 text-xl font-bold ${textColor}`}>
-                                        En Espera
+                                        {t("review.waiting")}
                                     </Text>
                                     <View className={`ml-2 px-2 py-0.5 rounded-full ${isDark ? "bg-cyan-900/30" : "bg-cyan-100"}`}>
                                         <Text className={`text-xs font-bold ${isDark ? "text-cyan-400" : "text-cyan-700"}`}>
@@ -126,7 +139,7 @@ export default function ReviewScreen() {
                                 {waitingTasks.length === 0 ? (
                                     <View className={`${cardBg} p-4 rounded-lg border ${borderColor}`}>
                                         <Text className={`${secondaryText} text-center`}>
-                                            No tasks waiting for others
+                                            {t("review.waitingEmpty")}
                                         </Text>
                                     </View>
                                 ) : (
@@ -139,7 +152,7 @@ export default function ReviewScreen() {
                                             />
                                             {task.delegate_name && (
                                                 <Text className={`ml-12 mt-1 text-sm ${isDark ? "text-cyan-400" : "text-cyan-600"}`}>
-                                                    ⏳ Esperando a: {task.delegate_name}
+                                                    ⏳ {t("review.waitingFor", { name: task.delegate_name })}
                                                 </Text>
                                             )}
                                         </View>
@@ -160,7 +173,7 @@ export default function ReviewScreen() {
                                     )}
                                     <Moon size={20} color={isDark ? "#fbbf24" : "#f59e0b"} className="ml-1" />
                                     <Text className={`ml-2 text-xl font-bold ${textColor}`}>
-                                        Algún día / Tal vez
+                                        {t("review.someday")}
                                     </Text>
                                     <View className={`ml-2 px-2 py-0.5 rounded-full ${isDark ? "bg-amber-900/30" : "bg-amber-100"}`}>
                                         <Text className={`text-xs font-bold ${isDark ? "text-amber-400" : "text-amber-700"}`}>
@@ -173,7 +186,7 @@ export default function ReviewScreen() {
                                     somedayTasks.length === 0 ? (
                                         <View className={`${cardBg} p-4 rounded-lg border ${borderColor}`}>
                                             <Text className={`${secondaryText} text-center`}>
-                                                No someday/maybe tasks
+                                                {t("review.somedayEmpty")}
                                             </Text>
                                         </View>
                                     ) : (
@@ -196,11 +209,10 @@ export default function ReviewScreen() {
                                 <Calendar size={48} color={isDark ? "#6b7280" : "#9ca3af"} />
                             </View>
                             <Text className={`text-xl font-bold mb-2 ${textColor}`}>
-                                No Upcoming Reviews
+                                {t("review.agendaEmpty")}
                             </Text>
                             <Text className={`${secondaryText} text-center`}>
-                                Tasks with due dates will appear here.{"\n"}
-                                Add dates to your tasks to plan ahead.
+                                {t("review.agendaEmptyDesc")}
                             </Text>
                         </View>
                     }

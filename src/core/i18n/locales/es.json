@@ -7,7 +7,8 @@
         "edit": "Editar",
         "add": "Agregar",
         "complete": "Completar",
-        "done": "Hecho"
+        "done": "Hecho",
+        "continue": "Continuar"
     },
     "tabs": {
         "inbox": "Inbox",
@@ -84,6 +85,36 @@
         "system": "Sistema",
         "english": "Inglés",
         "spanish": "Español"
+    },
+    "review": {
+        "title": "Revisar",
+        "startWeeklyReview": "Iniciar Revisión Semanal",
+        "agenda": "Agenda",
+        "waiting": "En Espera",
+        "someday": "Algún día / Tal vez",
+        "waitingEmpty": "No hay tareas esperando por otros",
+        "somedayEmpty": "No hay tareas en algún día/tal vez",
+        "agendaEmpty": "No hay revisiones próximas",
+        "agendaEmptyDesc": "Las tareas con fecha de vencimiento aparecerán aquí.\nAñade fechas para planificar con antelación.",
+        "overdue": "atrasado",
+        "waitingFor": "Esperando a: {{name}}"
+    },
+    "weeklyReview": {
+        "title": "Revisión Semanal",
+        "stepBrainDump": "Vaciado de Mente",
+        "stepBrainDumpDesc": "Saca todo de tu cabeza. Captura cualquier idea, proyecto o tarea nueva.",
+        "stepCalendar": "Revisión de Calendario",
+        "stepCalendarDesc": "Revisa los elementos completados la semana pasada y los compromisos de la próxima.",
+        "stepWaiting": "En Espera",
+        "stepWaitingDesc": "Revisa tus delegaciones pendientes. ¿Necesitas dar seguimiento a algo?",
+        "stepProjects": "Revisión de Proyectos",
+        "stepProjectsDesc": "Asegúrate de que cada proyecto tenga al menos una 'Acción Siguiente'.",
+        "stepSomeday": "Algún día/Tal vez",
+        "stepSomedayDesc": "Revisa tus ideas en pausa. ¿Hay algo que quieras activar ahora?",
+        "noNextAction": "¡Sin Acción Siguiente definida!",
+        "finish": "Finalizar Revisión",
+        "congrats": "¡Sistema Confiable!",
+        "congratsDesc": "Has completado con éxito tu revisión semanal. Tu sistema está al día y despejado."
     },
     "projectDetail": {
         "actions": "Acciones",

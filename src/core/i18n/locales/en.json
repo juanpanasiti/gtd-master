@@ -7,7 +7,8 @@
         "edit": "Edit",
         "add": "Add",
         "complete": "Complete",
-        "done": "Done"
+        "done": "Done",
+        "continue": "Continue"
     },
     "tabs": {
         "inbox": "Inbox",
@@ -84,6 +85,36 @@
         "system": "System",
         "english": "English",
         "spanish": "Spanish"
+    },
+    "review": {
+        "title": "Review",
+        "startWeeklyReview": "Start Weekly Review",
+        "agenda": "Agenda",
+        "waiting": "Waiting For",
+        "someday": "Someday / Maybe",
+        "waitingEmpty": "No tasks waiting for others",
+        "somedayEmpty": "No someday/maybe tasks",
+        "agendaEmpty": "No Upcoming Reviews",
+        "agendaEmptyDesc": "Tasks with due dates will appear here.\nAdd dates to your tasks to plan ahead.",
+        "overdue": "overdue",
+        "waitingFor": "Waiting for: {{name}}"
+    },
+    "weeklyReview": {
+        "title": "Weekly Review",
+        "stepBrainDump": "Mind Sweep",
+        "stepBrainDumpDesc": "Get everything out of your head. Capture any new ideas, projects, or tasks.",
+        "stepCalendar": "Calendar Review",
+        "stepCalendarDesc": "Review last week's completed items and next week's upcoming commitments.",
+        "stepWaiting": "Waiting For",
+        "stepWaitingDesc": "Review your pending delegations. Do you need to follow up on anything?",
+        "stepProjects": "Project Review",
+        "stepProjectsDesc": "Ensure every project has at least one 'Next Action'. Update status as needed.",
+        "stepSomeday": "Someday/Maybe",
+        "stepSomedayDesc": "Review your backburner ideas. Is there anything you want to start now?",
+        "noNextAction": "No Next Action defined!",
+        "finish": "Finish Review",
+        "congrats": "System Trusted!",
+        "congratsDesc": "You've successfully completed your weekly review. Your system is current and clear."
     },
     "projectDetail": {
         "actions": "Actions",
