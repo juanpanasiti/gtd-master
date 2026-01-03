@@ -116,6 +116,12 @@
         "congrats": "System Trusted!",
         "congratsDesc": "You've successfully completed your weekly review. Your system is current and clear."
     },
+    "notifications": {
+        "dailyTitle": "Daily Review",
+        "dailyBody": "Ready to clear your mind and focus on today's tasks?",
+        "weeklyTitle": "Weekly Review Time",
+        "weeklyBody": "Your system needs an update. Review your projects and commitments."
+    },
     "projectDetail": {
         "actions": "Actions",
         "reference": "Reference",

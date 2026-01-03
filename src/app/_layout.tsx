@@ -11,14 +11,28 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 // Ignore SafeAreaView deprecation warning from external libraries
 LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
 
+import { requestPermissions, scheduleDailyReviewReminder, scheduleWeeklyReviewReminder } from "@/core/notifications/NotificationService";
+
 function AppContent() {
   const [isReady, setIsReady] = useState(false);
   const { isDark } = useTheme();
 
   useEffect(() => {
-    runMigrations()
-      .then(() => setIsReady(true))
-      .catch((e) => console.error(e));
+    async function init() {
+      try {
+        await runMigrations();
+        const hasPermission = await requestPermissions();
+        if (hasPermission) {
+          await scheduleDailyReviewReminder();
+          await scheduleWeeklyReviewReminder();
+        }
+      } catch (e) {
+        console.error("Initialization error:", e);
+      } finally {
+        setIsReady(true);
+      }
+    }
+    init();
   }, []);
 
   if (!isReady) {
