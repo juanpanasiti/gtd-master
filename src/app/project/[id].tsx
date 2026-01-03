@@ -16,10 +16,11 @@ export default function ProjectDetailScreen() {
   const { isDark } = useTheme();
 
   const { tasks, loadTasks, toggleTask, contexts, loadContexts, addTask } = useTasks();
-  const { projects, loadProjects, updateProject, deleteProject } = useProjects();
+  const { projects, loadProjects, updateProject, deleteProject, areas, loadAreas } = useProjects();
   
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
+  const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [showCompleted, setShowCompleted] = useState(false);
 
@@ -29,6 +30,7 @@ export default function ProjectDetailScreen() {
     loadProjects();
     loadTasks();
     loadContexts();
+    loadAreas();
   }, []);
 
   const project = useMemo(
@@ -39,12 +41,13 @@ export default function ProjectDetailScreen() {
   useEffect(() => {
     if (project) {
         setEditTitle(project.title);
+        setSelectedAreaId(project.area_id);
     }
   }, [project]);
 
   const handleUpdate = async () => {
     if (!editTitle.trim()) return;
-    await updateProject(projectId, { title: editTitle });
+    await updateProject(projectId, { title: editTitle, area_id: selectedAreaId });
     setIsEditing(false);
   };
 
@@ -124,25 +127,62 @@ export default function ProjectDetailScreen() {
         <Folder size={24} color={isDark ? "#9ca3af" : "#4b5563"} className="ml-2" />
         
         {isEditing ? (
-            <View className="flex-1 flex-row items-center ml-3">
-                <TextInput
-                    value={editTitle}
-                    onChangeText={setEditTitle}
-                    className={`flex-1 text-xl font-bold ${textColor} border-b ${borderColor} mr-2`}
-                    autoFocus
-                />
-                <TouchableOpacity onPress={handleUpdate} className="p-2">
-                    <Check size={20} color={isDark ? "#4ade80" : "#16a34a"} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setIsEditing(false)} className="p-2">
-                    <XIcon size={20} color={isDark ? "#f87171" : "#dc2626"} />
-                </TouchableOpacity>
+            <View className="flex-1 ml-3">
+                <View className="flex-row items-center">
+                    <TextInput
+                        value={editTitle}
+                        onChangeText={setEditTitle}
+                        className={`flex-1 text-xl font-bold ${textColor} border-b ${borderColor} mr-2`}
+                        autoFocus
+                    />
+                    <TouchableOpacity onPress={handleUpdate} className="p-2">
+                        <Check size={20} color={isDark ? "#4ade80" : "#16a34a"} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setIsEditing(false)} className="p-2">
+                        <XIcon size={20} color={isDark ? "#f87171" : "#dc2626"} />
+                    </TouchableOpacity>
+                </View>
+                <View className="flex-row items-center mt-2 flex-wrap gap-2">
+                    <TouchableOpacity 
+                        onPress={() => setSelectedAreaId(null)}
+                        className={`px-3 py-1 rounded-full border ${!selectedAreaId ? "bg-slate-500 border-slate-500" : borderColor}`}
+                    >
+                        <Text className={`text-xs font-bold ${!selectedAreaId ? "text-white" : secondaryText}`}>
+                            No Area
+                        </Text>
+                    </TouchableOpacity>
+                    {areas.map(area => (
+                        <TouchableOpacity 
+                            key={area.id}
+                            onPress={() => setSelectedAreaId(area.id)}
+                            className={`px-3 py-1 rounded-full border ${selectedAreaId === area.id ? "" : borderColor}`}
+                            style={selectedAreaId === area.id ? { backgroundColor: area.color, borderColor: area.color } : {}}
+                        >
+                            <Text className={`text-xs font-bold ${selectedAreaId === area.id ? "text-white" : secondaryText}`}>
+                                {area.title}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </View>
         ) : (
             <>
-                <Text className={`text-xl font-bold ml-3 flex-1 ${textColor}`} numberOfLines={1}>
-                    {project?.title || "Project"}
-                </Text>
+                <View className="flex-1 ml-3">
+                    <Text className={`text-xl font-bold ${textColor}`} numberOfLines={1}>
+                        {project?.title || "Project"}
+                    </Text>
+                    {project?.area_id && (
+                        <View className="flex-row items-center mt-0.5">
+                            <View 
+                                className="w-2 h-2 rounded-full mr-1.5" 
+                                style={{ backgroundColor: areas.find(a => a.id === project.area_id)?.color || "#ccc" }} 
+                            />
+                            <Text className={`text-xs font-medium ${secondaryText}`}>
+                                {areas.find(a => a.id === project.area_id)?.title}
+                            </Text>
+                        </View>
+                    )}
+                </View>
                 <TouchableOpacity onPress={() => setIsEditing(true)} className="p-2">
                     <Edit2 size={20} color={isDark ? "#9ca3af" : "#4b5563"} />
                 </TouchableOpacity>

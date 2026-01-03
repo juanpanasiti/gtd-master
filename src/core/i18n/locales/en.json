@@ -35,7 +35,13 @@
         "placeholder": "New project name...",
         "addProject": "Add Project",
         "manageContexts": "Manage Contexts",
-        "emptyList": "No active projects."
+        "manageAreas": "Manage Areas",
+        "emptyList": "No active projects.",
+        "noArea": "No Area"
+    },
+    "areas": {
+        "title": "Areas of Responsibility",
+        "placeholder": "Work, Personal, Health..."
     },
     "contexts": {
         "title": "Contexts",

@@ -1,26 +1,40 @@
 import { create } from "zustand";
 import { db } from "@/db/client";
-import { projects } from "@/db/schema";
+import { areas, projects } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
-interface Project {
+export interface Area {
+    id: number;
+    title: string;
+    color: string;
+}
+
+export interface Project {
     id: number;
     title: string;
     status: "active" | "completed" | "archived";
+    area_id: number | null;
     created_at: Date;
 }
 
 interface ProjectsState {
     projects: Project[];
+    areas: Area[];
     loadProjects: () => Promise<void>;
-    addProject: (title: string) => Promise<number | undefined>;
+    addProject: (title: string, area_id?: number | null) => Promise<number | undefined>;
     updateProject: (id: number, updates: Partial<Project>) => Promise<void>;
     deleteProject: (id: number) => Promise<void>;
     updateProjectStatus: (id: number, status: Project["status"]) => Promise<void>;
+
+    // Area Actions
+    loadAreas: () => Promise<void>;
+    addArea: (title: string, color: string) => Promise<void>;
+    deleteArea: (id: number) => Promise<void>;
 }
 
 export const useProjects = create<ProjectsState>((set, get) => ({
     projects: [],
+    areas: [],
     loadProjects: async () => {
         try {
             const allProjects = await db.select().from(projects).orderBy(desc(projects.created_at));
@@ -30,11 +44,12 @@ export const useProjects = create<ProjectsState>((set, get) => ({
             console.error("Failed to load projects", error);
         }
     },
-    addProject: async (title: string) => {
+    addProject: async (title, area_id = null) => {
         try {
             if (!title.trim()) return;
             const result = await db.insert(projects).values({
                 title,
+                area_id,
                 created_at: new Date()
             }).returning({ insertedId: projects.id });
 
@@ -73,6 +88,32 @@ export const useProjects = create<ProjectsState>((set, get) => ({
             });
         } catch (error) {
             console.error("Failed to update project", error);
+        }
+    },
+
+    loadAreas: async () => {
+        try {
+            const allAreas = await db.select().from(areas).orderBy(desc(areas.id));
+            // @ts-ignore
+            set({ areas: allAreas });
+        } catch (error) {
+            console.error("Failed to load areas", error);
+        }
+    },
+    addArea: async (title, color) => {
+        try {
+            await db.insert(areas).values({ title, color });
+            await get().loadAreas();
+        } catch (error) {
+            console.error("Failed to add area", error);
+        }
+    },
+    deleteArea: async (id) => {
+        try {
+            await db.delete(areas).where(eq(areas.id, id));
+            await get().loadAreas();
+        } catch (error) {
+            console.error("Failed to delete area", error);
         }
     }
 }));

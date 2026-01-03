@@ -14,10 +14,17 @@ export const tasks = sqliteTable("tasks", {
     created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
 });
 
+export const areas = sqliteTable("areas", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    color: text("color").notNull(),
+});
+
 export const projects = sqliteTable("projects", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull(),
     status: text("status", { enum: ["active", "completed", "archived"] }).notNull().default("active"),
+    area_id: integer("area_id"),
     created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
 });
 

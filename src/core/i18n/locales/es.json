@@ -35,7 +35,13 @@
         "placeholder": "Nombre del nuevo proyecto...",
         "addProject": "Agregar Proyecto",
         "manageContexts": "Administrar Contextos",
-        "emptyList": "No hay proyectos activos."
+        "manageAreas": "Gestionar Áreas",
+        "emptyList": "No hay proyectos activos.",
+        "noArea": "Sin Área"
+    },
+    "areas": {
+        "title": "Áreas de Responsabilidad",
+        "placeholder": "Trabajo, Personal, Salud..."
     },
     "contexts": {
         "title": "Contextos",
