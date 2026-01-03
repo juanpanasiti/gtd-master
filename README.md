@@ -13,6 +13,8 @@
 
 **GTD Master** es una solución profesional de productividad personal basada rigurosamente en la metodología **Getting Things Done (GTD)** de David Allen. Diseñada para transformar el caos en calma, GTD Master combina una interfaz premium con la potencia de una base de datos local robusta (**Offline-First**).
 
+> 📘 **¿Eres nuevo en GTD?** Consulta nuestra [Guía de Uso Completa (USAGE.md)](./USAGE.md) para aprender la metodología y cómo aplicarla en esta app.
+
 ### El Flujo de Trabajo GTD Completo:
 
 | Pilar | Funcionalidad | Descripción |
