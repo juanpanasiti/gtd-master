@@ -20,6 +20,15 @@
             "5": "Thursday",
             "6": "Friday",
             "7": "Saturday"
+        },
+        "relative": {
+            "oneDay": "1 day",
+            "days": "{{count}} days",
+            "oneHour": "1 hour",
+            "hours": "{{count}} hours",
+            "oneMinute": "1 minute",
+            "minutes": "{{count}} minutes",
+            "lessThanMinute": "less than a minute"
         }
     },
     "tabs": {

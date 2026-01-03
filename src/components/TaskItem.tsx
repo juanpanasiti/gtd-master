@@ -4,6 +4,7 @@ import { useTheme } from "@/core/theme/ThemeProvider";
 import { RefreshCcw, Calendar } from "lucide-react-native";
 import { RecurrenceService } from "@/core/tasks/RecurrenceService";
 import { useTranslation } from "react-i18next";
+import { getRelativeTimeUntil } from "@/core/utils/dateUtils";
 
 interface TaskItemProps {
     task: {
@@ -95,16 +96,17 @@ export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
                             </View>
                         </View>
                     )}
-                    {task.is_completed && task.is_recurring && (
                         <View className="flex-row items-center mt-1">
                             <Calendar size={12} color={isDark ? "#64748b" : "#94a3b8"} />
                             <Text className={`text-[10px] ml-1 font-medium ${isDark ? "text-slate-500" : "text-gray-400"}`}>
-                                {t("task.resetsOn", { 
-                                    date: RecurrenceService.getNextResetDate(task)?.toLocaleDateString() || "" 
-                                })}
+                                {(() => {
+                                    const nextReset = RecurrenceService.getNextResetDate(task);
+                                    if (!nextReset) return "";
+                                    const relativeTime = getRelativeTimeUntil(nextReset, t);
+                                    return `${t("task.resetsOn", { date: nextReset.toLocaleDateString() })} (${relativeTime})`;
+                                })()}
                             </Text>
                         </View>
-                    )}
                 </View>
             </View>
         </TouchableOpacity>
