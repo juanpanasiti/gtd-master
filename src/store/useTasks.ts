@@ -183,9 +183,11 @@ export const useTasks = create<TasksState>((set, get) => ({
         for (const task of allTasks) {
             if (task.is_recurring && task.is_completed) {
                 if (RecurrenceService.shouldResetTask(task, now)) {
+                    const shouldClearDueDate = task.due_date && new Date(task.due_date) < now;
                     await updateTask(task.id, {
                         is_completed: false,
-                        last_reset_at: now
+                        last_reset_at: now,
+                        due_date: shouldClearDueDate ? null : task.due_date
                     });
                 }
             }
@@ -213,15 +215,16 @@ export const useTasks = create<TasksState>((set, get) => ({
             console.log(`[DEBUG] Resetting task IDs: ${ids.join(", ")}`);
 
             // Use Promise.all with individual ID updates to be 100% precise
-            await Promise.all(tasksToReset.map(task =>
-                db.update(tasks)
+            await Promise.all(tasksToReset.map(task => {
+                const shouldClearDueDate = task.due_date && new Date(task.due_date) < now;
+                return db.update(tasks)
                     .set({
                         is_completed: false,
-                        last_reset_at: now
+                        last_reset_at: now,
+                        due_date: shouldClearDueDate ? null : task.due_date
                     })
-                    .where(eq(tasks.id, task.id))
-            )
-            );
+                    .where(eq(tasks.id, task.id));
+            }));
 
             console.log("[DEBUG] DB Update complete, reloading tasks... Rose scheduling notifications...");
 
