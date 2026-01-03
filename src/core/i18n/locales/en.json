@@ -9,6 +9,9 @@
         "complete": "Complete",
         "done": "Done",
         "continue": "Continue",
+        "days_unit": "days",
+        "weeks_unit": "weeks",
+        "months_unit": "months",
         "days": {
             "1": "Sunday",
             "2": "Monday",
@@ -28,65 +31,67 @@
     "inbox": {
         "title": "Inbox",
         "placeholder": "I need to...",
-        "captureTask": "Capture Task",
-        "emptyTitle": "Tray Empty",
-        "emptyDescription": "You have processed all your items.\nCapture more things or check Engage.",
-        "twoMinuteRule": "2-Minute Rule",
-        "completeTaskConfirm": "Complete \"{{taskTitle}}\"?",
-        "twoMinuteRuleApplied": "2-minute rule applied",
-        "processItems": "Process Items ({{count}})"
+        "quickCapture": "Quick Capture",
+        "processInbox": "Process Inbox",
+        "empty": "Your Inbox is clear!",
+        "emptyDesc": "Everything's in its place. Capture new ideas anytime.",
+        "startProcessing": "Start Processing"
     },
     "wizard": {
-        "title": "Clarify & Organize",
-        "questionActionable": "Is this actionable?",
-        "yes": "Yes",
-        "no": "No",
-        "back": "Back",
-        "skip": "Skip",
-        "trash": "Trash",
-        "someday": "Someday/Maybe",
+        "processInbox": "Process Inbox",
+        "inboxEmpty": "Inbox Empty!",
+        "inboxEmptyDesc": "Great job! You've clarified all your incoming items.",
+        "stepActionable": "Is it actionable?",
+        "actionableDesc": "Does this require you to actually do something?",
+        "stepNonActionable": "What is it?",
+        "stepMultiStep": "Multi-step?",
+        "multiStepDesc": "Does this take more than one action to complete?",
+        "stepTwoMinutes": "< 2 Minutes?",
+        "twoMinutesDesc": "If it takes less than 2 minutes, the rule is: Do it now!",
+        "stepDelegate": "Delegate or Defer?",
+        "stepOrganize": "Organize",
         "reference": "Reference",
-        "questionMultiStep": "Does it take more than one step?",
-        "oneStep": "One Step",
+        "referenceDesc": "Useful information to keep for a project.",
+        "someday": "Someday/Maybe",
+        "somedayDesc": "Something you might want to do later, but not now.",
+        "trash": "Trash",
+        "trashDesc": "No longer needed. Throw it away!",
+        "doItNow": "Do it Now!",
+        "doItNowDesc": "Complete this task right away.",
         "createProject": "Create Project",
-        "questionTwoMinutes": "Will it take < 2 minutes?",
-        "doItNow": "Do it Now",
-        "delegateOrDefer": "Delegate or Defer",
-        "delegate": "Delegate",
-        "defer": "Defer / Organize",
+        "createProjectDesc": "This will become a new project.",
         "delegateTo": "Delegate to...",
-        "organize": "Organize",
+        "delegateDesc": "Someone else should do this.",
+        "defer": "Defer / Organize",
+        "deferDesc": "Put it on your calendar or in a context bucket.",
         "selectProject": "Select Project",
         "selectContext": "Select Context",
-        "finish": "Complete Processing",
-        "inboxEmpty": "Inbox Zero reached!"
-    },
-    "engage": {
-        "title": "Engage",
-        "emptyTitle": "Ready to Engage?",
-        "emptyDescription": "No contextual next actions found.\nCheck your Inbox to categorize tasks."
+        "optional": "(Optional)"
     },
     "projects": {
         "title": "Projects",
-        "placeholder": "New project name...",
-        "addProject": "Add Project",
-        "manageContexts": "Manage Contexts",
+        "placeholder": "New Project...",
+        "active": "Active",
+        "archived": "Archived",
+        "noProjects": "No active projects",
+        "addFirst": "Add your first project to get started",
+        "tasksCount": "{{count}} tasks",
         "manageAreas": "Manage Areas",
-        "emptyList": "No active projects.",
-        "noArea": "No Area"
+        "areas": "Areas of Focus",
+        "addArea": "Add Area",
+        "reference": "Reference material"
     },
-    "areas": {
-        "title": "Areas of Responsibility",
-        "placeholder": "Work, Personal, Health..."
-    },
-    "contexts": {
-        "title": "Contexts",
-        "placeholder": "New context name..."
+    "engage": {
+        "title": "Engage",
+        "emptyTitle": "Ready for Action!",
+        "emptyDesc": "No next actions in your current view. Review your projects or capture new ideas.",
+        "filterByContext": "Filter by Context",
+        "allContexts": "All Contexts"
     },
     "settings": {
         "title": "Settings",
         "notifications": "Notifications",
-        "dailyReminder": "Daily Review",
+        "dailyReminder": "Daily Briefing",
         "dailyReminderDesc": "Reminder of due and starting tasks",
         "weeklyReminder": "Weekly Review",
         "weeklyReminderDesc": "Guide for your weekly review habit",
@@ -100,7 +105,9 @@
         "dark": "Dark",
         "system": "System",
         "english": "English",
-        "spanish": "Spanish"
+        "spanish": "Spanish",
+        "feedback": "Feedback & Support",
+        "reportBug": "Report a Bug or Suggestion"
     },
     "review": {
         "title": "Review",
@@ -179,6 +186,17 @@
         "noReference": "No Reference Material",
         "noReferenceDescription": "Keep documents and notes related to this project here.",
         "deleteProject": "Delete Project",
-        "scheduled": "Scheduled (Future)"
+        "scheduled": "Scheduled (Future)",
+        "completed": "Completed",
+        "resetSession": "Reset Session",
+        "resetSessionConfirm": "This will mark all recurring tasks in this project as incomplete. Continue?"
+    },
+    "task": {
+        "recurrence": "Recurrence",
+        "recurrence_daily": "Daily",
+        "recurrence_weekly": "Weekly",
+        "recurrence_monthly": "Monthly",
+        "every": "Every",
+        "onDays": "On days:"
     }
 }

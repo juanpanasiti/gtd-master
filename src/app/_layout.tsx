@@ -18,7 +18,7 @@ import { useSettings } from "@/store/useSettings";
 function AppContent() {
   const [isReady, setIsReady] = useState(false);
   const { isDark } = useTheme();
-  const { loadTasks, getTodayBriefing } = useTasks();
+  const { loadTasks, getTodayBriefing, processRecurrenceResets } = useTasks();
   const { 
     dailyReminderEnabled, dailyReminderTime, 
     weeklyReminderEnabled, weeklyReminderDay, weeklyReminderTime 
@@ -30,6 +30,7 @@ function AppContent() {
         if (!isReady) {
           await runMigrations();
           await loadTasks();
+          await processRecurrenceResets();
         }
         
         const hasPermission = await requestPermissions();
@@ -56,7 +57,8 @@ function AppContent() {
     init();
   }, [
     dailyReminderEnabled, dailyReminderTime, 
-    weeklyReminderEnabled, weeklyReminderDay, weeklyReminderTime
+    weeklyReminderEnabled, weeklyReminderDay, weeklyReminderTime,
+    processRecurrenceResets
   ]);
 
   if (!isReady) {

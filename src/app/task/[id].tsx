@@ -5,7 +5,8 @@ import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { ChevronLeft, Calendar as CalendarIcon, X, FolderPlus } from "lucide-react-native";
+import { ChevronLeft, Calendar as CalendarIcon, X, FolderPlus, RefreshCcw } from "lucide-react-native";
+import { Switch } from "react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -31,6 +32,10 @@ export default function TaskDetailScreen() {
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
     const [status, setStatus] = useState<"active" | "someday" | "waiting">("active");
     const [delegateName, setDelegateName] = useState("");
+    const [isRecurring, setIsRecurring] = useState(false);
+    const [recurrenceType, setRecurrenceType] = useState<"daily" | "weekly" | "monthly">("daily");
+    const [recurrenceInterval, setRecurrenceInterval] = useState(1);
+    const [recurrenceDays, setRecurrenceDays] = useState<string>("");
 
     useEffect(() => {
         loadProjects();
@@ -45,6 +50,10 @@ export default function TaskDetailScreen() {
             setContextId(task.context_id);
             setStatus(task.status || "active");
             setDelegateName(task.delegate_name || "");
+            setIsRecurring(task.is_recurring || false);
+            setRecurrenceType(task.recurrence_type || "daily");
+            setRecurrenceInterval(task.recurrence_interval || 1);
+            setRecurrenceDays(task.recurrence_days || "");
             
             if (task.due_date) {
                 const d = new Date(task.due_date);
@@ -96,7 +105,11 @@ export default function TaskDetailScreen() {
                 delegate_name: status === "waiting" ? delegateName : null,
                 context_id: contextId,
                 due_date: dueDate,
-                start_date: startDate
+                start_date: startDate,
+                is_recurring: isRecurring,
+                recurrence_type: isRecurring ? recurrenceType : null,
+                recurrence_interval: isRecurring ? recurrenceInterval : 1,
+                recurrence_days: isRecurring && recurrenceType === "weekly" ? recurrenceDays : null
             });
             router.back();
         }
@@ -407,6 +420,96 @@ export default function TaskDetailScreen() {
                                 </Text>
                             </TouchableOpacity>
                         </View>
+                    </View>
+
+                    {/* Recurrence */}
+                    <View className="mb-6">
+                        <View className="flex-row items-center justify-between mb-2">
+                            <Text className={`text-sm font-bold ${secondaryText} uppercase`}>{t("task.recurrence")}</Text>
+                            <Switch 
+                                value={isRecurring} 
+                                onValueChange={setIsRecurring}
+                                trackColor={{ false: "#767577", true: "#3b82f6" }}
+                            />
+                        </View>
+
+                        {isRecurring && (
+                            <View className={`${cardBg} p-4 rounded-xl border ${borderColor} gap-4`}>
+                                <View className="flex-row items-center gap-3">
+                                    <RefreshCcw size={20} color={isDark ? "#60a5fa" : "#2563eb"} />
+                                    <View className="flex-1 flex-row gap-2">
+                                        {(["daily", "weekly", "monthly"] as const).map(type => (
+                                            <TouchableOpacity 
+                                                key={type}
+                                                onPress={() => setRecurrenceType(type)}
+                                                className={`px-3 py-1 rounded-full border ${
+                                                    recurrenceType === type 
+                                                    ? "bg-blue-500 border-blue-500" 
+                                                    : `${chipBg} ${borderColor}`
+                                                }`}
+                                            >
+                                                <Text className={`text-xs ${recurrenceType === type ? "text-white" : chipText}`}>
+                                                    {t(`task.recurrence_${type}`)}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                </View>
+
+                                <View className="flex-row items-center justify-between">
+                                    <Text className={textColor}>{t("task.every")}</Text>
+                                    <View className="flex-row items-center gap-2">
+                                        <TouchableOpacity 
+                                            onPress={() => setRecurrenceInterval(Math.max(1, recurrenceInterval - 1))}
+                                            className={`${chipBg} w-8 h-8 items-center justify-center rounded-lg border ${borderColor}`}
+                                        >
+                                            <Text className={textColor}>-</Text>
+                                        </TouchableOpacity>
+                                        <Text className={`text-lg font-bold ${textColor} w-8 text-center`}>{recurrenceInterval}</Text>
+                                        <TouchableOpacity 
+                                            onPress={() => setRecurrenceInterval(recurrenceInterval + 1)}
+                                            className={`${chipBg} w-8 h-8 items-center justify-center rounded-lg border ${borderColor}`}
+                                        >
+                                            <Text className={textColor}>+</Text>
+                                        </TouchableOpacity>
+                                        <Text className={secondaryText}>
+                                            {recurrenceType === "daily" ? t("common.days_unit") : recurrenceType === "weekly" ? t("common.weeks_unit") : t("common.months_unit")}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                {recurrenceType === "weekly" && (
+                                    <View>
+                                        <Text className={`text-xs ${secondaryText} mb-2`}>{t("task.onDays")}</Text>
+                                        <View className="flex-row justify-between">
+                                            {[0, 1, 2, 3, 4, 5, 6].map(day => {
+                                                const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
+                                                const days = recurrenceDays.split(",").filter(d => d !== "");
+                                                const isSelected = days.includes(day.toString());
+                                                return (
+                                                    <TouchableOpacity 
+                                                        key={day}
+                                                        onPress={() => {
+                                                            let newDays = isSelected 
+                                                                ? days.filter(d => d !== day.toString())
+                                                                : [...days, day.toString()];
+                                                            setRecurrenceDays(newDays.join(","));
+                                                        }}
+                                                        className={`w-8 h-8 rounded-full items-center justify-center ${
+                                                            isSelected ? "bg-blue-500" : chipBg
+                                                        }`}
+                                                    >
+                                                        <Text className={`text-xs font-bold ${isSelected ? "text-white" : textColor}`}>
+                                                            {dayNames[day]}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                );
+                                            })}
+                                        </View>
+                                    </View>
+                                )}
+                            </View>
+                        )}
                     </View>
 
                     {/* Waiting For (only visible when status is waiting) */}

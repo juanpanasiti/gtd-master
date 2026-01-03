@@ -11,6 +11,11 @@ export const tasks = sqliteTable("tasks", {
     delegate_name: text("delegate_name"),
     description: text("description"),
     start_date: integer("start_date", { mode: "timestamp" }),
+    is_recurring: integer("is_recurring", { mode: "boolean" }).notNull().default(false),
+    recurrence_type: text("recurrence_type"), // daily, weekly, monthly
+    recurrence_interval: integer("recurrence_interval").default(1),
+    recurrence_days: text("recurrence_days"), // comma-separated days for weekly
+    last_reset_at: integer("last_reset_at", { mode: "timestamp" }),
     created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
 });
 

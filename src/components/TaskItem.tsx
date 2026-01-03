@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/core/theme/ThemeProvider";
+import { RefreshCcw } from "lucide-react-native";
 
 interface TaskItemProps {
     task: {
@@ -8,6 +9,7 @@ interface TaskItemProps {
         title: string;
         is_completed: boolean;
         context_id?: number | null;
+        is_recurring?: boolean;
     };
     onToggle: (id: number, currentStatus: boolean) => void;
     context?: { id: number; title: string; color: string | null } | undefined;
@@ -45,9 +47,14 @@ export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
                     </View>
                 </TouchableOpacity>
                 <View className="flex-1">
-                    <Text className={`text-lg ${textColor} ${task.is_completed ? "line-through" : ""}`}>
-                        {task.title}
-                    </Text>
+                    <View className="flex-row items-center">
+                        <Text className={`text-lg ${textColor} ${task.is_completed ? "line-through" : ""} flex-1`}>
+                            {task.title}
+                        </Text>
+                        {task.is_recurring && (
+                            <RefreshCcw size={14} color={isDark ? "#94a3b8" : "#64748b"} className="ml-2" />
+                        )}
+                    </View>
                     {context && (
                         <View className="flex-row mt-1">
                             <View 

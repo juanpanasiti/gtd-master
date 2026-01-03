@@ -2,7 +2,7 @@ import { View, Text, FlatList, TouchableOpacity, TextInput, Alert } from "react-
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Folder, Edit2, Check, X as XIcon, Trash2, Plus, ChevronDown, ChevronUp } from "lucide-react-native";
+import { ArrowLeft, Folder, Edit2, Check, X as XIcon, Trash2, Plus, ChevronDown, ChevronUp, RefreshCcw } from "lucide-react-native";
 import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { TaskItem } from "@/components/TaskItem";
@@ -15,7 +15,7 @@ export default function ProjectDetailScreen() {
   const { t } = useTranslation();
   const { isDark } = useTheme();
 
-  const { tasks, loadTasks, toggleTask, contexts, loadContexts, addTask } = useTasks();
+  const { tasks, loadTasks, toggleTask, contexts, loadContexts, addTask, resetProjectRecurringTasks } = useTasks();
   const { projects, loadProjects, updateProject, deleteProject, areas, loadAreas, references, loadReferences, addReference, deleteReference } = useProjects();
   
   const projectId = parseInt(id || "0", 10);
@@ -118,6 +118,11 @@ export default function ProjectDetailScreen() {
 
   const completedTasks = useMemo(
     () => tasks.filter((t) => t.project_id === projectId && t.is_completed),
+    [tasks, projectId]
+  );
+  
+  const hasRecurringTasks = useMemo(
+    () => tasks.some(t => t.project_id === projectId && t.is_recurring),
     [tasks, projectId]
   );
 
@@ -239,6 +244,44 @@ export default function ProjectDetailScreen() {
                     </TouchableOpacity>
                 )}
             </View>
+
+            {activeTab === "actions" && hasRecurringTasks && (
+                <TouchableOpacity 
+                    onPress={() => {
+                        Alert.alert(
+                            t("projectDetail.resetSession"),
+                            t("projectDetail.resetSessionConfirm"),
+                            [
+                                { text: t("common.cancel"), style: "cancel" },
+                                { 
+                                    text: t("common.continue"), 
+                                    onPress: async () => {
+                                        await resetProjectRecurringTasks(projectId);
+                                    }
+                                }
+                            ]
+                        );
+                    }}
+                    style={{
+                        position: 'absolute',
+                        right: 20,
+                        bottom: 100, // Above the footer
+                        width: 56,
+                        height: 56,
+                        borderRadius: 28,
+                        backgroundColor: '#3b82f6',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        elevation: 5,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                    }}
+                >
+                    <RefreshCcw size={24} color="white" />
+                </TouchableOpacity>
+            )}
 
             <FlatList
                 data={displayTasks}

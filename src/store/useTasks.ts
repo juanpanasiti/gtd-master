@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { db } from "@/db/client";
 import { tasks, contexts } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import * as Haptics from "expo-haptics";
 
-interface Task {
+export interface Task {
     id: number;
     title: string;
     is_completed: boolean;
@@ -15,6 +15,11 @@ interface Task {
     delegate_name: string | null;
     description: string | null;
     start_date: Date | null;
+    is_recurring: boolean;
+    recurrence_type: "daily" | "weekly" | "monthly" | null;
+    recurrence_interval: number;
+    recurrence_days: string | null;
+    last_reset_at: Date | null;
     created_at: Date;
 }
 
@@ -38,6 +43,8 @@ interface TasksState {
     updateTask: (id: number, updates: Partial<Task>) => Promise<void>;
     deleteTask: (id: number) => Promise<void>;
     getTodayBriefing: () => { dueCount: number, startCount: number };
+    processRecurrenceResets: () => Promise<void>;
+    resetProjectRecurringTasks: (projectId: number) => Promise<void>;
 }
 
 export const useTasks = create<TasksState>((set, get) => ({
@@ -146,5 +153,52 @@ export const useTasks = create<TasksState>((set, get) => ({
         ).length;
 
         return { dueCount, startCount };
+    },
+    processRecurrenceResets: async () => {
+        const { tasks: allTasks, updateTask } = get();
+        const now = new Date();
+
+        // Dynamic import to avoid circular dependencies if any
+        const { RecurrenceService } = await import("@/core/tasks/RecurrenceService");
+
+        for (const task of allTasks) {
+            if (task.is_recurring && task.is_completed) {
+                if (RecurrenceService.shouldResetTask(task, now)) {
+                    await updateTask(task.id, {
+                        is_completed: false,
+                        last_reset_at: now
+                    });
+                }
+            }
+        }
+    },
+    resetProjectRecurringTasks: async (projectId: number) => {
+        try {
+            const now = new Date();
+            const state = get();
+
+            // Find exactly the tasks we want to reset based on current state
+            const tasksToReset = state.tasks.filter(
+                t => t.project_id === projectId && t.is_recurring
+            );
+
+            if (tasksToReset.length === 0) return;
+
+            // Use Promise.all with individual ID updates to be 100% precise
+            await Promise.all(tasksToReset.map(task =>
+                db.update(tasks)
+                    .set({
+                        is_completed: false,
+                        last_reset_at: now
+                    })
+                    .where(eq(tasks.id, task.id))
+            )
+            );
+
+            await state.loadTasks();
+            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } catch (error) {
+            console.error("Failed to reset project tasks", error);
+        }
     }
 }));

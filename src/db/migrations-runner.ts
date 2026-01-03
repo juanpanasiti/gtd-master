@@ -64,6 +64,16 @@ const MIGRATIONS = [
   `
   CREATE TABLE project_references (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER NOT NULL, content TEXT NOT NULL, created_at INTEGER NOT NULL);
   `,
+  // Version 12
+  `ALTER TABLE tasks ADD COLUMN is_recurring INTEGER DEFAULT 0 NOT NULL;`,
+  // Version 13
+  `ALTER TABLE tasks ADD COLUMN recurrence_type TEXT;`,
+  // Version 14
+  `ALTER TABLE tasks ADD COLUMN recurrence_interval INTEGER DEFAULT 1;`,
+  // Version 15
+  `ALTER TABLE tasks ADD COLUMN recurrence_days TEXT;`,
+  // Version 16
+  `ALTER TABLE tasks ADD COLUMN last_reset_at INTEGER;`,
 ];
 
 export async function runMigrations() {
