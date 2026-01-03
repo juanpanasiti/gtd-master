@@ -37,6 +37,7 @@ export default function TabLayout() {
           title: t("tabs.inbox"),
           tabBarIcon: ({ color }) => <Inbox size={24} color={color} />,
           href: "/",
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -44,6 +45,7 @@ export default function TabLayout() {
         options={{
           title: t("tabs.organize"),
           tabBarIcon: ({ color }) => <Folder size={24} color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -51,6 +53,7 @@ export default function TabLayout() {
         options={{
           title: t("tabs.engage"),
           tabBarIcon: ({ color }) => <CheckCircle size={24} color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -58,6 +61,7 @@ export default function TabLayout() {
         options={{
           title: t("tabs.review"),
           tabBarIcon: ({ color }) => <Calendar size={24} color={color} />,
+          headerShown: false,
         }}
       />
     </Tabs>

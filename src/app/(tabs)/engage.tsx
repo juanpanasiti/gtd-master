@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo } from "react";
 import { TaskItem } from "@/components/TaskItem";
-import { ListTodo, Search as SearchIcon, Settings } from "lucide-react-native";
+import { CheckCircle, Search as SearchIcon, Settings } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
@@ -50,7 +50,7 @@ export default function EngageScreen() {
                 <View className="flex-row items-center justify-between mb-6 px-2">
                     <View className="flex-row items-center">
                         <View className="bg-green-500/10 p-2 rounded-lg">
-                            <ListTodo size={24} color="#22c55e" />
+                            <CheckCircle size={24} color="#22c55e" />
                         </View>
                         <Text className={`ml-3 text-2xl font-bold ${textColor}`}>
                             {t("engage.title")}
@@ -93,7 +93,7 @@ export default function EngageScreen() {
                     ListEmptyComponent={
                         <View className="items-center justify-center p-10 mt-10">
                             <View className={`${isDark ? "bg-slate-800" : "bg-gray-100"} p-6 rounded-full mb-4`}>
-                                <ListTodo size={48} color={isDark ? "#60a5fa" : "#3b82f6"} />
+                                <CheckCircle size={48} color={isDark ? "#60a5fa" : "#3b82f6"} />
                             </View>
                             <Text className={`text-xl font-bold mb-2 ${textColor}`}>
                                 {t("engage.emptyTitle")}

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "expo-router";
 import { TaskItem } from "@/components/TaskItem";
-import { Inbox as InboxIcon, Zap, PlayCircle, Search as SearchIcon } from "lucide-react-native";
+import { Inbox as InboxIcon, Zap, PlayCircle, Search as SearchIcon, Settings } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
@@ -84,6 +84,12 @@ export default function Inbox() {
                     className="bg-purple-600/10 p-2 rounded-lg"
                 >
                     <Zap size={24} color="#a855f7" />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => router.push("/settings")}
+                    className="p-2"
+                >
+                    <Settings size={24} color={isDark ? "#94a3b8" : "#64748b"} />
                 </TouchableOpacity>
             </View>
           </View>

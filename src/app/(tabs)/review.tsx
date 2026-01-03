@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo, useState } from "react";
 import { TaskItem } from "@/components/TaskItem";
-import { Calendar, Clock, Moon, ChevronDown, ChevronRight, PlayCircle, Activity } from "lucide-react-native";
+import { Calendar, Clock, Moon, ChevronDown, ChevronRight, PlayCircle, Activity, Settings, Search as SearchIcon } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
@@ -83,6 +83,31 @@ export default function ReviewScreen() {
                     contentContainerStyle={{ paddingBottom: 20 }}
                     ListHeaderComponent={
                         <View className="px-4 pt-4 pb-2">
+                            <View className="flex-row items-center justify-between mb-6 px-2">
+                                <View className="flex-row items-center">
+                                    <View className="bg-purple-500/10 p-2 rounded-lg">
+                                        <Calendar size={24} color="#a855f7" />
+                                    </View>
+                                    <Text className={`ml-3 text-2xl font-bold ${textColor}`}>
+                                        {t("review.title")}
+                                    </Text>
+                                </View>
+                                <View className="flex-row items-center gap-2">
+                                    <TouchableOpacity 
+                                        onPress={() => router.push("/search")}
+                                        className={`${isDark ? "bg-slate-800" : "bg-gray-100"} p-2 rounded-lg`}
+                                    >
+                                        <SearchIcon size={24} color={isDark ? "#94a3b8" : "#64748b"} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity 
+                                        onPress={() => router.push("/settings")}
+                                        className="p-2"
+                                    >
+                                        <Settings size={24} color={isDark ? "#94a3b8" : "#64748b"} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
                             <View className="flex-row gap-3 mb-6">
                                 {/* Weekly Review Button */}
                                 <TouchableOpacity 

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Folder, ListTodo, Search as SearchIcon } from "lucide-react-native";
+import { Folder, ListTodo, Search as SearchIcon, Settings } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
@@ -92,6 +92,12 @@ export default function ProjectsScreen() {
                    <View className="bg-blue-500/10 p-2 rounded-lg">
                        <Text className="text-blue-500 font-medium">{t("projects.manageAreas")}</Text>
                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => router.push("/settings")}
+                    className="p-2"
+                >
+                    <Settings size={24} color={isDark ? "#94a3b8" : "#64748b"} />
                 </TouchableOpacity>
             </View>
           </View>
