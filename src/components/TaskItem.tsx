@@ -103,6 +103,7 @@ export const TaskItem = ({ task, onToggle, context, drag }: TaskItemProps) => {
                             </View>
                         </View>
                     )}
+                    {task.is_recurring && (
                         <View className="flex-row items-center mt-1">
                             <Calendar size={12} color={isDark ? "#64748b" : "#94a3b8"} />
                             <Text className={`text-[10px] ml-1 font-medium ${isDark ? "text-slate-500" : "text-gray-400"}`}>
@@ -114,6 +115,7 @@ export const TaskItem = ({ task, onToggle, context, drag }: TaskItemProps) => {
                                 })()}
                             </Text>
                         </View>
+                    )}
                 </View>
             </View>
         </TouchableOpacity>
