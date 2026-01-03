@@ -23,6 +23,7 @@ export interface Task {
     recurrence_time: string | null;
     recurrence_day_of_month: number | null;
     last_reset_at: Date | null;
+    sort_order: number;
     created_at: Date;
 }
 
@@ -48,6 +49,7 @@ interface TasksState {
     getTodayBriefing: () => { dueCount: number, startCount: number };
     processRecurrenceResets: () => Promise<void>;
     resetProjectRecurringTasks: (projectId: number) => Promise<void>;
+    updateTasksOrder: (taskOrders: { id: number, sort_order: number }[]) => Promise<void>;
 }
 
 export const useTasks = create<TasksState>((set, get) => ({
@@ -55,7 +57,7 @@ export const useTasks = create<TasksState>((set, get) => ({
     contexts: [],
     loadTasks: async () => {
         try {
-            const allTasks = await db.select().from(tasks).orderBy(desc(tasks.created_at));
+            const allTasks = await db.select().from(tasks).orderBy(tasks.sort_order, desc(tasks.created_at));
             // @ts-ignore
             set({ tasks: allTasks });
         } catch (error) {
@@ -74,11 +76,13 @@ export const useTasks = create<TasksState>((set, get) => ({
     addTask: async (title: string, due_date = null, project_id = null) => {
         try {
             if (!title.trim()) return;
+            const maxOrder = get().tasks.reduce((max, t) => Math.max(max, t.sort_order || 0), 0);
             await db.insert(tasks).values({
                 title,
                 created_at: new Date(),
                 due_date,
-                project_id
+                project_id,
+                sort_order: maxOrder + 1
             });
             await get().loadTasks();
         } catch (error) {
@@ -229,6 +233,16 @@ export const useTasks = create<TasksState>((set, get) => ({
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch (error) {
             console.error("[DEBUG] Failed to reset project tasks", error);
+        }
+    },
+    updateTasksOrder: async (taskOrders: { id: number, sort_order: number }[]) => {
+        try {
+            await Promise.all(taskOrders.map(to =>
+                db.update(tasks).set({ sort_order: to.sort_order }).where(eq(tasks.id, to.id))
+            ));
+            await get().loadTasks();
+        } catch (error) {
+            console.error("Failed to update tasks order", error);
         }
     }
 }));

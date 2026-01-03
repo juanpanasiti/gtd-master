@@ -18,6 +18,7 @@ export const tasks = sqliteTable("tasks", {
     recurrence_time: text("recurrence_time"), // HH:mm format
     recurrence_day_of_month: integer("recurrence_day_of_month"),
     last_reset_at: integer("last_reset_at", { mode: "timestamp" }),
+    sort_order: integer("sort_order").default(0),
     created_at: integer("created_at", { mode: "timestamp" }).notNull().default(new Date()),
 });
 

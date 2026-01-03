@@ -1,4 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity, TextInput, Alert } from "react-native";
+import DraggableFlatList, { ScaleDecorator, RenderItemParams } from "react-native-draggable-flatlist";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
@@ -15,7 +16,7 @@ export default function ProjectDetailScreen() {
   const { t } = useTranslation();
   const { isDark } = useTheme();
 
-  const { tasks, loadTasks, toggleTask, contexts, loadContexts, addTask, resetProjectRecurringTasks } = useTasks();
+  const { tasks, loadTasks, toggleTask, contexts, loadContexts, addTask, resetProjectRecurringTasks, updateTasksOrder } = useTasks();
   const { projects, loadProjects, updateProject, deleteProject, areas, loadAreas, references, loadReferences, addReference, deleteReference } = useProjects();
   
   const projectId = parseInt(id || "0", 10);
@@ -110,11 +111,19 @@ export default function ProjectDetailScreen() {
   }, [tasks, projectId]);
 
   // Combine for FlatList but we might want sections. 
-  // Actually, let's just use one data array but sorted, or use distinct sections in the FlatList via 'data' prop concatenation if we want separators.
-  // Best approach for FlatList: Concatenate arrays but maybe add a 'header' item or just simple sorting.
-  // User wanted "At the end".
-  // Let's render Available first, then Future.
-  const displayTasks = [...availableTasks, ...futureTasks];
+  // For DraggableFlatList, we must provide a flat array.
+  // We'll filter only non-completed tasks for dragging, as completed tasks are usually at the bottom and shouldn't interfere with the active backlog order.
+  const displayTasks = useMemo(() => {
+    return [...availableTasks, ...futureTasks].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+  }, [availableTasks, futureTasks]);
+
+  const handleDragEnd = async (data: typeof displayTasks) => {
+    const taskOrders = data.map((task, index) => ({
+      id: task.id,
+      sort_order: index
+    }));
+    await updateTasksOrder(taskOrders);
+  };
 
   const completedTasks = useMemo(
     () => tasks.filter((t) => t.project_id === projectId && t.is_completed),
@@ -246,31 +255,38 @@ export default function ProjectDetailScreen() {
             </View>
 
 
-            <FlatList
+            <DraggableFlatList
                 data={displayTasks}
+                onDragEnd={({ data }) => handleDragEnd(data)}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-                renderItem={({ item }) => {
+                renderItem={({ item, drag, isActive }: RenderItemParams<any>) => {
                     const isFuture = item.start_date && new Date(item.start_date) > new Date();
                     return (
-                        <View className={isFuture ? "opacity-60" : ""}>
-                            {isFuture && displayTasks.indexOf(item) === availableTasks.length && (
-                                <Text className={`text-sm font-semibold uppercase tracking-wider mb-2 mt-4 ${secondaryText}`}>
-                                    {t("projectDetail.scheduled")}
-                                </Text>
-                            )}
-                            <TaskItem
-                                task={item}
-                                onToggle={toggleTask}
-                                context={contexts.find((c) => c.id === item.context_id)}
-                            />
-                        </View>
+                        <ScaleDecorator>
+                            <View className={isFuture ? "opacity-60" : ""} style={{
+                                backgroundColor: isActive ? (isDark ? "#1e293b" : "#f1f5f9") : "transparent",
+                                borderRadius: isActive ? 12 : 0
+                            }}>
+                                {isFuture && displayTasks.indexOf(item) === availableTasks.length && (
+                                    <Text className={`text-sm font-semibold uppercase tracking-wider mb-2 mt-4 ${secondaryText}`}>
+                                        {t("projectDetail.scheduled")}
+                                    </Text>
+                                )}
+                                <TaskItem
+                                    task={item}
+                                    onToggle={toggleTask}
+                                    drag={drag}
+                                    context={contexts.find((c) => c.id === item.context_id)}
+                                />
+                            </View>
+                        </ScaleDecorator>
                     );
                 }}
                 ListHeaderComponent={
                 availableTasks.length > 0 ? (
                     <Text className={`text-sm font-semibold uppercase tracking-wider mb-3 ${secondaryText}`}>
-                    {t("projectDetail.activeTasks")} ({availableTasks.length})
+                    {t("projectDetail.activeTasks")} ({availableTasks.length + futureTasks.length})
                     </Text>
                 ) : null
                 }

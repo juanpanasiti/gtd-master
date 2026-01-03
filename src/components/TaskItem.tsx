@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/core/theme/ThemeProvider";
-import { RefreshCcw, Calendar } from "lucide-react-native";
+import { RefreshCcw, Calendar, GripVertical } from "lucide-react-native";
 import { RecurrenceService } from "@/core/tasks/RecurrenceService";
 import { useTranslation } from "react-i18next";
 import { getRelativeTimeUntil } from "@/core/utils/dateUtils";
@@ -22,9 +22,10 @@ interface TaskItemProps {
     };
     onToggle: (id: number, currentStatus: boolean) => void;
     context?: { id: number; title: string; color: string | null } | undefined;
+    drag?: () => void;
 }
 
-export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
+export const TaskItem = ({ task, onToggle, context, drag }: TaskItemProps) => {
     const router = useRouter();
     const { isDark } = useTheme();
     const { t } = useTranslation();
@@ -43,10 +44,16 @@ export const TaskItem = ({ task, onToggle, context }: TaskItemProps) => {
 
     return (
         <TouchableOpacity
+            onLongPress={drag}
             onPress={() => router.push(`/task/${task.id}`)}
             className={`p-4 mb-3 rounded-xl border ${cardBg} ${borderColor} ${!task.is_completed ? "shadow-sm" : ""}`}
         >
             <View className="flex-row items-center gap-3">
+                {drag && (
+                    <TouchableOpacity onLongPress={drag} className="p-1 -ml-2">
+                        <GripVertical size={20} color={isDark ? "#475569" : "#cbd5e1"} />
+                    </TouchableOpacity>
+                )}
                 <TouchableOpacity onPress={() => onToggle(task.id, task.is_completed)}>
                     <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
                         task.is_completed 
