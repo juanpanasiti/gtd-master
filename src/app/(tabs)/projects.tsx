@@ -186,7 +186,7 @@ export default function ProjectsScreen() {
                     <TouchableOpacity onLongPress={drag} className="p-1 -ml-2">
                         <GripVertical size={20} color={isDark ? "#475569" : "#cbd5e1"} />
                     </TouchableOpacity>
-                    <Folder size={24} color={isDark ? "#9ca3af" : "#4B5563"} />
+                    <Folder size={24} color={item.color || (isDark ? "#9ca3af" : "#4B5563")} />
                     <View className="flex-1">
                         <Text className={`text-lg font-semibold ${textColor}`}>{item.title}</Text>
                         <Text className={secondaryText}>{item.status}</Text>

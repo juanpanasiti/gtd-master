@@ -82,6 +82,8 @@ const MIGRATIONS = [
   `ALTER TABLE tasks ADD COLUMN sort_order INTEGER DEFAULT 0;`,
   // Version 20
   `ALTER TABLE projects ADD COLUMN sort_order INTEGER DEFAULT 0;`,
+  // Version 21
+  `ALTER TABLE projects ADD COLUMN color TEXT;`,
 ];
 
 export async function runMigrations() {

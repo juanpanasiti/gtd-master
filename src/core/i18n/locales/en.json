@@ -210,7 +210,9 @@
         "scheduled": "Scheduled (Future)",
         "completed": "Completed",
         "resetSession": "Reset Session",
-        "resetSessionConfirm": "This will mark all recurring tasks in this project as incomplete. Continue?"
+        "resetSessionConfirm": "This will mark all recurring tasks in this project as incomplete. Continue?",
+        "iconColor": "Icon Color",
+        "selectColor": "Select Color"
     },
     "task": {
         "recurrence": "Recurrence",

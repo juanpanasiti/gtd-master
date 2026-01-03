@@ -10,6 +10,10 @@ import { TaskItem } from "@/components/TaskItem";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
+const PROJECT_COLORS = [
+  "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#64748b", "#06b6d4", "#f97316"
+];
+
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -25,6 +29,7 @@ export default function ProjectDetailScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newReference, setNewReference] = useState("");
   const [activeTab, setActiveTab] = useState<"actions" | "reference">("actions");
@@ -47,12 +52,17 @@ export default function ProjectDetailScreen() {
     if (project) {
         setEditTitle(project.title);
         setSelectedAreaId(project.area_id);
+        setSelectedColor(project.color);
     }
   }, [project]);
 
   const handleUpdate = async () => {
     if (!editTitle.trim()) return;
-    await updateProject(projectId, { title: editTitle, area_id: selectedAreaId });
+    await updateProject(projectId, { 
+      title: editTitle, 
+      area_id: selectedAreaId,
+      color: selectedColor
+    });
     setIsEditing(false);
   };
 
@@ -148,7 +158,11 @@ export default function ProjectDetailScreen() {
         <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
           <ArrowLeft size={24} color={isDark ? "#fff" : "#374151"} />
         </TouchableOpacity>
-        <Folder size={24} color={isDark ? "#9ca3af" : "#4b5563"} className="ml-2" />
+        <Folder 
+            size={24} 
+            color={isEditing ? (selectedColor || (isDark ? "#9ca3af" : "#4b5563")) : (project?.color || (isDark ? "#9ca3af" : "#4b5563"))} 
+            className="ml-2" 
+        />
         
         {isEditing ? (
             <View className="flex-1 ml-3">
@@ -172,7 +186,7 @@ export default function ProjectDetailScreen() {
                         className={`px-3 py-1 rounded-full border ${!selectedAreaId ? "bg-slate-500 border-slate-500" : borderColor}`}
                     >
                         <Text className={`text-xs font-bold ${!selectedAreaId ? "text-white" : secondaryText}`}>
-                            No Area
+                            {t("projects.noArea")}
                         </Text>
                     </TouchableOpacity>
                     {areas.map(area => (
@@ -187,6 +201,29 @@ export default function ProjectDetailScreen() {
                             </Text>
                         </TouchableOpacity>
                     ))}
+                </View>
+
+                {/* Color Picker */}
+                <View className="mt-3">
+                    <Text className={`text-[10px] uppercase font-bold tracking-wider mb-2 ${secondaryText}`}>
+                        {t("projectDetail.iconColor")}
+                    </Text>
+                    <View className="flex-row gap-2 flex-wrap">
+                        <TouchableOpacity 
+                            onPress={() => setSelectedColor(null)}
+                            className={`w-6 h-6 rounded-full border flex-row items-center justify-center ${!selectedColor ? "border-blue-500" : borderColor}`}
+                        >
+                            <XIcon size={12} color={isDark ? "#94a3b8" : "#64748b"} />
+                        </TouchableOpacity>
+                        {PROJECT_COLORS.map(color => (
+                            <TouchableOpacity 
+                                key={color}
+                                onPress={() => setSelectedColor(color)}
+                                className={`w-6 h-6 rounded-full border ${selectedColor === color ? "border-blue-500" : "border-transparent"}`}
+                                style={{ backgroundColor: color }}
+                            />
+                        ))}
+                    </View>
                 </View>
             </View>
         ) : (

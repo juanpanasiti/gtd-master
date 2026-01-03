@@ -23,6 +23,7 @@ export interface Project {
     status: "active" | "completed" | "archived";
     area_id: number | null;
     sort_order: number;
+    color: string | null;
     created_at: Date;
 }
 
@@ -75,6 +76,7 @@ export const useProjects = create<ProjectsState>((set, get) => ({
                 title,
                 area_id,
                 sort_order: maxOrder + 1,
+                color: null,
                 created_at: new Date()
             }).returning({ insertedId: projects.id });
 

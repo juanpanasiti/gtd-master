@@ -209,7 +209,9 @@
         "deleteProject": "Eliminar Proyecto",
         "scheduled": "Programado (Futuro)",
         "resetSession": "Reiniciar Sesión",
-        "resetSessionConfirm": "Esto marcará todas las tareas recurrentes de este proyecto como pendientes. ¿Continuar?"
+        "resetSessionConfirm": "Esto marcará todas las tareas recurrentes de este proyecto como pendientes. ¿Continuar?",
+        "iconColor": "Color del Icono",
+        "selectColor": "Seleccionar Color"
     },
     "task": {
         "recurrence": "Recurrencia",
