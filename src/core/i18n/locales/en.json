@@ -123,6 +123,16 @@
         "weeklyTitle": "Weekly Review Time",
         "weeklyBody": "Your system needs an update. Review your projects and commitments."
     },
+    "search": {
+        "title": "Search",
+        "placeholder": "Search for tasks, projects...",
+        "noResults": "No results found for \"{{query}}\"",
+        "categories": {
+            "tasks": "Tasks",
+            "projects": "Projects",
+            "references": "References"
+        }
+    },
     "projectDetail": {
         "actions": "Actions",
         "reference": "Reference",

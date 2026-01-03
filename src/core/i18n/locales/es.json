@@ -128,6 +128,16 @@
         "weeklyTitle": "Hora de la Revisión Semanal",
         "weeklyBody": "Tu sistema necesita una actualización. Revisa tus proyectos y compromisos."
     },
+    "search": {
+        "title": "Buscar",
+        "placeholder": "Busca tareas, proyectos...",
+        "noResults": "No se encontraron resultados para \"{{query}}\"",
+        "categories": {
+            "tasks": "Tareas",
+            "projects": "Proyectos",
+            "references": "Referencias"
+        }
+    },
     "projectDetail": {
         "actions": "Acciones",
         "reference": "Referencia",

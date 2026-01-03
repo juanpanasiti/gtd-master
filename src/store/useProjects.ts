@@ -41,6 +41,7 @@ interface ProjectsState {
 
     // Reference Actions
     loadReferences: (projectId: number) => Promise<void>;
+    loadAllReferences: () => Promise<void>;
     addReference: (projectId: number, content: string) => Promise<void>;
     deleteReference: (id: number, projectId: number) => Promise<void>;
 }
@@ -145,6 +146,22 @@ export const useProjects = create<ProjectsState>((set, get) => ({
             });
         } catch (error) {
             console.error("Failed to load references", error);
+        }
+    },
+    loadAllReferences: async () => {
+        try {
+            const allRefs = await db.select().from(projectReferences).orderBy(desc(projectReferences.created_at));
+            // Group by project_id for the existing store structure
+            const grouped = allRefs.reduce((acc, ref) => {
+                if (!acc[ref.project_id]) acc[ref.project_id] = [];
+                // @ts-ignore
+                acc[ref.project_id].push(ref);
+                return acc;
+            }, {} as Record<number, ProjectReference[]>);
+
+            set({ references: grouped });
+        } catch (error) {
+            console.error("Failed to load all references", error);
         }
     },
     addReference: async (projectId, content) => {

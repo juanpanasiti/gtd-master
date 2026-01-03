@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "expo-router";
 import { TaskItem } from "@/components/TaskItem";
-import { Inbox as InboxIcon, Zap, PlayCircle } from "lucide-react-native";
+import { Inbox as InboxIcon, Zap, PlayCircle, Search as SearchIcon } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
@@ -72,12 +72,20 @@ export default function Inbox() {
                 {t("inbox.title")}
               </Text>
             </View>
-            <TouchableOpacity 
-              onPress={() => router.push("/inbox/quick")}
-              className="bg-purple-600/10 p-2 rounded-lg"
-            >
-              <Zap size={24} color="#a855f7" />
-            </TouchableOpacity>
+            <View className="flex-row items-center gap-2">
+                <TouchableOpacity 
+                    onPress={() => router.push("/search")}
+                    className={`${isDark ? "bg-slate-800" : "bg-gray-100"} p-2 rounded-lg`}
+                >
+                    <SearchIcon size={24} color={isDark ? "#94a3b8" : "#64748b"} />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => router.push("/inbox/quick")}
+                    className="bg-purple-600/10 p-2 rounded-lg"
+                >
+                    <Zap size={24} color="#a855f7" />
+                </TouchableOpacity>
+            </View>
           </View>
 
           <FlatList

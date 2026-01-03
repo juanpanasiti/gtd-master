@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Folder, ListTodo } from "lucide-react-native";
+import { Folder, ListTodo, Search as SearchIcon } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 
@@ -72,14 +72,33 @@ export default function ProjectsScreen() {
               className="flex-1"
             >
         <View className="flex-1 p-4">
-          <View className="flex-row justify-between items-center mb-6">
-              <TouchableOpacity onPress={() => router.push("/organize/contexts")}>
-                  <Text className="text-blue-500 font-medium">{t("projects.manageContexts")}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => router.push("/organize/areas")}>
-                  <Text className="text-blue-500 font-medium">{t("projects.manageAreas")}</Text>
-              </TouchableOpacity>
+          <View className="flex-row items-center justify-between mb-6 px-2">
+            <View className="flex-row items-center">
+              <View className="bg-blue-500/10 p-2 rounded-lg">
+                <Folder size={24} color="#3b82f6" />
+              </View>
+              <Text className={`ml-3 text-2xl font-bold ${textColor}`}>
+                {t("projects.title")}
+              </Text>
+            </View>
+            <View className="flex-row items-center gap-2">
+                <TouchableOpacity 
+                    onPress={() => router.push("/search")}
+                    className={`${isDark ? "bg-slate-800" : "bg-gray-100"} p-2 rounded-lg`}
+                >
+                    <SearchIcon size={24} color={isDark ? "#94a3b8" : "#64748b"} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push("/organize/areas")}>
+                   <View className="bg-blue-500/10 p-2 rounded-lg">
+                       <Text className="text-blue-500 font-medium">{t("projects.manageAreas")}</Text>
+                   </View>
+                </TouchableOpacity>
+            </View>
           </View>
+
+          <TouchableOpacity onPress={() => router.push("/organize/contexts")} className="mb-4">
+              <Text className="text-center text-blue-500 font-medium">{t("projects.manageContexts")}</Text>
+          </TouchableOpacity>
 
           <SectionList
             sections={sections}
