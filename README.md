@@ -5,80 +5,83 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
-![Version](https://img.shields.io/badge/Version-1.4.1-blue)
+![Version](https://img.shields.io/badge/Version-1.5.0-blue)
 
 ---
 
-## 📖 Descripción
+## 📖 Description
 
-**GTD Master** es una solución profesional de productividad personal basada rigurosamente en la metodología **Getting Things Done (GTD)** de David Allen. Diseñada para transformar el caos en calma, GTD Master combina una interfaz premium con la potencia de una base de datos local robusta (**Offline-First**).
+**GTD Master** is a professional personal productivity solution rigorously based on David Allen's **Getting Things Done (GTD)** methodology. Designed to transform chaos into calm, GTD Master combines a premium interface with the power of a robust local database (**Offline-First**).
 
-> 📘 **¿Eres nuevo en GTD?** Consulta nuestra [Guía de Uso Completa (USAGE.md)](./USAGE.md) para aprender la metodología y cómo aplicarla en esta app.
+> 📘 **New to GTD?** Check out our [Complete Usage Guide (USAGE.md)](./USAGE.md) to learn the methodology and how to apply it in this app.
 
-### El Flujo de Trabajo GTD Completo:
+### The Complete GTD Workflow:
 
-| Pilar | Funcionalidad | Descripción |
+| Pillar | Functionality | Description |
 |-------|---------------|-------------|
-| 📥 **Capturar** | Inbox & Quick Capture | Captura ultra-rápida con Haptics y Deep Linking. |
-| 🔍 **Clarificar** | Inbox Processor Wizard | Asistente inteligente para llegar a "Inbox Zero" sin fricción. |
-| 📂 **Organizar** | Projects & Contexts | Áreas de responsabilidad, Referencias de proyecto y Contextos. |
-| 📅 **Revisar** | Weekly Review Wizard | Ritual guiado paso a paso para mantener tu sistema al día. |
-| ⚡ **Ejecutar** | Engage List | Próximas acciones agrupadas por contexto y filtradas por fecha de inicio. |
-| 📊 **Reflejar** | Perspectives Dashboard | Visualización de salud del sistema, áreas y moméntum semanal. |
+| 📥 **Capture** | Inbox & Quick Capture | Ultra-fast capture with Haptics and Deep Linking. |
+| 🔍 **Clarify** | Inbox Processor Wizard | Intelligent assistant to reach "Inbox Zero" without friction. |
+| 📂 **Organize** | Projects & Contexts | Areas of responsibility, Project References, and Contexts. |
+| 📅 **Review** | Weekly Review Wizard | Guided step-by-step ritual to keep your system up to date. |
+| 🔄 **Repeat** | Recurring Tasks | Automatic tasks (daily, weekly, monthly) with intelligent reset. |
+| ⚡ **Engage** | Engage List | Next actions grouped by context and filtered by start date. |
+| 📊 **Reflect** | Perspectives Dashboard | System health visualization, areas, and weekly momentum. |
 
 ---
 
-## ✨ Características de Refinamiento (v1.4.0)
+## ✨ Refinement Features (v1.5.0)
 
-### 🧠 Inteligencia en el Flujo
-- **Wizards Paso a Paso**: Procesamiento de bandeja de entrada y revisión semanal mediante guías interactivas.
-- **Hitos Visuales**: Celebraciones con confeti y transiciones fluidas al completar procesos clave.
-- **Referencias de Proyecto**: Guarda material de apoyo (notas, links) vinculado directamente a tus proyectos.
+### 🧠 Flow Intelligence
+- **Recurring Tasks**: Set up routines (daily, weekly, or monthly). The system automatically "resets" them upon completion according to their cycle.
+- **Manual Reset FAB**: Floating action button in projects to instantly reset all recurring tasks for a session.
+- **Step-by-Step Wizards**: Inbox processing and weekly review through interactive guides.
+- **Visual Milestones**: Confetti celebrations and smooth transitions when completing key processes.
+- **Project References**: Save support material (notes, links) directly linked to your projects.
 
-### 🔔 Notificaciones y Hábitos
-- **Daily Briefing**: Notificación matutina dinámica que te informa cuántas tareas vencen e inician hoy.
-- **Recordatorios Personalizados**: Configura libremente el día y la hora de tu Revisión Semanal y Resumen Diario.
-- **Fast Capture**: Acceso directo mediante Deep Linking (`gtdmaster://inbox/quick`) para capturar ideas al instante.
+### 🔔 Notifications & Habits
+- **Daily Briefing**: Dynamic morning notification informing you how many tasks are due and starting today.
+- **Custom Reminders**: Freely configure the day and time for your Weekly Review and Daily Briefing.
+- **Fast Capture**: Direct access via Deep Linking (`gtdmaster://inbox/quick`) to capture ideas instantly.
 
-### 🛡️ Tu Información, Tu Control
-- **Offline-First Real**: Sin login, sin nube obligatoria. Todo vive en tu dispositivo.
-- **Data Portability**: Exporta e importa todo tu sistema en un archivo JSON estándar para respaldos o migración.
-- **Búsqueda Global**: Filtro en tiempo real por tareas, proyectos y material de referencia desde cualquier pestaña.
+### 🛡️ Your Data, Your Control
+- **True Offline-First**: No login, no mandatory cloud. Everything lives on your device.
+- **Data Portability**: Export and import your entire system in a standard JSON file for backups or migration.
+- **Global Search**: Real-time filtering for tasks, projects, and reference material from any tab.
 
-### 🎨 Diseño Premium & UX
-- **Modo Oscuro Adaptativo**: Soporte completo de Dark/Light mode con una estética moderna y profesional.
-- **Feedback Sensorial**: Integración de `expo-haptics` para una respuesta táctil satisfactoria.
-- **UI Unificada**: Cabeceras personalizadas premium consistentes en todas las secciones principales.
+### 🎨 Premium Design & UX
+- **Adaptive Dark Mode**: Full Dark/Light mode support with a modern and professional aesthetic.
+- **Sensory Feedback**: `expo-haptics` integration for a satisfying tactile response.
+- **Unified UI**: Premium custom headers consistent across all main sections.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Technological Stack
 
-| Categoría | Tecnología |
+| Category | Technology |
 |-----------|------------|
 | **Core** | Expo SDK 54 / React Native 0.81.5 |
 | **Logic** | TypeScript 5.9 |
-| **Persistence** | SQLite + Drizzle ORM (con sistema de migraciones personalizado) |
-| **State Management** | Zustand con persistencia AsyncStorage |
+| **Persistence** | SQLite + Drizzle ORM (with custom migration system) |
+| **State Management** | Zustand with AsyncStorage persistence |
 | **Styling** | NativeWind (TailwindCSS) + Lucide Icons |
 | **UX/UI Extras** | Reanimated, Confetti Cannon, Haptics |
-| **I18n** | i18next (Soporte completo Inglés/Español) |
+| **I18n** | i18next (Full English/Spanish support) |
 | **System APIs** | Notifications, Sharing, Document Picker, File System |
 
 ---
 
-## 📁 Arquitectura del Proyecto
+## 📁 Project Architecture
 
 ```
 src/
-├── app/                    # 📱 Rutas (Expo Router)
-│   ├── (tabs)/             # Pestañas principales (Inbox, Organize, Engage, Review)
-│   ├── inbox/              # Wizards de Procesamiento y Captura Rápida
-│   ├── project/            # Gestión de Proyectos, Áreas y Referencias
-│   ├── review/             # Asistente de Revisión Semanal
-│   ├── perspectives.tsx    # Dashboard de métricas y gestión de datos
-│   ├── search.tsx          # Pantalla de búsqueda global
-│   └── settings.tsx        # Configuración de notificaciones, idioma y tema
+├── app/                    # 📱 Routes (Expo Router)
+│   ├── (tabs)/             # Main tabs (Inbox, Organize, Engage, Review)
+│   ├── inbox/              # Processing and Quick Capture Wizards
+│   ├── project/            # Project, Area, and Reference management
+│   ├── review/             # Weekly Review Assistant
+│   ├── perspectives.tsx    # Metrics dashboard and data management
+│   ├── search.tsx          # Global search screen
+│   └── settings.tsx        # Notification, language, and theme configuration
 │
 ├── components/             # 🧩 UI Kit & TaskItem
 ├── core/                   # ⚙️ i18n, Theme, Notifications & DataService
@@ -88,20 +91,20 @@ src/
 
 ---
 
-## 🚀 Instalación y Uso
+## 🚀 Installation & Usage
 
-### Prerrequisitos
+### Prerequisites
 
 - Node.js 18+ 
-- Expo Go (móvil) o Simulador (Android/iOS)
+- Expo Go (mobile) or Simulator (Android/iOS)
 
-### Pasos Rápidos
+### Quick Steps
 
 ```bash
-# 1. Instalar dependencias
+# 1. Install dependencies
 npm install
 
-# 2. Iniciar desarrollo
+# 2. Start development
 npm start
 
 # 3. Android / iOS
@@ -111,13 +114,13 @@ npm run ios
 
 ---
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+This project is under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
 
 <p align="center">
-  <b>GTD Master</b> - Despeja tu mente, enfócate en lo importante.<br>
-  Hecho con ❤️ usando la potencia de Expo.
+  <b>GTD Master</b> - Clear your mind, focus on what matters.<br>
+  Built with ❤️ using the power of Expo.
 </p>

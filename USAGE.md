@@ -1,68 +1,68 @@
-# 📖 Guía de Uso: GTD Master
+# 📖 Usage Guide: GTD Master
 
-Bienvenido a **GTD Master**. Esta aplicación no es solo una lista de tareas; es un sistema completo basado en la metodología **Getting Things Done (GTD)** de David Allen. Esta guía te ayudará a entender los conceptos y a sacar el máximo provecho de la app.
-
----
-
-## 🧠 Conceptos Core de GTD
-
-Para que el sistema funcione, es fundamental entender la diferencia entre sus componentes:
-
-### 1. Tarea (Acción Siguiente)
-Es una acción física y atómica que se puede realizar. 
-> **Ejemplo:** "Llamar al fontanero para pedir presupuesto" (No es "Reparar el baño").
-
-### 2. Proyecto
-Cualquier resultado deseado que requiera **más de una acción** para completarse.
-> **Ejemplo:** "Reparar el baño" es un proyecto porque requiere: buscar el fontanero, comprar materiales, coordinar la visita, revisar el trabajo.
-
-### 3. Contexto (@lugar o herramienta)
-Define **dónde** o **con qué** herramienta puedes realizar una tarea. Te ayuda a filtrar qué puedes hacer en tu situación actual.
-> **Ejemplos:** `@Casa`, `@Trabajo`, `@Teléfono`, `@Computadora`, `@Mandados`.
-
-### 4. Área de Enfoque
-Niveles de responsabilidad de alto nivel que agrupan proyectos y tareas.
-> **Ejemplos:** `Personal`, `Trabajo`, `Finanzas`, `Salud`.
+Welcome to **GTD Master**. This application is not just a to-do list; it is a complete system based on David Allen's **Getting Things Done (GTD)** methodology. This guide will help you understand the concepts and get the most out of the app.
 
 ---
 
-## 🔃 El Flujo de Trabajo
+## 🧠 GTD Core Concepts
 
-El proceso se resume en 5 pasos: **Capturar → Clarificar → Organizar → Reflexionar → Ejecutar.**
+To make the system work, it is fundamental to understand the difference between its components:
 
-### 1. Capturar (Inbox)
-Saca todo de tu cabeza. Si algo te preocupa o es un compromiso pendiente, escríbelo en el **Inbox**. No pienses en fechas ni categorías todavía, solo captúralo.
+### 1. Task (Next Action)
+A physical and atomic action that can be performed.
+> **Example:** "Call the plumber to ask for a quote" (It is not "Repair the bathroom").
 
-### 2. Clarificar y Organizar (Inbox Processor)
-Este es el pilar del sistema. Para cada elemento en tu Inbox, debes decidir qué es. GTD Master incluye un **Asistente (Wizard)** que te guía en este camino:
+### 2. Project
+Any desired result that requires **more than one action** to complete.
+> **Example:** "Repair the bathroom" is a project because it requires: finding the plumber, buying materials, coordinating the visit, reviewing the work.
+
+### 3. Context (@place or tool)
+Defines **where** or **with what** tool you can perform a task. It helps you filter what you can do in your current situation.
+> **Examples:** `@Home`, `@Work`, `@Phone`, `@Computer`, `@Errands`.
+
+### 4. Area of Focus
+High-level responsibility levels that group projects and tasks.
+> **Examples:** `Personal`, `Work`, `Finances`, `Health`.
+
+---
+
+## 🔃 The Workflow
+
+The process is summarized in 5 steps: **Capture → Clarify → Organize → Reflect → Engage.**
+
+### 1. Capture (Inbox)
+Get everything out of your head. If something worries you or is a pending commitment, write it in the **Inbox**. Don't think about dates or categories yet, just capture it.
+
+### 2. Clarify and Organize (Inbox Processor)
+This is the pillar of the system. For each item in your Inbox, you must decide what it is. GTD Master includes a **Wizard** that guides you through this path:
 
 ```mermaid
 graph TD
-    %% Estilos de nodos
+    %% Node styles
     classDef start fill:#f9f,stroke:#333,stroke-width:2px;
     classDef decision fill:#fff4dd,stroke:#d4a017,stroke-width:2px;
     classDef action fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
     classDef terminal fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px;
 
-    Entry((📥 Inbox Task)) --> Actionable{¿Es accionable?}
+    Entry((📥 Inbox Task)) --> Actionable{Is it actionable?}
     
-    %% Camino No Accionable
-    Actionable -- No --> NonActionable{¿Qué es?}
-    NonActionable --> Trash[🗑️ Basura]
-    NonActionable --> Someday[🌙 Algún día / Tal vez]
-    NonActionable --> Ref[📚 Referencia de Proyecto]
+    %% Non-Actionable path
+    Actionable -- No --> NonActionable{What is it?}
+    NonActionable --> Trash[🗑️ Trash]
+    NonActionable --> Someday[🌙 Someday / Maybe]
+    NonActionable --> Ref[📚 Project Reference]
     
-    %% Camino Accionable
-    Actionable -- Sí --> MultiStep{¿Requiere > 1 paso?}
+    %% Actionable path
+    Actionable -- Yes --> MultiStep{Requires > 1 step?}
     
-    MultiStep -- Sí --> Project[📂 Crear Proyecto]
-    MultiStep -- No --> TwoMin{¿Tarda < 2 min?}
+    MultiStep -- Yes --> Project[📂 Create Project]
+    MultiStep -- No --> TwoMin{Takes < 2 min?}
     
-    TwoMin -- Sí --> DoIt[⚡ Hacerlo Ahora]
-    TwoMin -- No --> DelegateDefer{¿Delegar o Deferir?}
+    TwoMin -- Yes --> DoIt[⚡ Do It Now]
+    TwoMin -- No --> DelegateDefer{Delegate or Defer?}
     
-    DelegateDefer -- Delegar --> Delegate[👤 Esperando a...]
-    DelegateDefer -- Deferir --> Calendar[📅 Agendar / Contexto]
+    DelegateDefer -- Delegate --> Delegate[👤 Waiting for...]
+    DelegateDefer -- Defer --> Calendar[📅 Schedule / Context]
 
     class Entry start;
     class Actionable,MultiStep,TwoMin,NonActionable,DelegateDefer decision;
@@ -70,93 +70,111 @@ graph TD
     class DoIt,Trash,Delegate terminal;
 ```
 
-### 3. Reflexionar (Review)
-Tu sistema solo es útil si confías en él. La **Revisión Semanal** es clave para mantener el sistema limpio y actualizado. Utiliza el asistente de revisión para vaciar tu cabeza, revisar tus proyectos y planificar la semana.
+### 3. Reflect (Review)
+Your system is only useful if you trust it. The **Weekly Review** is key to keeping the system clean and updated. Use the review assistant to empty your head, review your projects, and plan the week.
 
-### 4. Ejecutar (Engage)
-Cuando es momento de trabajar, ve a la pestaña **Engage**. Filtra por el contexto en el que te encuentras (ej. si estás en la oficina, mira `@Oficina`) y simplemente haz la primera tarea de la lista.
-
----
-
-## 🛠️ Ejemplo Práctico: Proyecto "Reparaciones de Casa"
-
-Imagina que tienes varias cosas rotas. Así fluiría por el sistema:
-
-### Paso 1: Captura rápida
-Entras a la app y usas el **Quick Capture** para anotar todo lo que ves:
-- "Gotea la canilla de la cocina"
-- "La persiana del cuarto no sube"
-- "Falta pintura en el pasillo"
-
-### Paso 2: Procesar el Inbox
-Abres el asistente de procesamiento:
-
-1. **"Gotea la canilla de la cocina"**
-   - *¿Es accionable?* Sí.
-   - *¿Más de un paso?* No (solo necesito cambiar el cuerito).
-   - *¿Menos de 2 minutos?* No (tengo que ir a la ferretería).
-   - *Organizar:* Contexto `@Mandados` para comprar el cuerito.
-
-2. **"La persiana del cuarto no sube"**
-   - *¿Es accionable?* Sí.
-   - *¿Más de un paso?* Sí (debo desarmar el taparrollo, ver qué rompió, comprar repuesto, arreglar).
-   - *Acción:* Se convierte en **Proyecto: "Arreglar persiana cuarto"**.
-
-3. **"Falta pintura en el pasillo"**
-   - *¿Es accionable?* Sí, pero no ahora.
-   - *Acción:* Mover a **Algún día / Tal vez**.
-
-### Paso 3: Ejecución
-Cuando sales a hacer las compras del súper, abres tu app, vas a **Engage** y filtras por `@Mandados`. Verás:
-- ✅ Comprar cuerito para canilla.
+### 4. Engage (Execute)
+When it's time to work, go to the **Engage** tab. Filter by the context you are in (e.g., if you are in the office, look at `@Work`) and simply do the first task on the list.
 
 ---
 
-## 🛣️ Ejemplos de Procesamiento: Caminos Reales
+## 🛠️ Practical Example: "Home Repairs" Project
 
-Para entender mejor cómo fluyen las ideas, veamos estos ejemplos reales procesados en el asistente:
+Imagine you have several things broken. This is how they would flow through the system:
 
-### 1. El camino de la Referencia (Información útil)
-*Tarea capturada:* "Código de reserva del hotel para el viaje a Madrid"
+### Step 1: Quick Capture
+You enter the app and use **Quick Capture** to write down everything you see:
+- "Kitchen faucet is leaking"
+- "Bedroom blind won't go up"
+- "Paint missing in the hallway"
+
+### Step 2: Process the Inbox
+You open the processing assistant:
+
+1. **"Kitchen faucet is leaking"**
+   - *Is it actionable?* Yes.
+   - *More than one step?* No (I just need to change the washer).
+   - *Less than 2 minutes?* No (I need to go to the hardware store).
+   - *Organize:* Context `@Errands` to buy the washer.
+
+2. **"Bedroom blind won't go up"**
+   - *Is it actionable?* Yes.
+   - *More than one step?* Yes (I need to take apart the valance, see what broke, buy the part, fix it).
+   - *Action:* Becomes **Project: "Fix bedroom blind"**.
+
+3. **"Paint missing in the hallway"**
+   - *Is it actionable?* Yes, but not now.
+   - *Action:* Move to **Someday / Maybe**.
+
+### Step 3: Execution
+When you go out to do the grocery shopping, you open your app, go to **Engage**, and filter by `@Errands`. You will see:
+- ✅ Buy washer for kitchen faucet.
+
+---
+
+## � Processing Examples: Real Paths
+
+To better understand how ideas flow, let's look at these real examples processed in the assistant:
+
+### 1. The Reference Path (Useful information)
+*Captured task:* "Hotel reservation code for the trip to Madrid"
 ```mermaid
 graph LR
-    A[📥 Reserva Hotel] --> B{¿Accionable?}
-    B -- No --> C{¿Qué es?}
-    C -- Información --> D[📚 Referencia de Proyecto]
-    D --> E[📂 Proyecto: Viaje Madrid]
+    A[📥 Hotel Reservation] --> B{Actionable?}
+    B -- No --> C{What is it?}
+    C -- Information --> D[📚 Project Reference]
+    D --> E[📂 Project: Madrid Trip]
 ```
 
-### 2. El camino de la Delegación (Esperando a alguien)
-*Tarea capturada:* "Saber si Juan tiene el presupuesto de las ventanas"
+### 2. The Delegation Path (Waiting for someone)
+*Captured task:* "Know if Juan has the windows quote"
 ```mermaid
 graph LR
-    A[📥 Presupuesto Ventanas] --> B{¿Accionable?}
-    B -- Sí --> C{¿Mismo paso?}
-    C -- Sí --> D{ < 2 min }
-    D -- No --> E[👤 Delegar a Juan]
-    E --> F[🕒 Lista: Esperando a...]
+    A[📥 Windows Quote] --> B{Actionable?}
+    B -- Yes --> C{Single step?}
+    C -- Yes --> D{ < 2 min }
+    D -- No --> E[👤 Delegate to Juan]
+    E --> F[🕒 List: Waiting for...]
 ```
 
-### 3. El camino del "Hacerlo Ya" (2 Minutos)
-*Tarea capturada:* "Confirmar asistencia al evento por mail"
+### 3. The "Do It Now" Path (2 Minutes)
+*Captured task:* "Confirm attendance to the event by email"
 ```mermaid
 graph LR
-    A[📥 Confirmar mail] --> B{¿Accionable?}
-    B -- Sí --> C{ < 2 min }
-    C -- Sí --> D[⚡ Hacerlo Ahora]
-    D --> E[✅ Completado]
+    A[📥 Confirm email] --> B{Actionable?}
+    B -- Yes --> C{ < 2 min }
+    C -- Yes --> D[⚡ Do It Now]
+    D --> E[✅ Completed]
 ```
 
 ---
 
-## 💡 Tips para el Éxito
+---
 
-1. **Vacia tu Inbox a diario**: No dejes que se acumulen más de 20 tareas sin procesar.
-2. **Usa los Contextos honestamente**: Si una tarea requiere computadora, no le pongas contexto `@Móvil`.
-3. **No te saltes la Revisión Semanal**: Es la diferencia entre estar organizado y estar estresado.
-4. **Captura en el momento**: Usa el acceso rápido. Si no lo anotas, tu cerebro lo guardará... y te estresará a las 3 AM.
+## 🔄 Recurring Tasks (Routines)
+
+GTD Master allows managing habits and repetitive tasks without cluttering your system.
+
+### How do they work?
+When editing a task, you can enable **Recurrence** and choose between:
+- **Daily**: Repeats every X days.
+- **Weekly**: Select specific days (e.g., Monday, Wednesday, Friday).
+- **Monthly**: Repeats once a month.
+
+### Automatic vs. Manual Reset
+1. **Automatic**: Every midnight (00:00), the system checks your completed recurring tasks and marks them as "Incomplete" if their cycle requires it.
+2. **Manual (FAB)**: Within a **Project**, you will see a floating blue button (`Refresh`). Pressing it will instantly reset all recurring tasks in that project. Ideal for gym routines, travel checklists, or repetitive processes.
+
+---
+
+## 💡 Tips for Success
+
+1. **Clear your Inbox daily**: Don't let more than 20 tasks accumulate without processing.
+2. **Use Contexts honestly**: If a task requires a computer, don't context it with `@Mobile`.
+3. **Don't skip the Weekly Review**: It's the difference between being organized and being stressed.
+4. **Capture in the moment**: Use quick access. If you don't write it down, your brain will store it... and stress you out at 3 AM.
 
 ---
 <p align="center">
-  <i>"Tu mente es para tener ideas, no para guardarlas."</i> — David Allen
+  <i>"Your mind is for having ideas, not holding them."</i> — David Allen
 </p>
