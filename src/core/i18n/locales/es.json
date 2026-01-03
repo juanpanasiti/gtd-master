@@ -8,7 +8,16 @@
         "add": "Agregar",
         "complete": "Completar",
         "done": "Hecho",
-        "continue": "Continuar"
+        "continue": "Continuar",
+        "days": {
+            "1": "Domingo",
+            "2": "Lunes",
+            "3": "Martes",
+            "4": "Miércoles",
+            "5": "Jueves",
+            "6": "Viernes",
+            "7": "Sábado"
+        }
     },
     "tabs": {
         "inbox": "Inbox",
@@ -81,6 +90,13 @@
     },
     "settings": {
         "title": "Ajustes",
+        "notifications": "Notificaciones",
+        "dailyReminder": "Revisión Diaria",
+        "dailyReminderDesc": "Recordatorio de tareas vencidas y por empezar",
+        "weeklyReminder": "Revisión Semanal",
+        "weeklyReminderDesc": "Guía para tu hábito de revisión semanal",
+        "reminderTime": "Hora del Recordatorio",
+        "reminderDay": "Día del Recordatorio",
         "appearance": "Apariencia",
         "language": "Idioma",
         "about": "Acerca de",

@@ -74,7 +74,12 @@ export const requestPermissions = async () => {
     }
 };
 
-export const scheduleDailyReviewReminder = async (dueCount: number = 0, startCount: number = 0) => {
+export const scheduleDailyReviewReminder = async (
+    dueCount: number = 0,
+    startCount: number = 0,
+    hour: number = 9,
+    minute: number = 0
+) => {
     if (isExpoGo) return;
     const Notifications = getNotifications();
     if (!Notifications) return;
@@ -96,8 +101,8 @@ export const scheduleDailyReviewReminder = async (dueCount: number = 0, startCou
             },
             trigger: {
                 type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-                hour: 9,
-                minute: 0,
+                hour,
+                minute,
                 repeats: true,
             },
         });
@@ -106,7 +111,11 @@ export const scheduleDailyReviewReminder = async (dueCount: number = 0, startCou
     }
 };
 
-export const scheduleWeeklyReviewReminder = async () => {
+export const scheduleWeeklyReviewReminder = async (
+    hour: number = 10,
+    minute: number = 0,
+    weekday: number = 1
+) => {
     if (isExpoGo) return;
     const Notifications = getNotifications();
     if (!Notifications) return;
@@ -123,9 +132,9 @@ export const scheduleWeeklyReviewReminder = async () => {
             },
             trigger: {
                 type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-                hour: 10,
-                minute: 0,
-                weekday: 1, // Sunday
+                hour,
+                minute,
+                weekday,
                 repeats: true,
             },
         });

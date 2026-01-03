@@ -12,24 +12,40 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
 
 import { requestPermissions, scheduleDailyReviewReminder, scheduleWeeklyReviewReminder } from "@/core/notifications/NotificationService";
-
 import { useTasks } from "@/store/useTasks";
+import { useSettings } from "@/store/useSettings";
 
 function AppContent() {
   const [isReady, setIsReady] = useState(false);
   const { isDark } = useTheme();
   const { loadTasks, getTodayBriefing } = useTasks();
+  const { 
+    dailyReminderEnabled, dailyReminderTime, 
+    weeklyReminderEnabled, weeklyReminderDay, weeklyReminderTime 
+  } = useSettings();
 
   useEffect(() => {
     async function init() {
       try {
-        await runMigrations();
-        await loadTasks(); // Load tasks safely
+        if (!isReady) {
+          await runMigrations();
+          await loadTasks();
+        }
+        
         const hasPermission = await requestPermissions();
         if (hasPermission) {
-          const { dueCount, startCount } = getTodayBriefing();
-          await scheduleDailyReviewReminder(dueCount, startCount);
-          await scheduleWeeklyReviewReminder();
+          // Daily Reminder
+          if (dailyReminderEnabled) {
+            const { dueCount, startCount } = getTodayBriefing();
+            const [hour, minute] = dailyReminderTime.split(':').map(Number);
+            await scheduleDailyReviewReminder(dueCount, startCount, hour, minute);
+          }
+          
+          // Weekly Reminder
+          if (weeklyReminderEnabled) {
+            const [wHour, wMinute] = weeklyReminderTime.split(':').map(Number);
+            await scheduleWeeklyReviewReminder(wHour, wMinute, weeklyReminderDay);
+          }
         }
       } catch (e) {
         console.error("Initialization error:", e);
@@ -38,7 +54,10 @@ function AppContent() {
       }
     }
     init();
-  }, []);
+  }, [
+    dailyReminderEnabled, dailyReminderTime, 
+    weeklyReminderEnabled, weeklyReminderDay, weeklyReminderTime
+  ]);
 
   if (!isReady) {
     return (

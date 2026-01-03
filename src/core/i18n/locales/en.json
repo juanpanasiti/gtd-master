@@ -8,7 +8,16 @@
         "add": "Add",
         "complete": "Complete",
         "done": "Done",
-        "continue": "Continue"
+        "continue": "Continue",
+        "days": {
+            "1": "Sunday",
+            "2": "Monday",
+            "3": "Tuesday",
+            "4": "Wednesday",
+            "5": "Thursday",
+            "6": "Friday",
+            "7": "Saturday"
+        }
     },
     "tabs": {
         "inbox": "Inbox",
@@ -76,6 +85,13 @@
     },
     "settings": {
         "title": "Settings",
+        "notifications": "Notifications",
+        "dailyReminder": "Daily Review",
+        "dailyReminderDesc": "Reminder of due and starting tasks",
+        "weeklyReminder": "Weekly Review",
+        "weeklyReminderDesc": "Guide for your weekly review habit",
+        "reminderTime": "Reminder Time",
+        "reminderDay": "Reminder Day",
         "appearance": "Appearance",
         "language": "Language",
         "about": "About",
