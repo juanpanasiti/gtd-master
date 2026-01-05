@@ -174,24 +174,32 @@ export const useTasks = create<TasksState>((set, get) => ({
         return { dueCount, startCount };
     },
     processRecurrenceResets: async () => {
+        console.log("[DEBUG] processRecurrenceResets: Starting check...");
         const { tasks: allTasks, updateTask } = get();
         const now = new Date();
 
         // Dynamic import to avoid circular dependencies if any
         const { RecurrenceService } = await import("@/core/tasks/RecurrenceService");
 
+        let resetCount = 0;
         for (const task of allTasks) {
             if (task.is_recurring && task.is_completed) {
-                if (RecurrenceService.shouldResetTask(task, now)) {
+                const shouldReset = RecurrenceService.shouldResetTask(task, now);
+                console.log(`[DEBUG] Task ${task.id} (${task.title}): is_recurring=true, is_completed=true. Should reset? ${shouldReset}`);
+
+                if (shouldReset) {
                     const shouldClearDueDate = task.due_date && new Date(task.due_date) < now;
                     await updateTask(task.id, {
                         is_completed: false,
                         last_reset_at: now,
                         due_date: shouldClearDueDate ? null : task.due_date
                     });
+                    resetCount++;
+                    console.log(`[DEBUG] Task ${task.id} reset successfully.`);
                 }
             }
         }
+        console.log(`[DEBUG] processRecurrenceResets: Check complete. Reset ${resetCount} tasks.`);
     },
     resetProjectRecurringTasks: async (projectId: number) => {
         console.log(`[DEBUG] resetProjectRecurringTasks called for projectId: ${projectId}`);

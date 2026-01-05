@@ -26,6 +26,16 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.giosoft.gtdmaster"
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default"
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/icon.png"
     },

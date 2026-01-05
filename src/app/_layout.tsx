@@ -28,9 +28,13 @@ function AppContent() {
     async function init() {
       try {
         if (!isReady) {
+          console.log("[DEBUG] App Init: Running migrations...");
           await runMigrations();
+          console.log("[DEBUG] App Init: Loading tasks...");
           await loadTasks();
+          console.log("[DEBUG] App Init: Processing recurrence resets...");
           await processRecurrenceResets();
+          console.log("[DEBUG] App Init: Startup sequence complete.");
         }
         
         const hasPermission = await requestPermissions();

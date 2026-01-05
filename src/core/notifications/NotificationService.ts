@@ -166,6 +166,7 @@ export const scheduleRecurrenceReminder = async (task: any) => {
             },
             trigger: nextReset,
         });
+        console.log(`[DEBUG] Scheduled recurrence reminder for task ${task.id} at ${nextReset.toISOString()}`);
     } catch (e) {
         console.warn('NotificationService: scheduleRecurrenceReminder failed', e);
     }
