@@ -13,15 +13,24 @@ const resources = {
 // Get device locale
 const deviceLocale = Localization.getLocales()[0]?.languageCode || "en";
 
-i18n.use(initReactI18next).init({
-    resources,
-    lng: deviceLocale === "es" ? "es" : "en",
-    fallbackLng: "en",
-    interpolation: {
-        escapeValue: false,
-    },
-    compatibilityJSON: "v4",
-});
+// Initialize i18n asynchronously
+export const initI18n = async () => {
+    if (!i18n.isInitialized) {
+        await i18n.use(initReactI18next).init({
+            resources,
+            lng: deviceLocale === "es" ? "es" : "en",
+            fallbackLng: "en",
+            interpolation: {
+                escapeValue: false,
+            },
+            compatibilityJSON: "v4",
+        });
+    }
+    return i18n;
+};
+
+// Initialize immediately for backwards compatibility
+initI18n();
 
 export default i18n;
 

@@ -53,17 +53,27 @@
         "processItems": "Process {{count}} Items"
     },
     "wizard": {
+        "title": "Process Inbox",
         "processInbox": "Process Inbox",
         "inboxEmpty": "Inbox Empty!",
         "inboxEmptyDesc": "Great job! You've clarified all your incoming items.",
+        "questionActionable": "Is it actionable?",
+        "yes": "Yes",
+        "no": "No",
         "stepActionable": "Is it actionable?",
         "actionableDesc": "Does this require you to actually do something?",
         "stepNonActionable": "What is it?",
+        "questionMultiStep": "Multiple steps?",
+        "oneStep": "Single step",
         "stepMultiStep": "Multi-step?",
         "multiStepDesc": "Does this take more than one action to complete?",
+        "questionTwoMinutes": "Takes less than 2 minutes?",
         "stepTwoMinutes": "< 2 Minutes?",
         "twoMinutesDesc": "If it takes less than 2 minutes, the rule is: Do it now!",
+        "delegateOrDefer": "Delegate or Defer",
         "stepDelegate": "Delegate or Defer?",
+        "delegate": "Delegate",
+        "organize": "Organize",
         "stepOrganize": "Organize",
         "reference": "Reference",
         "referenceDesc": "Useful information to keep for a project.",
@@ -81,7 +91,9 @@
         "deferDesc": "Put it on your calendar or in a context bucket.",
         "selectProject": "Select Project",
         "selectContext": "Select Context",
-        "optional": "(Optional)"
+        "optional": "(Optional)",
+        "skip": "Skip",
+        "back": "Back"
     },
     "projects": {
         "title": "Projects",

@@ -1,5 +1,5 @@
 import "../global.css";
-import "@/core/i18n"; // Initialize i18n
+import { initI18n } from "@/core/i18n"; // Initialize i18n
 import { Stack } from "expo-router";
 import { View, Text, LogBox } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -33,6 +33,8 @@ function AppContent() {
     async function init() {
       try {
         if (!isReady) {
+          console.log("[DEBUG] App Init: Initializing i18n...");
+          await initI18n();
           console.log("[DEBUG] App Init: Running migrations...");
           await runMigrations();
           console.log("[DEBUG] App Init: Loading tasks...");

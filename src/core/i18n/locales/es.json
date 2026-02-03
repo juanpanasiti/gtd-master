@@ -53,17 +53,27 @@
         "processItems": "Procesar {{count}} Elementos"
     },
     "wizard": {
+        "title": "Procesar Bandeja",
         "processInbox": "Procesar Bandeja",
         "inboxEmpty": "¡Bandeja Vacía!",
         "inboxEmptyDesc": "¡Buen trabajo! Has clarificado todos tus elementos entrantes.",
+        "questionActionable": "¿Es accionable?",
+        "yes": "Sí",
+        "no": "No",
         "stepActionable": "¿Es accionable?",
         "actionableDesc": "¿Esto requiere que hagas algo realmente?",
         "stepNonActionable": "¿Qué es?",
+        "questionMultiStep": "¿Varios pasos?",
+        "oneStep": "Un solo paso",
         "stepMultiStep": "¿Varios pasos?",
         "multiStepDesc": "¿Esto requiere más de una acción para completarse?",
+        "questionTwoMinutes": "¿Toma menos de 2 minutos?",
         "stepTwoMinutes": "¿< 2 Minutos?",
         "twoMinutesDesc": "Si toma menos de 2 minutos, la regla es: ¡Hazlo ahora!",
+        "delegateOrDefer": "Delegar o Diferir",
         "stepDelegate": "¿Delegar o Diferir?",
+        "delegate": "Delegar",
+        "organize": "Organizar",
         "stepOrganize": "Organizar",
         "reference": "Referencia",
         "referenceDesc": "Información útil para guardar para un proyecto.",
@@ -81,7 +91,9 @@
         "deferDesc": "Ponlo en tu calendario o en un cubo de contexto.",
         "selectProject": "Seleccionar Proyecto",
         "selectContext": "Seleccionar Contexto",
-        "optional": "(Opcional)"
+        "optional": "(Opcional)",
+        "skip": "Omitir",
+        "back": "Volver"
     },
     "projects": {
         "title": "Proyectos",
