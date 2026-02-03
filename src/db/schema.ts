@@ -25,6 +25,7 @@ export const tasks = sqliteTable("tasks", {
 export const areas = sqliteTable("areas", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull(),
+    sort_order: integer("sort_order").default(0),
     color: text("color").notNull(),
 });
 

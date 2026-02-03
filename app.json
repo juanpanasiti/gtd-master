@@ -2,7 +2,7 @@
   "expo": {
     "name": "GTD Master",
     "slug": "gtd-master",
-    "version": "1.7.1",
+    "version": "1.7.1b",
     "scheme": "gtdmaster",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,7 +17,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 11,
+      "versionCode": 12,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f1f5f9"
@@ -33,6 +33,29 @@
           "icon": "./assets/icon.png",
           "color": "#ffffff",
           "defaultChannel": "default"
+        }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "InboxCount",
+              "label": "Inbox Count",
+              "minWidth": "100dp",
+              "minHeight": "100dp",
+              "description": "Shows the number of active tasks in your Inbox.",
+              "previewImage": "./assets/icon.png"
+            },
+            {
+              "name": "QuickAdd",
+              "label": "Quick Capture",
+              "minWidth": "60dp",
+              "minHeight": "60dp",
+              "description": "Quickly add a new task to your Inbox.",
+              "previewImage": "./assets/icon.png"
+            }
+          ]
         }
       ]
     ],

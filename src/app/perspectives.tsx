@@ -31,7 +31,12 @@ export default function PerspectivesScreen() {
         const activeProjects = projects.filter(p => p.status === "active");
         
         const stalledProjects = activeProjects.filter(p => {
-            const hasNextAction = tasks.some(t => t.project_id === p.id && !t.is_completed && t.status === "active");
+            const hasNextAction = tasks.some(t => 
+                t.project_id === p.id && (
+                    (!t.is_completed && t.status === "active") || 
+                    t.is_recurring
+                )
+            );
             return !hasNextAction;
         });
 

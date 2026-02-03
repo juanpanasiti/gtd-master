@@ -296,6 +296,7 @@ export default function ProjectDetailScreen() {
                 data={displayTasks}
                 onDragEnd={({ data }) => handleDragEnd(data)}
                 keyExtractor={(item) => item.id.toString()}
+                containerStyle={{ flex: 1 }}
                 contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
                 renderItem={({ item, drag, isActive }: RenderItemParams<any>) => {
                     const isFuture = item.start_date && new Date(item.start_date) > new Date();
@@ -400,6 +401,7 @@ export default function ProjectDetailScreen() {
             <FlatList
                 data={projectReferences}
                 keyExtractor={(item) => item.id.toString()}
+                style={{ flex: 1 }}
                 contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
                 renderItem={({ item }) => (
                     <View className={`p-4 mb-3 rounded-xl ${isDark ? "bg-gray-800" : "bg-gray-50"} border ${borderColor}`}>

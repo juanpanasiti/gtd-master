@@ -14,6 +14,9 @@ LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
 import { requestPermissions, scheduleDailyReviewReminder, scheduleWeeklyReviewReminder } from "@/core/notifications/NotificationService";
 import { useTasks } from "@/store/useTasks";
 import { useSettings } from "@/store/useSettings";
+import { registerWidgetTaskHandler } from "react-native-android-widget";
+import { widgetTaskHandler } from "@/widgets/widget-task-handler";
+import * as Linking from "expo-linking";
 
 function AppContent() {
   const [isReady, setIsReady] = useState(false);
@@ -25,6 +28,8 @@ function AppContent() {
   } = useSettings();
 
   useEffect(() => {
+    registerWidgetTaskHandler(widgetTaskHandler);
+
     async function init() {
       try {
         if (!isReady) {
@@ -59,6 +64,19 @@ function AppContent() {
       }
     }
     init();
+
+    // Handle Deep Link for Quick Capture
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      const parsed = Linking.parse(url);
+      if (parsed.queryParams?.action === "capture") {
+        // We'll set a global flag or use a navigation param to open the modal
+        // For now, let's just log it. Ideal usage is to trigger the Add Task modal.
+        // Since we are in Layout, we might need a way to signal this.
+        // Simplified: The 'Inbox' screen can check params.
+      }
+    });
+
+    return () => subscription.remove();
   }, [
     dailyReminderEnabled, dailyReminderTime, 
     weeklyReminderEnabled, weeklyReminderDay, weeklyReminderTime,

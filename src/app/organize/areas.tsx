@@ -1,19 +1,20 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Layers, ChevronLeft } from "lucide-react-native";
+import { Layers, ChevronLeft, GripVertical } from "lucide-react-native";
 import { useRouter } from "expo-router";
 
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import DraggableFlatList, { ScaleDecorator, RenderItemParams } from "react-native-draggable-flatlist";
 
 const COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#a855f7", "#ec4899", "#6b7280"];
 
 export default function AreasScreen() {
-    const { areas, loadAreas, addArea, deleteArea } = useProjects();
+    const { areas, loadAreas, addArea, deleteArea, updateAreasOrder } = useProjects();
     const [title, setTitle] = useState("");
     const [selectedColor, setSelectedColor] = useState(COLORS[7]);
     const router = useRouter();
@@ -78,22 +79,43 @@ export default function AreasScreen() {
                 </View>
 
                 <Text className={`font-bold mb-4 text-xl ${textColor}`}>Existing Areas</Text>
-                <FlatList
+                <DraggableFlatList
                     data={areas}
+                    onDragEnd={({ data }) => {
+                        // Optimistic update
+                        const updates = data.map((area, index) => ({
+                            id: area.id,
+                            updates: { sort_order: index }
+                        }));
+                        updateAreasOrder(updates);
+                    }}
                     keyExtractor={item => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <View className={`flex-row items-center justify-between p-3 mb-2 ${itemBg} border ${borderColor} rounded-lg`}>
-                            <View className="flex-row items-center">
-                                <View 
-                                    className="w-4 h-4 rounded-full mr-3" 
-                                    style={{ backgroundColor: item.color }} 
-                                />
-                                <Text className={`text-lg ${secondaryText}`}>{item.title}</Text>
-                            </View>
-                            <TouchableOpacity onPress={() => deleteArea(item.id)}>
-                                <Text className="text-red-500 font-bold">{t("common.delete")}</Text>
+                    containerStyle={{ flex: 1 }}
+                    renderItem={({ item, drag, isActive }: RenderItemParams<any>) => (
+                        <ScaleDecorator>
+                            <TouchableOpacity 
+                                onLongPress={drag}
+                                disabled={isActive}
+                                className={`flex-row items-center justify-between p-3 mb-2 ${itemBg} border ${borderColor} rounded-lg`}
+                                style={{
+                                    backgroundColor: isActive ? (isDark ? "#1e293b" : "#f1f5f9") : itemBg
+                                }}
+                            >
+                                <View className="flex-row items-center flex-1">
+                                    <TouchableOpacity onPressIn={drag} className="mr-3">
+                                        <GripVertical size={20} color={isDark ? "#475569" : "#cbd5e1"} />
+                                    </TouchableOpacity>
+                                    <View 
+                                        className="w-4 h-4 rounded-full mr-3" 
+                                        style={{ backgroundColor: item.color }} 
+                                    />
+                                    <Text className={`text-lg ${secondaryText} flex-1`}>{item.title}</Text>
+                                </View>
+                                <TouchableOpacity onPress={() => deleteArea(item.id)}>
+                                    <Text className="text-red-500 font-bold">{t("common.delete")}</Text>
+                                </TouchableOpacity>
                             </TouchableOpacity>
-                        </View>
+                        </ScaleDecorator>
                     )}
                 />
             </View>

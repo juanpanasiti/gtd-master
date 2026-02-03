@@ -8,6 +8,7 @@ export interface Area {
     id: number;
     title: string;
     color: string;
+    sort_order: number;
 }
 
 export interface ProjectReference {
@@ -42,6 +43,11 @@ interface ProjectsState {
     loadAreas: () => Promise<void>;
     addArea: (title: string, color: string) => Promise<void>;
     deleteArea: (id: number) => Promise<void>;
+    updateAreasOrder: (areaUpdates: { id: number, updates: Partial<Area> }[]) => Promise<void>;
+
+    // UI State
+    collapsedAreaIds: number[];
+    toggleAreaCollapse: (areaId: number) => void;
 
     // Reference Actions
     loadReferences: (projectId: number) => Promise<void>;
@@ -53,6 +59,7 @@ interface ProjectsState {
 export const useProjects = create<ProjectsState>((set, get) => ({
     projects: [],
     areas: [],
+    collapsedAreaIds: [],
     references: {},
     loadProjects: async () => {
         try {
@@ -126,7 +133,7 @@ export const useProjects = create<ProjectsState>((set, get) => ({
 
     loadAreas: async () => {
         try {
-            const allAreas = await db.select().from(areas).orderBy(desc(areas.id));
+            const allAreas = await db.select().from(areas).orderBy(areas.sort_order, desc(areas.id));
             // @ts-ignore
             set({ areas: allAreas });
         } catch (error) {
@@ -135,7 +142,16 @@ export const useProjects = create<ProjectsState>((set, get) => ({
     },
     addArea: async (title, color) => {
         try {
-            await db.insert(areas).values({ title, color });
+            const currentAreas = get().areas;
+            const maxOrder = currentAreas.length > 0
+                ? Math.max(...currentAreas.map(a => a.sort_order || 0))
+                : 0;
+
+            await db.insert(areas).values({
+                title,
+                color,
+                sort_order: maxOrder + 1
+            });
             await get().loadAreas();
         } catch (error) {
             console.error("Failed to add area", error);
@@ -147,6 +163,24 @@ export const useProjects = create<ProjectsState>((set, get) => ({
             await get().loadAreas();
         } catch (error) {
             console.error("Failed to delete area", error);
+        }
+    },
+    updateAreasOrder: async (areaUpdates: { id: number, updates: Partial<Area> }[]) => {
+        try {
+            await Promise.all(areaUpdates.map(au =>
+                db.update(areas).set(au.updates).where(eq(areas.id, au.id))
+            ));
+            await get().loadAreas();
+        } catch (error) {
+            console.error("Failed to update areas order", error);
+        }
+    },
+    toggleAreaCollapse: (areaId) => {
+        const collapsed = get().collapsedAreaIds;
+        if (collapsed.includes(areaId)) {
+            set({ collapsedAreaIds: collapsed.filter(id => id !== areaId) });
+        } else {
+            set({ collapsedAreaIds: [...collapsed, areaId] });
         }
     },
 

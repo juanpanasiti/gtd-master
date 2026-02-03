@@ -1,18 +1,20 @@
 import { View, Text, SectionList, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useProjects, Project } from "@/store/useProjects";
+import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Folder, ListTodo, Search as SearchIcon, Settings } from "lucide-react-native";
+import { Folder, ListTodo, Search as SearchIcon, Settings, ChevronDown, ChevronRight } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import DraggableFlatList, { ScaleDecorator, RenderItemParams } from "react-native-draggable-flatlist";
 import { GripVertical } from "lucide-react-native";
 
 export default function ProjectsScreen() {
-  const { projects, loadProjects, addProject, areas, loadAreas, updateProjectsOrder, updateProject } = useProjects();
+  const { projects, loadProjects, addProject, areas, loadAreas, updateProjectsOrder, updateProject, collapsedAreaIds, toggleAreaCollapse } = useProjects();
+  const { tasks } = useTasks();
   const [newProject, setNewProject] = useState("");
   const router = useRouter();
   const { isDark } = useTheme();
@@ -57,14 +59,27 @@ export default function ProjectsScreen() {
     sortedGroups.forEach(group => {
         // Find areaId for this group
         const areaId = areas.find(a => a.title === group.title)?.id || null;
-        flattened.push({ type: 'header', title: group.title, color: group.color, areaId });
-        group.data.forEach(p => {
-            flattened.push({ ...p, type: 'project' });
+        const isCollapsed = areaId ? collapsedAreaIds.includes(areaId) : false; // Only collapse valid areas (not "No Area")
+
+        flattened.push({ 
+            type: 'header', 
+            title: group.title, 
+            color: group.color, 
+            areaId,
+            isCollapsed,
+            projectCount: group.data.length
         });
+        
+        if (!isCollapsed) {
+            group.data.forEach(p => {
+                const taskCount = tasks.filter(t => t.project_id === p.id && !t.is_completed).length;
+                flattened.push({ ...p, type: 'project', taskCount });
+            });
+        }
     });
 
     return flattened;
-  }, [projects, areas, t]);
+  }, [projects, areas, t, collapsedAreaIds, tasks]);
 
   const handleDragEnd = async (data: any[]) => {
       // Only projects contribute to sort_order
@@ -157,19 +172,32 @@ export default function ProjectsScreen() {
             data={flattenedData}
             onDragEnd={({ data }) => handleDragEnd(data)}
             keyExtractor={(item) => item.type === 'header' ? `header-${item.title}` : `project-${item.id}`}
+            containerStyle={{ flex: 1 }}
             contentContainerStyle={{ paddingBottom: 100 }}
             renderItem={({ item, drag, isActive }: RenderItemParams<any>) => {
               if (item.type === 'header') {
                 return (
-                    <View className="flex-row items-center py-2 mt-4 mb-2">
+                    <TouchableOpacity 
+                        onPress={() => item.areaId && toggleAreaCollapse(item.areaId)}
+                        disabled={!item.areaId} // "No area" header might not need collapsing or maybe it should? Let's allow it if it has ID (it won't). But "null" area has no ID. We could treat null as collapsable too if we assign a dummy ID or just check for null.
+                        // Let's assume only real areas are collapsible for now, or maybe "No Area" is always expanded?
+                        // If we want "No Area" collapsible, we need a special ID concept or use -1.
+                        // For now, let's just make real areas collapsible.
+                        className="flex-row items-center py-2 mt-4 mb-2"
+                    >
+                        {item.areaId && (
+                            item.isCollapsed 
+                                ? <ChevronRight size={20} color={isDark ? "#94a3b8" : "#64748b"} className="mr-1" />
+                                : <ChevronDown size={20} color={isDark ? "#94a3b8" : "#64748b"} className="mr-1" />
+                        )}
                         <View 
                             className="w-3 h-3 rounded-full mr-2" 
                             style={{ backgroundColor: item.color }} 
                         />
                         <Text className={`text-lg font-bold uppercase tracking-wider ${textColor === "text-white" ? "text-slate-300" : "text-gray-700"}`}>
-                            {item.title}
+                            {item.title} ({item.projectCount})
                         </Text>
-                    </View>
+                    </TouchableOpacity>
                 );
               }
 
@@ -189,23 +217,28 @@ export default function ProjectsScreen() {
                     <Folder size={24} color={item.color || (isDark ? "#9ca3af" : "#4B5563")} />
                     <View className="flex-1">
                         <Text className={`text-lg font-semibold ${textColor}`}>{item.title}</Text>
-                        <Text className={secondaryText}>{item.status}</Text>
+                        <Text className={secondaryText}>{item.status} • {item.taskCount || 0} {item.taskCount === 1 ? 'task' : 'tasks'}</Text>
                     </View>
                   </TouchableOpacity>
                 </ScaleDecorator>
               );
             }}
             ListHeaderComponent={
-                <TouchableOpacity
-                    onPress={() => router.push("/project/single")}
-                    className={`p-4 mb-3 rounded-xl ${cardBg} border ${borderColor} shadow-sm flex-row items-center gap-3`}
-                >
-                    <ListTodo size={24} color={isDark ? "#60a5fa" : "#2563eb"} />
-                    <View className="flex-1">
-                        <Text className={`text-lg font-semibold ${textColor}`}>Single Actions</Text>
-                        <Text className={secondaryText}>Tasks without a project</Text>
-                    </View>
-                </TouchableOpacity>
+                () => {
+                    const singleActionCount = tasks.filter(t => !t.project_id && !t.is_completed).length;
+                    return (
+                        <TouchableOpacity
+                            onPress={() => router.push("/project/single")}
+                            className={`p-4 mb-3 rounded-xl ${cardBg} border ${borderColor} shadow-sm flex-row items-center gap-3`}
+                        >
+                            <ListTodo size={24} color={isDark ? "#60a5fa" : "#2563eb"} />
+                            <View className="flex-1">
+                                <Text className={`text-lg font-semibold ${textColor}`}>Single Actions</Text>
+                                <Text className={secondaryText}>Tasks without a project • {singleActionCount} {singleActionCount === 1 ? 'task' : 'tasks'}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    );
+                }
             }
             ListEmptyComponent={
                 <View className="items-center justify-center p-10">

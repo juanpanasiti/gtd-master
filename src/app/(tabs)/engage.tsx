@@ -3,13 +3,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTasks } from "@/store/useTasks";
 import { useEffect, useMemo } from "react";
 import { TaskItem } from "@/components/TaskItem";
-import { CheckCircle, Search as SearchIcon, Settings } from "lucide-react-native";
+import { CheckCircle, Search as SearchIcon, Settings, ChevronDown, ChevronRight } from "lucide-react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 
 export default function EngageScreen() {
-    const { tasks, loadTasks, toggleTask, contexts, loadContexts } = useTasks();
+    const { tasks, loadTasks, toggleTask, contexts, loadContexts, collapsedContextIds, toggleContextCollapse } = useTasks();
     const { isDark } = useTheme();
     const { t } = useTranslation();
     const router = useRouter();
@@ -20,7 +20,22 @@ export default function EngageScreen() {
     }, []);
 
     const engageTasks = useMemo(() => {
-        return tasks.filter(t => !t.is_completed && t.status === "active" && t.due_date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return tasks.filter(t => {
+            // Must be active and not completed
+            if (t.is_completed || t.status !== "active") return false;
+
+            // Respect start date (tickler)
+            if (t.start_date) {
+                const startDate = new Date(t.start_date);
+                startDate.setHours(0, 0, 0, 0);
+                if (startDate > today) return false;
+            }
+
+            return true;
+        });
     }, [tasks]);
 
     const sections = useMemo(() => {
@@ -32,12 +47,18 @@ export default function EngageScreen() {
             return acc;
         }, {} as Record<string, typeof engageTasks>);
 
-        return Object.entries(groups).map(([contextId, data]) => ({
-            title: contextId === "no-context" ? t("common.noContext") : contextsMap[contextId]?.title || "Unknown",
-            color: contextsMap[contextId]?.color || "#64748b",
-            data
-        }));
-    }, [engageTasks, contexts, t]);
+        return Object.entries(groups).map(([contextId, data]) => {
+            const isCollapsed = collapsedContextIds.includes(contextId === "no-context" ? "no-context" : parseInt(contextId));
+            return {
+                id: contextId,
+                title: contextId === "no-context" ? t("common.noContext") : contextsMap[contextId]?.title || "Unknown",
+                color: contextId === "no-context" ? "#64748b" : contextsMap[contextId]?.color || "#64748b",
+                isCollapsed,
+                data: isCollapsed ? [] : data,
+                totalCount: data.length
+            };
+        });
+    }, [engageTasks, contexts, t, collapsedContextIds]);
 
     const bgColor = isDark ? "bg-slate-950" : "bg-gray-50";
     const textColor = isDark ? "text-white" : "text-gray-900";
@@ -82,13 +103,20 @@ export default function EngageScreen() {
                             context={contexts.find(c => c.id === item.context_id)} 
                         />
                     )}
-                    renderSectionHeader={({ section: { title, color } }) => (
-                        <View className={`flex flex-row items-center py-2 backdrop-blur-sm mt-4 mb-2 ${sectionHeaderBg} rounded-lg px-2`}>
+                    renderSectionHeader={({ section: { title, color, id, isCollapsed, totalCount } }) => (
+                        <TouchableOpacity 
+                            onPress={() => toggleContextCollapse(id === "no-context" ? "no-context" : parseInt(id))}
+                            className={`flex flex-row items-center py-2 backdrop-blur-sm mt-4 mb-2 ${sectionHeaderBg} rounded-lg px-2`}
+                        >
+                            {isCollapsed 
+                                ? <ChevronRight size={20} color={isDark ? "#94a3b8" : "#64748b"} className="mr-1" />
+                                : <ChevronDown size={20} color={isDark ? "#94a3b8" : "#64748b"} className="mr-1" />
+                            }
                             <View className="w-2 h-4 rounded-full mr-3" style={{ backgroundColor: color }} />
-                            <Text className={`text-lg font-bold ${textColor} uppercase tracking-wider`}>
-                                {title}
+                            <Text className={`text-lg font-bold ${textColor} uppercase tracking-wider flex-1`}>
+                                {title} ({totalCount})
                             </Text>
-                        </View>
+                        </TouchableOpacity>
                     )}
                     ListEmptyComponent={
                         <View className="items-center justify-center p-10 mt-10">

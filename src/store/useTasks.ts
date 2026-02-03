@@ -4,6 +4,7 @@ import { tasks, contexts } from "@/db/schema";
 import { eq, desc, and, inArray } from "drizzle-orm";
 import * as Haptics from "expo-haptics";
 import * as NotificationService from "@/core/notifications/NotificationService";
+import { requestWidgetUpdate } from "react-native-android-widget";
 
 export interface Task {
     id: number;
@@ -50,16 +51,22 @@ interface TasksState {
     processRecurrenceResets: () => Promise<void>;
     resetProjectRecurringTasks: (projectId: number) => Promise<void>;
     updateTasksOrder: (taskOrders: { id: number, sort_order: number }[]) => Promise<void>;
+    updateInboxWidget: () => Promise<void>;
+    collapsedContextIds: (number | string)[];
+    toggleContextCollapse: (contextId: number | string) => void;
 }
 
 export const useTasks = create<TasksState>((set, get) => ({
     tasks: [],
     contexts: [],
+    collapsedContextIds: [],
     loadTasks: async () => {
         try {
             const allTasks = await db.select().from(tasks).orderBy(tasks.sort_order, desc(tasks.created_at));
             // @ts-ignore
             set({ tasks: allTasks });
+            // Update widget whenever tasks are loaded
+            get().updateInboxWidget();
         } catch (error) {
             console.error("Failed to load tasks", error);
         }
@@ -85,6 +92,7 @@ export const useTasks = create<TasksState>((set, get) => ({
                 sort_order: maxOrder + 1
             });
             await get().loadTasks();
+            await get().updateInboxWidget();
         } catch (error) {
             console.error("Failed to add task", error);
         }
@@ -130,6 +138,8 @@ export const useTasks = create<TasksState>((set, get) => ({
                     await NotificationService.cancelRecurrenceReminder(id);
                 }
             }
+            // Update widget on toggle
+            get().updateInboxWidget();
         } catch (error) {
             console.error("Failed to update task status", error);
         }
@@ -147,6 +157,7 @@ export const useTasks = create<TasksState>((set, get) => ({
             await NotificationService.cancelRecurrenceReminder(id);
             await db.delete(tasks).where(eq(tasks.id, id));
             await get().loadTasks();
+            await get().updateInboxWidget();
         } catch (error) {
             console.error("Failed to delete task", error);
         }
@@ -255,5 +266,31 @@ export const useTasks = create<TasksState>((set, get) => ({
         } catch (error) {
             console.error("Failed to update tasks order", error);
         }
-    }
+    },
+    updateInboxWidget: async () => {
+        try {
+            const { tasks } = get();
+            // Count active tasks for Inbox (no project, not completed, not waiting/someday)
+            const count = tasks.filter(t =>
+                !t.is_completed &&
+                !t.project_id &&
+                t.status === 'active'
+            ).length;
+
+            // Needed for widget update, we must import it dynamically or use the global if available?
+            // actually we use a helper to avoid jsx in .ts files
+            const { triggerInboxWidgetUpdate } = require("@/widgets/widget-helpers");
+            await triggerInboxWidgetUpdate(count);
+        } catch (e) {
+            console.log("Failed to update widget:", e);
+        }
+    },
+    toggleContextCollapse: (contextId) => {
+        const collapsed = get().collapsedContextIds;
+        if (collapsed.includes(contextId)) {
+            set({ collapsedContextIds: collapsed.filter(id => id !== contextId) });
+        } else {
+            set({ collapsedContextIds: [...collapsed, contextId] });
+        }
+    },
 }));
