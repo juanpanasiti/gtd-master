@@ -5,11 +5,12 @@ import { useTasks } from "@/store/useTasks";
 import { useProjects } from "@/store/useProjects";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { ChevronLeft, Calendar as CalendarIcon, X, FolderPlus, RefreshCcw, Clock } from "lucide-react-native";
+import { ChevronLeft, Calendar as CalendarIcon, X, FolderPlus, RefreshCcw, Clock, CalendarPlus } from "lucide-react-native";
 import { Switch } from "react-native";
 import { useTheme } from "@/core/theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { calendarService } from "@/core/calendar/CalendarService";
 
 export default function TaskDetailScreen() {
     const { id } = useLocalSearchParams();
@@ -191,6 +192,60 @@ export default function TaskDetailScreen() {
         }
     };
 
+    const handleAddDueDateToCalendar = async () => {
+        if (!dueDate) return;
+
+        Alert.alert(
+            t("task.addToCalendar"),
+            "¿Abrir la app de calendario para agregar este evento?\nPodrás editar los detalles antes de guardar.",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Abrir Calendario",
+                    onPress: async () => {
+                        try {
+                            const success = await calendarService.createDueDateEvent(
+                                title || task.title,
+                                dueDate,
+                                description
+                            );
+                            if (success) console.log('Calendar intent opened for due date');
+                        } catch (error) {
+                            console.error('Error opening calendar for due date:', error);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    const handleAddStartDateToCalendar = async () => {
+        if (!startDate) return;
+
+        Alert.alert(
+            t("task.addToCalendar"),
+            "¿Abrir la app de calendario para agregar este evento?\nPodrás editar los detalles antes de guardar.",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Abrir Calendario",
+                    onPress: async () => {
+                        try {
+                            const success = await calendarService.createStartDateEvent(
+                                title || task.title,
+                                startDate,
+                                description
+                            );
+                            if (success) console.log('Calendar intent opened for start date');
+                        } catch (error) {
+                            console.error('Error opening calendar for start date:', error);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     return (
         <SafeAreaView className={`flex-1 ${bgColor}`}>
             <View className="flex-1 p-4">
@@ -252,7 +307,17 @@ export default function TaskDetailScreen() {
                         
                         {/* Start Date */}
                         <View className="mb-3">
-                            <Text className={`text-xs ${secondaryText} mb-1`}>Start Date (Hide untill)</Text>
+                            <View className="flex-row items-center justify-between mb-1">
+                                <Text className={`text-xs ${secondaryText} uppercase`}>Start Date (Hide untill)</Text>
+                                {startDate && (
+                                    <TouchableOpacity 
+                                        onPress={handleAddStartDateToCalendar}
+                                        className={`p-1.5 rounded-lg ${isDark ? "bg-blue-900/30" : "bg-blue-100"}`}
+                                    >
+                                        <CalendarPlus size={16} color={isDark ? "#60a5fa" : "#2563eb"} />
+                                    </TouchableOpacity>
+                                )}
+                            </View>
                             <TouchableOpacity 
                                 onPress={() => setShowStartDatePicker(true)}
                                 className={`flex-row items-center justify-between ${inputBg} border-2 ${borderColor} p-3 rounded-lg`}
@@ -293,7 +358,17 @@ export default function TaskDetailScreen() {
 
                         {/* Due Date */}
                         <View>
-                            <Text className={`text-xs ${secondaryText} mb-1`}>Due Date (Deadline)</Text>
+                            <View className="flex-row items-center justify-between mb-1">
+                                <Text className={`text-xs ${secondaryText} uppercase`}>Due Date (Deadline)</Text>
+                                {dueDate && (
+                                    <TouchableOpacity 
+                                        onPress={handleAddDueDateToCalendar}
+                                        className={`p-1.5 rounded-lg ${isDark ? "bg-red-900/30" : "bg-red-100"}`}
+                                    >
+                                        <CalendarPlus size={16} color={isDark ? "#f87171" : "#ef4444"} />
+                                    </TouchableOpacity>
+                                )}
+                            </View>
                              <TouchableOpacity 
                                 onPress={() => setShowDatePicker(true)}
                                 className={`flex-row items-center justify-between ${inputBg} border-2 ${borderColor} p-3 rounded-lg`}

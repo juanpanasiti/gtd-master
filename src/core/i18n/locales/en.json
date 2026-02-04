@@ -235,6 +235,10 @@
         "onDays": "On days:",
         "onDayOfMonth": "On day of month:",
         "resetTime": "Reset Time",
-        "resetsOn": "Resets on: {{date}}"
+        "resetsOn": "Resets on: {{date}}",
+        "addToCalendar": "Add to Calendar",
+        "addedToCalendar": "Task added to calendar!",
+        "calendarPermissionRequired": "Calendar permission is required",
+        "noDueDate": "This task has no due date"
     }
 }

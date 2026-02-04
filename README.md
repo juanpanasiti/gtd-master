@@ -4,8 +4,8 @@
 ![Expo](https://img.shields.io/badge/Expo-SDK_54-000020?logo=expo)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-Complete-brightgreen)
-![Version](https://img.shields.io/badge/Version-1.5.0-blue)
+![Status](https://img.shields.io/badge/Status-Active_Development-orange)
+![Version](https://img.shields.io/badge/Version-1.7.0-blue)
 
 ---
 
@@ -19,39 +19,43 @@
 
 | Pillar | Functionality | Description |
 |-------|---------------|-------------|
-| 📥 **Capture** | Inbox & Quick Capture | Ultra-fast capture with Haptics and Deep Linking. |
+| 📥 **Capture** | Inbox & Quick Capture | Ultra-fast capture with Haptics, Deep Linking and Widgets. |
 | 🔍 **Clarify** | Inbox Processor Wizard | Intelligent assistant to reach "Inbox Zero" without friction. |
 | 📂 **Organize** | Projects & Contexts | Areas of responsibility, Project References, and Contexts. |
 | 📅 **Review** | Weekly Review Wizard | Guided step-by-step ritual to keep your system up to date. |
 | 🔄 **Repeat** | Recurring Tasks | Automatic tasks (daily, weekly, monthly) with intelligent reset. |
-| ⚡ **Engage** | Engage List | Next actions grouped by context and filtered by start date. |
+| ⚡ **Engage** | Engage List & Calendar | Next actions filtered by context. **Native Calendar Integration.** |
 | 📊 **Reflect** | Perspectives Dashboard | System health visualization, areas, and weekly momentum. |
 
 ---
 
-## ✨ Refinement Features (v1.5.0)
+## ✨ Features Update (v1.7.0)
+
+### 📆 Native Calendar Integration
+Seamlessly bridge your tasks with your life using our new advanced calendar features:
+- **Direct Integration**: Send any task with a *Start Date* or *Due Date* directly to your phone's native calendar app (Google Calendar, Outlook, etc.).
+- **Smart Intent**: Uses native Android Intents to open the "Create Event" screen pre-filled with your task details (Title, Date, Description).
+- **Full Control**: Review, edit, add alarms, or invite people in your calendar app before saving.
+- **Dual Mode**: Separate buttons for "Start Date" (Morning event) and "Due Date" (Deadline event).
 
 ### 🧠 Flow Intelligence
-- **Recurring Tasks**: Set up routines (daily, weekly, or monthly). The system automatically "resets" them upon completion according to their cycle.
-- **Manual Reset FAB**: Floating action button in projects to instantly reset all recurring tasks for a session.
-- **Step-by-Step Wizards**: Inbox processing and weekly review through interactive guides.
-- **Visual Milestones**: Confetti celebrations and smooth transitions when completing key processes.
-- **Project References**: Save support material (notes, links) directly linked to your projects.
+- **Recurring Tasks**: Set up routines (daily, weekly, or monthly). The system automatically "resets" them upon completion.
+- **Manual Reset FAB**: Floating action button to instantly reset recurring tasks.
+- **Step-by-Step Wizards**: Inbox processing and weekly review guides.
+- **Visual Milestones**: Confetti celebrations when completing key processes.
 
 ### 🔔 Notifications & Habits
-- **Daily Briefing**: Dynamic morning notification informing you how many tasks are due and starting today.
-- **Custom Reminders**: Freely configure the day and time for your Weekly Review and Daily Briefing.
-- **Fast Capture**: Direct access via Deep Linking (`gtdmaster://inbox/quick`) to capture ideas instantly.
+- **Daily Briefing**: Dynamic morning notification about due and starting tasks.
+- **Fast Capture**: Direct access via Deep Linking (`gtdmaster://inbox/quick`) or Home Screen Widgets.
 
 ### 🛡️ Your Data, Your Control
-- **True Offline-First**: No login, no mandatory cloud. Everything lives on your device.
-- **Data Portability**: Export and import your entire system in a standard JSON file for backups or migration.
-- **Global Search**: Real-time filtering for tasks, projects, and reference material from any tab.
+- **True Offline-First**: No login, no mandatory cloud.
+- **Data Portability**: Export/Import your entire system via JSON.
+- **Global Search**: Real-time filtering across the entire system.
 
 ### 🎨 Premium Design & UX
-- **Adaptive Dark Mode**: Full Dark/Light mode support with a modern and professional aesthetic.
-- **Sensory Feedback**: `expo-haptics` integration for a satisfying tactile response.
-- **Unified UI**: Premium custom headers consistent across all main sections.
+- **Adaptive Dark Mode**: Full Dark/Light mode support.
+- **Sensory Feedback**: `expo-haptics` integration.
 
 ---
 
@@ -61,12 +65,12 @@
 |-----------|------------|
 | **Core** | Expo SDK 54 / React Native 0.81.5 |
 | **Logic** | TypeScript 5.9 |
-| **Persistence** | SQLite + Drizzle ORM (with custom migration system) |
+| **Persistence** | SQLite + Drizzle ORM (custom migration system) |
 | **State Management** | Zustand with AsyncStorage persistence |
 | **Styling** | NativeWind (TailwindCSS) + Lucide Icons |
+| **Integrations** | **Expo Calendar**, **Expo Intent Launcher**, Notifications |
 | **UX/UI Extras** | Reanimated, Confetti Cannon, Haptics |
-| **I18n** | i18next (Full English/Spanish support) |
-| **System APIs** | Notifications, Sharing, Document Picker, File System |
+| **I18n** | i18next + expo-localization (English/Spanish) |
 
 ---
 
@@ -78,25 +82,26 @@ src/
 │   ├── (tabs)/             # Main tabs (Inbox, Organize, Engage, Review)
 │   ├── inbox/              # Processing and Quick Capture Wizards
 │   ├── project/            # Project, Area, and Reference management
+│   ├── task/               # Task Details & Calendar Integration logic
 │   ├── review/             # Weekly Review Assistant
-│   ├── perspectives.tsx    # Metrics dashboard and data management
-│   ├── search.tsx          # Global search screen
-│   └── settings.tsx        # Notification, language, and theme configuration
+│   ├── perspectives.tsx    # Metrics dashboard
+│   └── settings.tsx        # Configuration
 │
 ├── components/             # 🧩 UI Kit & TaskItem
-├── core/                   # ⚙️ i18n, Theme, Notifications & DataService
-├── db/                     # 🗄️ SQLite Client, Schemas & Migration Runner
-└── store/                  # 📦 Zustand Stores (Tasks, Projects, Settings)
+├── core/                   # ⚙️ Core Logic
+│   ├── calendar/           # 📆 Calendar Service (Permissions & Intents)
+│   ├── i18n/               # Internationalization
+│   └── theme/              # Theme Provider
+├── db/                     # 🗄️ SQLite Client & Drizzle Schema
+└── store/                  # 📦 Zustand Stores
 ```
-
----
 
 ## 🚀 Installation & Usage
 
 ### Prerequisites
 
 - Node.js 18+ 
-- Expo Go (mobile) or Simulator (Android/iOS)
+- Expo Go (limited features) or Android Emulator/Device (Recommended for Calendar features)
 
 ### Quick Steps
 
@@ -104,12 +109,11 @@ src/
 # 1. Install dependencies
 npm install
 
-# 2. Start development
-npm start
-
-# 3. Android / iOS
+# 2. Rebuild Native Code (Required for Calendar/Widgets)
 npm run android
-npm run ios
+
+# 3. Start development
+npm start
 ```
 
 ---

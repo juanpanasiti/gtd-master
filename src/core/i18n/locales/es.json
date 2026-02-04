@@ -234,6 +234,10 @@
         "onDays": "Los días:",
         "onDayOfMonth": "Día del mes:",
         "resetTime": "Hora de reinicio",
-        "resetsOn": "Se reinicia el: {{date}}"
+        "resetsOn": "Se reinicia el: {{date}}",
+        "addToCalendar": "Agregar al Calendario",
+        "addedToCalendar": "¡Tarea agregada al calendario!",
+        "calendarPermissionRequired": "Se necesita permiso para acceder al calendario",
+        "noDueDate": "Esta tarea no tiene fecha de vencimiento"
     }
 }
